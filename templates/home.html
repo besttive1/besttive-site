@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BESTTIVE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>BESTTIVE 🛍️</header>
+
+<div class="products">
+    {% for product in products %}
+    <div class="card">
+        <img src="{{ url_for('static', filename=product.image) }}">
+        <h3>{{ product.name }}</h3>
+        <p>₹{{ product.price }}</p>
+       <a href="https://wa.me/918956884324?text=Hello%20BESTTIVE,%0A%0AI%20want%20to%20order:%20{{ product.name }}%0APrice:%20₹{{ product.price }}%0A%0AMy%20Name:%20_____%0AAddress:%20_____%0APhone:%20_____">
+    <button>Order on WhatsApp</button>
+</a>
+</a>
+    </div>
+    {% endfor %}
+</div>
+<a href="https://instagram.com/besttive.business" target="_blank">
+    <button style="background:#E1306C; color:white;">
+        Follow on Instagram
+    </button>
+</a>
+</body>
+</html>

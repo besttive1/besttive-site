@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cart</title>
+</head>
+<body>
+
+<h2>Your Cart 🛒</h2>
+
+{% for item in cart %}
+<p>{{ item.name }} - ₹{{ item.price }}</p>
+{% endfor %}
+
+<h3>Total: ₹{{ total }}</h3>
+
+<a href="https://wa.me/918956884324?text=Hello%20BESTTIVE,%0AI%20want%20to%20order%20items%20worth%20₹{{ total }}">
+    <button>Order Full Cart</button>
+</a>
+</body>
+</html>
