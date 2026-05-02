@@ -83,3 +83,12 @@ button:hover {
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   z-index: 1000;
 }
+.insta-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.whatsapp-icon {
+  width: 28px;
+  height: 28px;
+}
