@@ -14,9 +14,8 @@
         <img src="{{ url_for('static', filename=product.image) }}">
         <h3>{{ product.name }}</h3>
         <p>₹{{ product.price }}</p>
-       <a href="https://wa.me/918956884324?text=Hello%20BESTTIVE,%0A%0AI%20want%20to%20order:%20{{ product.name }}%0APrice:%20₹{{ product.price }}%0A%0AMy%20Name:%20_____%0AAddress:%20_____%0APhone:%20_____">
-    <button>Order on WhatsApp</button>
-</a>
+      <a href="/payment/{{ product.name }}/{{ product.price }}">
+    <button>Buy Now</button>
 </a>
     </div>
     {% endfor %}
@@ -25,6 +24,10 @@
     <button style="background:#E1306C; color:white;">
         Follow on Instagram
     </button>
+
+</a>
+<a href="https://wa.me/918601362353" class="whatsapp-float" target="_blank">
+    💬
 </a>
 </body>
 </html>

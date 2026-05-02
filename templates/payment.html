@@ -22,11 +22,16 @@
 
     <h4>After Payment, Fill Details</h4>
 
-    <form method="POST">
-        <input type="text" name="name" placeholder="Your Name" required><br><br>
-        <input type="number" name="amount" placeholder="Amount Paid" required><br><br>
-        <button type="submit">Confirm Payment</button>
-    </form>
+    <h2>Scan & Pay</h2>
+
+<img src="{{ url_for('static', filename='images/qr.jpeg') }}" width="200">
+
+<p>Product: {{ name }}</p>
+<p>Amount: ₹{{ price }}</p>
+
+<a href="https://wa.me/918601362353?text=Order%20for%20{{ name }}%20₹{{ price }}">
+    <button>Confirm Order on WhatsApp</button>
+</a>
 
 </div>
 

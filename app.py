@@ -14,6 +14,29 @@ cart = []
 def home():
     return render_template("home.html", products=products)
 
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+# PRODUCTS (example)
+products = [
+    {"name": "Bangles Set", "price": 299, "image": "images/bangles.jpg"},
+    {"name": "Mobile Phone", "price": 12999, "image": "images/mobile.jpg"},
+    {"name": "Toys", "price": 399, "image": "images/toy.jpg"},
+]
+
+@app.route("/")
+def home():
+    return render_template("home.html", products=products)
+
+# 🔥 DYNAMIC PAYMENT ROUTE
+@app.route("/payment/<string:name>/<int:price>")
+def payment(name, price):
+    return render_template("payment.html", name=name, price=price)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+    
 @app.route("/add_to_cart/<name>/<int:price>")
 def add_to_cart(name, price):
     cart.append({"name": name, "price": price})
