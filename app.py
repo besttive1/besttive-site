@@ -48,7 +48,7 @@ def view_cart():
     return render_template("cart.html", cart=cart, total=total)
 
 @app.route("/payment", methods=["GET", "POST"])
-def payment():
+def payment_form():
     if request.method == "POST":
         name = request.form["name"]
         amount = request.form["amount"]
