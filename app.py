@@ -102,87 +102,65 @@ def send_otp(email, otp):
 # --------- ROUTES ---------
 
 # Home (yahan tumhara existing home render kar sakte ho)
-@app.route("/")
-def home():
-    return render_template("home.html")
+import random
+from flask import session, redirect, render_template, request, flash
 
-# Login page
+# LOGIN PAGE
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form.get("email")
+        phone = request.form.get("phone")
 
-        if not email:
-            flash("Please enter email")
-            return redirect("/login")
+        # generate OTP
+        otp = random.randint(1000, 9999)
+        session["otp"] = otp
+        session["phone"] = phone
 
-        otp = str(random.randint(100000, 999999))
-        session['otp'] = otp
-        session['email'] = email
-        session['otp_exp'] = (datetime.datetime.utcnow() + datetime.timedelta(minutes=5)).isoformat()
-
-        try:
-            send_otp(email, otp)
-        except Exception as e:
-            return f"Mail error: {e}"
+        print("OTP:", otp)  # 🔥 abhi console me aayega
 
         return redirect("/verify")
 
     return render_template("login.html")
 
-# Verify OTP
+
+# VERIFY OTP
 @app.route("/verify", methods=["GET", "POST"])
 def verify():
     if request.method == "POST":
         user_otp = request.form.get("otp")
-        real_otp = session.get("otp")
-        exp = session.get("otp_exp")
 
-        if not real_otp or not exp:
-            flash("Session expired. Try again.")
-            return redirect("/login")
+        if int(user_otp) == session.get("otp"):
+            phone = session.get("phone")
 
-        if datetime.datetime.utcnow() > datetime.datetime.fromisoformat(exp):
-            flash("OTP expired")
-            return redirect("/login")
-
-        if user_otp == real_otp:
-            email = session.get("email")
-            user = User.query.filter_by(email=email).first()
+            user = User.query.filter_by(phone=phone).first()
 
             if not user:
-                user = User(email=email)
-                db.session.add(user)
-                db.session.commit()
+                return redirect("/register")
 
-            session['user_id'] = user.id
+            session["user_id"] = user.id
             return redirect("/profile")
+
         else:
             flash("Wrong OTP")
 
     return render_template("verify.html")
 
-# Profile
-@app.route("/profile", methods=["GET", "POST"])
-def profile():
-    uid = session.get("user_id")
 
-    if not uid:
-        return redirect("/login")
-
-    user = User.query.get(uid)
-    if not user:
-        return redirect("/login")
-
+# REGISTER
+@app.route("/register", methods=["GET", "POST"])
+def register():
     if request.method == "POST":
-        user.name = request.form.get("name")
-        user.address = request.form.get("address")
-        user.dob = request.form.get("dob")
+        name = request.form.get("name")
+        phone = session.get("phone")
 
+        new_user = User(name=name, phone=phone)
+        db.session.add(new_user)
         db.session.commit()
-        flash("Profile updated")
 
+        session["user_id"] = new_user.id
         return redirect("/profile")
+
+    return render_template("register.html")
 
     return render_template("profile.html", user=user)
 # Logout

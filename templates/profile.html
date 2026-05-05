@@ -1,15 +1,11 @@
-<h2>My Profile</h2>
+<h2>My Account</h2>
+
+<p>Name: {{ user.name }}</p>
+<p>Phone: {{ user.phone }}</p>
 
 <form method="POST">
-  <input name="name" value="{{ user.name }}" placeholder="Name"><br>
-  <input name="address" value="{{ user.address }}" placeholder="Address"><br>
-  <input name="dob" value="{{ user.dob }}" placeholder="DOB"><br>
-  <button type="submit">Update</button>
+  <input type="text" name="name" placeholder="Update Name">
+  <input type="text" name="address" placeholder="Address">
+  <input type="date" name="dob">
+  <button type="submit">Save</button>
 </form>
-
-<a href="/logout">Logout</a>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <p style="color: green;">{{ messages[0] }}</p>
-  {% endif %}
-{% endwith %}
