@@ -166,22 +166,46 @@ def verify():
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
     uid = session.get("user_id")
+
     if not uid:
         return redirect("/login")
 
     user = User.query.get(uid)
+    if not user:
+        return redirect("/login")
 
     if request.method == "POST":
         user.name = request.form.get("name")
         user.address = request.form.get("address")
         user.dob = request.form.get("dob")
+
         db.session.commit()
         flash("Profile updated")
 
-    return render_template("profile.html", user=user)
+        return redirect("/profile")
 
+    return render_template("profile.html", user=user)
 # Logout
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
+@app.route("/orders")
+def orders():
+    return "<h2>Your Orders</h2>"
+
+@app.route("/wishlist")
+def wishlist():
+    return "<h2>Your Wishlist</h2>"
+
+@app.route("/notifications")
+def notifications():
+    return "<h2>Notifications</h2>"
+
+@app.route("/support")
+def support():
+    return "<h2>Customer Care</h2>"
+
+@app.route("/download")
+def download():
+    return "<h2>Download App</h2>"

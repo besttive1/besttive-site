@@ -8,3 +8,8 @@
 </form>
 
 <a href="/logout">Logout</a>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <p style="color: green;">{{ messages[0] }}</p>
+  {% endif %}
+{% endwith %}
