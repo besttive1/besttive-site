@@ -144,3 +144,67 @@ button:hover {
 .cat p {
   margin: 5px 0 0;
 }
+/* HEADER */
+.premium-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo-box img {
+  width: 45px;
+  border-radius: 50%;
+}
+
+/* SEARCH */
+.search-box {
+  flex: 1;
+  margin: 0 15px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+
+/* LINKS */
+.header-links span {
+  margin-left: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* CATEGORY */
+.premium-categories {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  overflow-x: auto;
+}
+
+.cat-item {
+  text-align: center;
+  min-width: 70px;
+  cursor: pointer;
+}
+
+.cat-item img {
+  width: 40px;
+  height: 40px;
+}
+
+.cat-item p {
+  margin-top: 5px;
+  font-size: 12px;
+}
