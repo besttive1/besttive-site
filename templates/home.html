@@ -28,22 +28,7 @@
   </div>
 </div>
   <!-- 🔍 TOP SEARCH BAR -->
-   <script>
-function toggleMenu() {
-  let menu = document.getElementById("loginMenu");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-
-/* CLICK OUTSIDE CLOSE */
-document.addEventListener("click", function(e) {
-  let menu = document.getElementById("loginMenu");
-  let btn = document.querySelector(".login-wrapper");
-
-  if (!btn.contains(e.target)) {
-    menu.style.display = "none";
-  }
-});
-</script>
+   
 <div class="top-bar">
   <input type="text" placeholder="Search for Products, Brands and More">
   <div class="top-links">
@@ -94,5 +79,21 @@ document.addEventListener("click", function(e) {
 <a href="https://wa.me/918601362353" class="whatsapp-float" target="_blank">
   <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" class="whatsapp-icon">
 </a>
+<script>
+function toggleMenu() {
+  let menu = document.getElementById("loginMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* CLICK OUTSIDE CLOSE */
+document.addEventListener("click", function(e) {
+  let menu = document.getElementById("loginMenu");
+  let btn = document.querySelector(".login-wrapper");
+
+  if (!btn.contains(e.target)) {
+    menu.style.display = "none";
+  }
+});
+</script>
 </body>
 </html>
