@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <head>
-  <!-- DROPDOWN PANEL -->
-  <div class="top-header">
-<!-- LEFT LOGO -->
+<head>
+    <title>BESTTIVE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<!-- 🔥 HEADER -->
+<div class="top-header">
+
+  <!-- LEFT LOGO -->
   <div class="logo">
     <img src="{{ url_for('static', filename='images/logo.png') }}">
   </div>
@@ -22,19 +29,18 @@
 
 </div>
 
-<!-- LOGIN DROPDOWN -->
+<!-- 🔥 LOGIN DROPDOWN -->
 <div id="loginMenu" class="login-menu">
   <ul>
-  <li><a href="/profile">👤 My Profile</a></li>
-  <li><a href="/orders">📦 Orders</a></li>
-  <li><a href="/wishlist">❤️ Wishlist</a></li>
-  <li><a href="/notifications">🔔 Notifications</a></li>
-  <li><a href="/support">🎧 Customer Care</a></li>
-  <li><a href="/download">⬇ Download App</a></li>
-</ul>
+    <li><a href="/profile">👤 My Profile</a></li>
+    <li><a href="/orders">📦 Orders</a></li>
+    <li><a href="/wishlist">❤️ Wishlist</a></li>
+    <li><a href="/notifications">🔔 Notifications</a></li>
+    <li><a href="/support">🎧 Customer Care</a></li>
+    <li><a href="/download">⬇ Download App</a></li>
+  </ul>
 </div>
-  <!-- 🔍 TOP SEARCH BAR -->
-   
+
 <!-- 🛍 CATEGORY BAR -->
 <div class="category-bar">
   <div class="cat">👕<p>Fashion</p></div>
@@ -45,56 +51,32 @@
   <div class="cat">🧸<p>Toys</p></div>
   <div class="cat">📚<p>Books</p></div>
 </div>
-    <header class="header">
-  <img src="{{ url_for('static', filename='images/logo.jpeg') }}" class="logo">
-  BESTTIVE
-</header>
-    <title>BESTTIVE</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
 
-<header>BESTTIVE 🛍️</header>
-
+<!-- PRODUCTS -->
 <div class="products">
     {% for product in products %}
     <div class="card">
         <img src="{{ url_for('static', filename=product.image) }}">
         <h3>{{ product.name }}</h3>
         <p>₹{{ product.price }}</p>
-      <a href="/payment/{{ product.name }}/{{ product.price }}">
-    <button>Buy Now</button>
-</a>
+        <a href="/payment/{{ product.name }}/{{ product.price }}">
+            <button>Buy Now</button>
+        </a>
     </div>
     {% endfor %}
 </div>
+
+<!-- INSTAGRAM -->
 <a href="https://instagram.com/besttive.business" class="insta-float" target="_blank">
   <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" class="insta-icon">
-  Follow
 </a>
 
+<!-- WHATSAPP -->
 <a href="https://wa.me/918601362353" class="whatsapp-float" target="_blank">
   <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" class="whatsapp-icon">
 </a>
-<script>
-function toggleMenu() {
-  let menu = document.getElementById("loginMenu");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
 
-/* CLICK OUTSIDE CLOSE */
-document.addEventListener("click", function(e) {
-  let menu = document.getElementById("loginMenu");
-  let btn = document.querySelector(".login-wrapper");
-
-  if (!btn.contains(e.target)) {
-    menu.style.display = "none";
-  }
-});
-<!-- tumhara pura page content upar hoga -->
-
-<!-- 🔥 LOGIN SCRIPT YAHAN -->
-
+<!-- 🔥 SCRIPT (ONLY ONCE) -->
 <script>
 function toggleMenu() {
   let menu = document.getElementById("loginMenu");
@@ -110,5 +92,6 @@ document.addEventListener("click", function(e) {
   }
 });
 </script>
+
 </body>
 </html>
