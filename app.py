@@ -163,6 +163,19 @@ def register():
     return render_template("register.html")
 
     return render_template("profile.html", user=user)
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    uid = session.get("user_id")
+
+    if not uid:
+        return redirect("/login")
+
+    user = User.query.get(uid)
+
+    if not user:
+        return redirect("/login")
+
+    return render_template("profile.html", user=user)
 # Logout
 @app.route("/logout")
 def logout():
