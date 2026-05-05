@@ -57,4 +57,131 @@ def payment_form():
 
 if __name__ == "__main__":
     app.run(debug=True)
-    
+    import os, random, datetime
+from flask import Flask, render_template, request, redirect, session, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = "CHANGE_THIS_SECRET_KEY"
+
+# DB (SQLite)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# MAIL CONFIG (Gmail SMTP)
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = "YOUR_GMAIL@gmail.com"
+app.config['MAIL_PASSWORD'] = "YOUR_16_CHAR_APP_PASSWORD"
+mail = Mail(app)
+
+# --------- MODEL ---------
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(120), default="New User")
+    address = db.Column(db.String(255), default="")
+    dob = db.Column(db.String(50), default="")
+
+with app.app_context():
+    db.create_all()
+
+# --------- HELPERS ---------
+def send_otp(email, otp):
+    msg = Message(
+        subject="BESTTIVE Login OTP",
+        sender=app.config['MAIL_USERNAME'],
+        recipients=[email],
+        body=f"Your OTP is: {otp}\nValid for 5 minutes."
+    )
+    mail.send(msg)
+
+# --------- ROUTES ---------
+
+# Home (yahan tumhara existing home render kar sakte ho)
+@app.route("/")
+def home():
+    return render_template("home.html")
+
+# Login page
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+
+        if not email:
+            flash("Please enter email")
+            return redirect("/login")
+
+        otp = str(random.randint(100000, 999999))
+        session['otp'] = otp
+        session['email'] = email
+        session['otp_exp'] = (datetime.datetime.utcnow() + datetime.timedelta(minutes=5)).isoformat()
+
+        try:
+            send_otp(email, otp)
+        except Exception as e:
+            return f"Mail error: {e}"
+
+        return redirect("/verify")
+
+    return render_template("login.html")
+
+# Verify OTP
+@app.route("/verify", methods=["GET", "POST"])
+def verify():
+    if request.method == "POST":
+        user_otp = request.form.get("otp")
+        real_otp = session.get("otp")
+        exp = session.get("otp_exp")
+
+        if not real_otp or not exp:
+            flash("Session expired. Try again.")
+            return redirect("/login")
+
+        if datetime.datetime.utcnow() > datetime.datetime.fromisoformat(exp):
+            flash("OTP expired")
+            return redirect("/login")
+
+        if user_otp == real_otp:
+            email = session.get("email")
+            user = User.query.filter_by(email=email).first()
+
+            if not user:
+                user = User(email=email)
+                db.session.add(user)
+                db.session.commit()
+
+            session['user_id'] = user.id
+            return redirect("/profile")
+        else:
+            flash("Wrong OTP")
+
+    return render_template("verify.html")
+
+# Profile
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    uid = session.get("user_id")
+    if not uid:
+        return redirect("/login")
+
+    user = User.query.get(uid)
+
+    if request.method == "POST":
+        user.name = request.form.get("name")
+        user.address = request.form.get("address")
+        user.dob = request.form.get("dob")
+        db.session.commit()
+        flash("Profile updated")
+
+    return render_template("profile.html", user=user)
+
+# Logout
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")

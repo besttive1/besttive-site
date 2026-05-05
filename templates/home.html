@@ -27,12 +27,8 @@
 
 <!-- LOGIN DROPDOWN -->
 <div id="loginMenu" class="login-menu">
-  <div class="menu-top">
-    <span>New customer?</span>
-    <a href="#">Sign Up</a>
-  </div>
-
   <ul>
+    <li><a href="/profile">👤 My Profile</a></li>
     <li>👤 My Profile</li>
     <li>📦 Orders</li>
     <li>❤️ Wishlist</li>
@@ -97,6 +93,23 @@ document.addEventListener("click", function(e) {
   let btn = document.querySelector(".login-wrapper");
 
   if (!btn.contains(e.target)) {
+    menu.style.display = "none";
+  }
+});
+<!-- tumhara pura page content upar hoga -->
+
+<!-- 🔥 LOGIN SCRIPT YAHAN -->
+<script>
+function toggleMenu() {
+  let menu = document.getElementById("loginMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+document.addEventListener("click", function(e) {
+  let menu = document.getElementById("loginMenu");
+  let btn = document.querySelector(".login-btn");
+
+  if (!btn.contains(e.target) && !menu.contains(e.target)) {
     menu.style.display = "none";
   }
 });
