@@ -4,26 +4,41 @@
   
 
   <!-- DROPDOWN PANEL -->
-  <div id="loginMenu" class="login-menu">
-    <div class="menu-top">
-      <span>New customer?</span>
-      <a href="#">Sign Up</a>
-    </div>
+  <div class="top-header">
 
-    <ul>
-      <li>👤 My Profile</li>
-      <li>⭐ Flipkart Plus Zone</li>
-      <li>📦 Orders</li>
-      <li>❤️ Wishlist</li>
-      <li>🏪 Become a Seller</li>
-      <li>🎁 Rewards</li>
-      <li>🎟 Gift Cards</li>
-      <li>🔔 Notifications</li>
-      <li>🎧 Customer Care</li>
-      <li>📢 Advertise</li>
-      <li>⬇ Download App</li>
-    </ul>
+  <!-- LEFT LOGO -->
+  <div class="logo">
+    <img src="{{ url_for('static', filename='images/logo.png') }}">
   </div>
+
+  <!-- CENTER SEARCH -->
+  <div class="search-bar">
+    <input type="text" placeholder="Search for Products, Brands and More">
+  </div>
+
+  <!-- RIGHT LINKS -->
+  <div class="top-links">
+    <span class="login-btn" onclick="toggleMenu()">Login</span>
+    <span>More</span>
+    <span>Cart</span>
+  </div>
+
+</div>
+
+<!-- LOGIN DROPDOWN -->
+<div id="loginMenu" class="login-menu">
+  <div class="menu-top">
+    <span>New customer?</span>
+    <a href="#">Sign Up</a>
+  </div>
+
+  <ul>
+    <li>👤 My Profile</li>
+    <li>📦 Orders</li>
+    <li>❤️ Wishlist</li>
+    <li>🎁 Rewards</li>
+    <li>🎧 Customer Care</li>
+  </ul>
 </div>
   <!-- 🔍 TOP SEARCH BAR -->
    
