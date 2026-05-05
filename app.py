@@ -237,3 +237,6 @@ def profile():
         return redirect("/profile")
 
     return render_template("profile.html", user=user)
+@app.route("/profile")
+def profile():
+    return "PROFILE WORKING"
