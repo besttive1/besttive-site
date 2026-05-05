@@ -1,7 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <!-- LOGIN BUTTON -->
+<div class="login-wrapper">
+  <span onclick="toggleMenu()">👤 Login</span>
+
+  <!-- DROPDOWN PANEL -->
+  <div id="loginMenu" class="login-menu">
+    <div class="menu-top">
+      <span>New customer?</span>
+      <a href="#">Sign Up</a>
+    </div>
+
+    <ul>
+      <li>👤 My Profile</li>
+      <li>⭐ Flipkart Plus Zone</li>
+      <li>📦 Orders</li>
+      <li>❤️ Wishlist</li>
+      <li>🏪 Become a Seller</li>
+      <li>🎁 Rewards</li>
+      <li>🎟 Gift Cards</li>
+      <li>🔔 Notifications</li>
+      <li>🎧 Customer Care</li>
+      <li>📢 Advertise</li>
+      <li>⬇ Download App</li>
+    </ul>
+  </div>
+</div>
   <!-- 🔍 TOP SEARCH BAR -->
+   <script>
+function toggleMenu() {
+  let menu = document.getElementById("loginMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* CLICK OUTSIDE CLOSE */
+document.addEventListener("click", function(e) {
+  let menu = document.getElementById("loginMenu");
+  let btn = document.querySelector(".login-wrapper");
+
+  if (!btn.contains(e.target)) {
+    menu.style.display = "none";
+  }
+});
+</script>
 <div class="top-bar">
   <input type="text" placeholder="Search for Products, Brands and More">
   <div class="top-links">
