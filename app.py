@@ -78,7 +78,7 @@ with app.app_context():
     db.create_all()
 
 # --------- HELPERS ---------
-def print("OTP:", otp)
+print("OTP:", otp)
     try:
         msg = Message(
             subject="BESTTIVE Login OTP",
