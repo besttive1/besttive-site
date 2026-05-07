@@ -95,18 +95,20 @@ def send_otp(email, otp):
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        phone = request.form.get("email")
+
+        email = request.form.get("email")
 
         # generate OTP
         otp = random.randint(1000, 9999)
-        session["otp"] = otp
-        session["email"] = phone
 
-      send_otp(email, otp)# terminal mein dikhe
+        session["otp"] = str(otp)
+        session["email"] = email
+
+        send_otp(email, otp)
+
         return redirect("/verify")
 
     return render_template("login.html")
-
 
 # VERIFY OTP
 @app.route("/verify", methods=["GET", "POST"])
