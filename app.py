@@ -62,8 +62,8 @@ db = SQLAlchemy(app)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = "YOUR_GMAIL@gmail.com"
-app.config['MAIL_PASSWORD'] = "YOUR_16_CHAR_APP_PASSWORD"
+app.config['MAIL_USERNAME'] = "amitjia2000@gmail.com"
+app.config['MAIL_PASSWORD'] = "qqcv ybwa vghv ijgp"
 mail = Mail(app)
 
 # --------- MODEL ---------
@@ -95,14 +95,14 @@ def send_otp(email, otp):
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        phone = request.form.get("phone")
+        phone = request.form.get("email")
 
         # generate OTP
         otp = random.randint(1000, 9999)
         session["otp"] = otp
-        session["phone"] = phone
+        session["email"] = phone
 
-        print("OTP:", otp) # terminal mein dikhe
+      send_otp(email, otp)# terminal mein dikhe
         return redirect("/verify")
 
     return render_template("login.html")
@@ -115,15 +115,15 @@ def verify():
         user_otp = request.form.get("otp")
 
         if user_otp == session.get("otp"):
-            phone = session.get("phone")
+            phone = session.get("email")
 
             # existing user
-            if phone in users:
-                session["user"] = users[phone]
+            if email in users:
+                session["user"] = users[email]
                 return redirect("/profile")
 
             return redirect("/register")
-
+e
         flash("Wrong OTP")
 
     return render_template("verify.html")
