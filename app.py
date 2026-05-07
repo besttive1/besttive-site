@@ -90,6 +90,7 @@ print("OTP:", otp)
         mail.send(msg)
 
     except Exception as e:
+
         print("MAIL ERROR:", e)
 
 # --------- ROUTES ---------
@@ -110,7 +111,6 @@ def login():
         session["email"] = email
 
         print("OTP:", otp)
-
         return redirect("/verify")
 
     return render_template("login.html")
