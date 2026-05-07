@@ -113,11 +113,14 @@ def login():
 # VERIFY OTP
 @app.route("/verify", methods=["GET", "POST"])
 def verify():
+
     if request.method == "POST":
+
         user_otp = request.form.get("otp")
 
         if user_otp == session.get("otp"):
-            phone = session.get("email")
+
+            email = session.get("email")
 
             # existing user
             if email in users:
@@ -125,11 +128,10 @@ def verify():
                 return redirect("/profile")
 
             return redirect("/register")
-e
+
         flash("Wrong OTP")
 
     return render_template("verify.html")
-
 
 # REGISTER
 @app.route("/register", methods=["GET", "POST"])
