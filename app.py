@@ -43,13 +43,8 @@ def payment_form():
         return f"Payment Successful! {name} paid ₹{amount}"
     return render_template("payment.html")
 
-
-
-  
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
-
 
 app.config['SECRET_KEY'] = "CHANGE_THIS_SECRET_KEY"
 
@@ -63,7 +58,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = "amitjia2000@gmail.com"
-app.config['MAIL_PASSWORD'] = "qqcvybwavghvijgp"
+app.config['MAIL_PASSWORD'] = ""
 mail = Mail(app)
 
 # --------- MODEL ---------
@@ -78,21 +73,10 @@ with app.app_context():
     db.create_all()
 
 # --------- HELPERS ---------
-print("OTP:", otp)
-    try:
-        msg = Message(
-            subject="BESTTIVE Login OTP",
-            sender=app.config['MAIL_USERNAME'],
-            recipients=[email],
-            body=f"Your OTP is: {otp}"
-        )
+# --------- HELPERS ---------
+def send_otp(email, otp):
 
-        mail.send(msg)
-
-    except Exception as e:
-
-        print("MAIL ERROR:", e)
-
+    print("OTP:", otp)
 # --------- ROUTES ---------
 
 # Home (yahan tumhara existing home render kar sakte ho)
