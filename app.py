@@ -78,8 +78,7 @@ with app.app_context():
     db.create_all()
 
 # --------- HELPERS ---------
-def send_otp(email, otp):
-
+def print("OTP:", otp)
     try:
         msg = Message(
             subject="BESTTIVE Login OTP",
@@ -110,7 +109,7 @@ def login():
         session["otp"] = str(otp)
         session["email"] = email
 
-        send_otp(email, otp)
+        print("OTP:", otp)
 
         return redirect("/verify")
 
