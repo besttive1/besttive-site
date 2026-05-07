@@ -1,46 +1,46 @@
-from flask import Flask, render_template, request, redirect
-
-app = Flask(__name__)   # 👉 YE SABSE PEHLE hona chahiye
-
-products = [
-    {"name": "Bangles Set", "price": 299, "image": "images/bangles.jpg"},
-    {"name": "Mobile Phone", "price": 12999, "image": "images/mobile.jpg"},
-    {"name": "Toys", "price": 399, "image": "images/toy.jpg"},
-]
-
+from flask import Flask, render_template, request, redirect, session, flash
+app = Flask(__name__)
+app.secret_key = "secret123"  # required for session
+# 🔥 CART LIST
 cart = []
 
-@app.route("/")
-def home():
-    return render_template("home.html", products=products)
-
-from flask import Flask, render_template
-
-app = Flask(__name__)
-
-# PRODUCTS (example)
+# PRODUCTS DATA
 products = [
     {"name": "Bangles Set", "price": 299, "image": "images/bangles.jpg"},
     {"name": "Mobile Phone", "price": 12999, "image": "images/mobile.jpg"},
     {"name": "Toys", "price": 399, "image": "images/toy.jpg"},
 ]
 
+# 🔥 HOME PAGE (ONLY ONCE)
 @app.route("/")
 def home():
     return render_template("home.html", products=products)
 
-# 🔥 DYNAMIC PAYMENT ROUTE
+# 🔥 PROFILE ROUTE
+@app.route("/profile")
+def profile():
+    user = session.get("user")  # yaha se user milega (ya None)
+    return render_template("profile.html", user=user)
+
+# 🔥 PAYMENT PAGE
 @app.route("/payment/<string:name>/<int:price>")
 def payment(name, price):
     return render_template("payment.html", name=name, price=price)
 
-if __name__ == "__main__":
-    app.run(debug=True)
-    
+# 🔥 ADD TO CART
 @app.route("/add_to_cart/<name>/<int:price>")
 def add_to_cart(name, price):
     cart.append({"name": name, "price": price})
     return redirect("/cart")
+
+# 🔥 CART PAGE
+@app.route("/cart")
+def view_cart():
+    return str(cart)
+
+# 🔥 RUN APP (ONLY ONCE)
+if __name__ == "__main__":
+    app.run(debug=True)
 
 @app.route("/cart")
 def view_cart():
@@ -102,8 +102,9 @@ def send_otp(email, otp):
 # --------- ROUTES ---------
 
 # Home (yahan tumhara existing home render kar sakte ho)
-import random
-from flask import session, redirect, render_template, request, flash
+@app.route("/")
+def home():
+    return render_template("home.html")
 
 # LOGIN PAGE
 @app.route("/login", methods=["GET", "POST"])
@@ -116,8 +117,7 @@ def login():
         session["otp"] = otp
         session["phone"] = phone
 
-        print("OTP:", otp)  # 🔥 abhi console me aayega
-
+        print("OTP:", otp) # terminal mein dikhe
         return redirect("/verify")
 
     return render_template("login.html")
@@ -129,19 +129,17 @@ def verify():
     if request.method == "POST":
         user_otp = request.form.get("otp")
 
-        if int(user_otp) == session.get("otp"):
+        if user_otp == session.get("otp"):
             phone = session.get("phone")
 
-            user = User.query.filter_by(phone=phone).first()
+            # existing user
+            if phone in users:
+                session["user"] = users[phone]
+                return redirect("/profile")
 
-            if not user:
-                return redirect("/register")
+            return redirect("/register")
 
-            session["user_id"] = user.id
-            return redirect("/profile")
-
-        else:
-            flash("Wrong OTP")
+        flash("Wrong OTP")
 
     return render_template("verify.html")
 
@@ -153,34 +151,27 @@ def register():
         name = request.form.get("name")
         phone = session.get("phone")
 
-        new_user = User(name=name, phone=phone)
-        db.session.add(new_user)
-        db.session.commit()
+        users[phone] = {"name": name, "phone": phone}
+        session["user"] = users[phone]
 
-        session["user_id"] = new_user.id
         return redirect("/profile")
 
     return render_template("register.html")
 
     return render_template("profile.html", user=user)
-@app.route("/profile", methods=["GET", "POST"])
+@app.route("/profile")
 def profile():
-    uid = session.get("user_id")
-
-    if not uid:
-        return redirect("/login")
-
-    user = User.query.get(uid)
-
-    if not user:
-        return redirect("/login")
-
+    user = session.get("user")
     return render_template("profile.html", user=user)
 # Logout
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
+    
+if __name__ == "__main__":
+    app.run(debug=True)
+
 @app.route("/orders")
 def orders():
     return "<h2>Your Orders</h2>"

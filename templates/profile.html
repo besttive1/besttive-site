@@ -1,11 +1,10 @@
-<h2>My Account</h2>
+<h2>My Profile</h2>
 
-<p>Name: {{ user.name }}</p>
-<p>Phone: {{ user.phone }}</p>
-
-<form method="POST">
-  <input type="text" name="name" placeholder="Update Name">
-  <input type="text" name="address" placeholder="Address">
-  <input type="date" name="dob">
-  <button type="submit">Save</button>
-</form>
+{% if user %}
+  <p>Name: {{ user.name }}</p>
+  <p>Phone: {{ user.phone }}</p>
+  <a href="/logout">Logout</a>
+{% else %}
+  <p>Please login</p>
+  <a href="/login">Login</a>
+{% endif %}
