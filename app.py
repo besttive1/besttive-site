@@ -4,6 +4,7 @@ app = Flask(__name__)
 app.secret_key = "secret123"  # required for session
 # 🔥 CART LIST
 cart = []
+users = {}
 
 # PRODUCTS DATA
 products = [
@@ -16,12 +17,6 @@ products = [
 @app.route("/")
 def home():
     return render_template("home.html", products=products)
-
-# 🔥 PROFILE ROUTE
-@app.route("/profile")
-def profile():
-    user = session.get("user")  # yaha se user milega (ya None)
-    return render_template("profile.html", user=user)
 
 # 🔥 PAYMENT PAGE
 @app.route("/payment/<string:name>/<int:price>")
@@ -48,15 +43,14 @@ def payment_form():
         return f"Payment Successful! {name} paid ₹{amount}"
     return render_template("payment.html")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+
 
   
-from flask import Flask, render_template, request, redirect, session, url_for, flash
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 
-app = Flask(__name__)
+
 app.config['SECRET_KEY'] = "CHANGE_THIS_SECRET_KEY"
 
 # DB (SQLite)
@@ -96,9 +90,6 @@ def send_otp(email, otp):
 # --------- ROUTES ---------
 
 # Home (yahan tumhara existing home render kar sakte ho)
-@app.route("/")
-def home():
-    return render_template("home.html")
 
 # LOGIN PAGE
 @app.route("/login", methods=["GET", "POST"])
@@ -152,19 +143,12 @@ def register():
 
     return render_template("register.html")
 
-    return render_template("profile.html", user=user)
-@app.route("/profile")
-def profile():
-    user = session.get("user")
-    return render_template("profile.html", user=user)
 # Logout
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
     
-if __name__ == "__main__":
-    app.run(debug=True)
 
 @app.route("/orders")
 def orders():
@@ -204,6 +188,5 @@ def profile():
         return redirect("/profile")
 
     return render_template("profile.html", user=user)
-@app.route("/profile")
-def profile():
-    return "PROFILE WORKING"
+if __name__ == "__main__":
+    app.run(debug=True)
