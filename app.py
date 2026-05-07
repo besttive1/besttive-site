@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session, flash
+import os, random, datetime
 app = Flask(__name__)
 app.secret_key = "secret123"  # required for session
 # 🔥 CART LIST
@@ -49,8 +50,8 @@ def payment_form():
 
 if __name__ == "__main__":
     app.run(debug=True)
-    
-    import os, random, datetime
+
+  
 from flask import Flask, render_template, request, redirect, session, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
