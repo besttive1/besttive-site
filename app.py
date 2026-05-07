@@ -185,25 +185,7 @@ def support():
 @app.route("/download")
 def download():
     return "<h2>Download App</h2>"
-@app.route("/orders")
-def orders():
-    return "<h2>Orders Page</h2>"
 
-@app.route("/wishlist")
-def wishlist():
-    return "<h2>Wishlist Page</h2>"
-
-@app.route("/notifications")
-def notifications():
-    return "<h2>Notifications Page</h2>"
-
-@app.route("/support")
-def support():
-    return "<h2>Customer Care</h2>"
-
-@app.route("/download")
-def download():
-    return "<h2>Download App</h2>"
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
     uid = session.get("user_id")
