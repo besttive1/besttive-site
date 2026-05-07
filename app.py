@@ -33,15 +33,7 @@ def add_to_cart(name, price):
     cart.append({"name": name, "price": price})
     return redirect("/cart")
 
-# 🔥 CART PAGE
-@app.route("/cart")
-def view_cart():
-    return str(cart)
-
 # 🔥 RUN APP (ONLY ONCE)
-if __name__ == "__main__":
-    app.run(debug=True)
-
 @app.route("/cart")
 def view_cart():
     total = sum(item["price"] for item in cart)
@@ -57,6 +49,7 @@ def payment_form():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
     import os, random, datetime
 from flask import Flask, render_template, request, redirect, session, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
