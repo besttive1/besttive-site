@@ -76,7 +76,22 @@ with app.app_context():
 # --------- HELPERS ---------
 def send_otp(email, otp):
 
-    print("OTP:", otp)
+    try:
+
+        msg = Message(
+            subject="BESTTIVE Login OTP",
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email],
+            body=f"Your OTP is: {otp}"
+        )
+
+        mail.send(msg)
+
+        print("MAIL SENT")
+
+    except Exception as e:
+
+        print("MAIL ERROR:", e)
 # --------- ROUTES ---------
 
 # Home (yahan tumhara existing home render kar sakte ho)
@@ -94,7 +109,7 @@ def login():
         session["otp"] = str(otp)
         session["email"] = email
 
-        print("OTP:", otp)
+        send_otp(email, otp)
         return redirect("/verify")
 
     return render_template("login.html")
