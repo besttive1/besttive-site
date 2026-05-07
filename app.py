@@ -63,7 +63,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = "amitjia2000@gmail.com"
-app.config['MAIL_PASSWORD'] = "qqcv ybwa vghv ijgp"
+app.config['MAIL_PASSWORD'] = "qqcvybwavghvijgp"
 mail = Mail(app)
 
 # --------- MODEL ---------
@@ -79,13 +79,19 @@ with app.app_context():
 
 # --------- HELPERS ---------
 def send_otp(email, otp):
-    msg = Message(
-        subject="BESTTIVE Login OTP",
-        sender=app.config['MAIL_USERNAME'],
-        recipients=[email],
-        body=f"Your OTP is: {otp}\nValid for 5 minutes."
-    )
-    mail.send(msg)
+
+    try:
+        msg = Message(
+            subject="BESTTIVE Login OTP",
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[email],
+            body=f"Your OTP is: {otp}"
+        )
+
+        mail.send(msg)
+
+    except Exception as e:
+        print("MAIL ERROR:", e)
 
 # --------- ROUTES ---------
 
@@ -193,4 +199,4 @@ def profile():
 
     return render_template("profile.html", user=user)
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
