@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, session, flash
 import os, random, datetime
 from flask_sqlalchemy import SQLAlchemy
-
+from werkzeug.utils import secure_filename
 app = Flask(__name__)
 
 app.secret_key = "secret123"
@@ -11,16 +11,22 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
+UPLOAD_FOLDER = "static/uploads"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
 # PRODUCTS DATA
 products = [
-    {"name": "Bangles Set", "price": 299, "image": "images/bangles.jpg"},
-    {"name": "Mobile Phone", "price": 12999, "image": "images/mobile.jpg"},
-    {"name": "Toys", "price": 399, "image": "images/toy.jpg"},
+    {
+        "name": "Bangles Set",
+        "price": 299,
+        "image": "images/bangles.jpg"
+    }
 ]
 
 # 🔥 HOME PAGE (ONLY ONCE)
 @app.route("/")
 def home():
+    products = Product.query.all()
     return render_template("home.html", products=products)
 
 # 🔥 PAYMENT PAGE
@@ -190,6 +196,41 @@ def admin_dashboard():
         return redirect("/admin")
 
     return render_template("admin_dashboard.html")
+
+@app.route("/admin/add-product", methods=["GET", "POST"])
+def add_product():
+
+    # Admin login check
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    if request.method == "POST":
+
+        name = request.form.get("name")
+        price = request.form.get("price")
+        description = request.form.get("description")
+        stock = request.form.get("stock")
+
+        image = request.files["image"]
+
+        filename = secure_filename(image.filename)
+        image.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
+        new_product = Product(
+            name=name,
+            price=int(price),
+            image="uploads/" + filename,
+            description=description,
+            stock=int(stock)
+        )
+
+        db.session.add(new_product)
+        db.session.commit()
+
+        flash("Product Added Successfully!")
+        return redirect("/admin/dashboard")
+
+    return render_template("add_product.html")
 
 # Logout
 @app.route("/logout")
