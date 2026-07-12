@@ -1,5 +1,20 @@
-<h2>Enter OTP</h2>
-<form method="POST">
-  <input name="otp" placeholder="Enter OTP">
-  <button>Verify</button>
-</form>
+# VERIFY OTP
+@app.route("/verify", methods=["GET", "POST"])
+def verify():
+    if request.method == "POST":
+        user_otp = request.form.get("otp")
+
+        if user_otp == session.get("otp"):
+            email = session.get("email")
+
+            existing_user = User.query.filter_by(email=email).first()
+
+            if existing_user:
+                session["user_id"] = existing_user.id
+                return redirect("/profile")
+
+            return redirect("/register")
+
+        flash("Wrong OTP")
+
+    return render_template("verify.html")

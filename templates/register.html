@@ -1,5 +1,10 @@
-<h2>Create Account</h2>
-<form method="POST">
-  <input name="name" placeholder="Your Name">
-  <button>Create</button>
-</form>
+if request.method == "POST":
+    db.session.add(new_user)
+    db.session.commit()
+
+    session["user_id"] = new_user.id
+    return redirect("/profile")
+
+return render_template("register.html")
+
+

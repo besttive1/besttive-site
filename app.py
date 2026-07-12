@@ -126,14 +126,13 @@ def verify():
 
             email = session.get("email")
 
-            # existing user
-            if email in users:
-                session["user"] = users[email]
-                return redirect("/profile")
+            existing_user = User.query.filter_by(email=email).first()
 
-            return redirect("/register")
-
-        flash("Wrong OTP")
+    if existing_user:
+      session["user_id"] = existing_user.id
+      return redirect("/profile")
+            
+    flash("Wrong OTP")
 
     return render_template("verify.html")
 
@@ -142,15 +141,20 @@ def verify():
 def register():
     if request.method == "POST":
         name = request.form.get("name")
-        phone = session.get("phone")
+        email = session.get("email")
 
-        users[phone] = {"name": name, "phone": phone}
-        session["user"] = users[phone]
+        new_user = User(
+            email=email,
+            name=name
+        )
 
+        db.session.add(new_user)
+        db.session.commit()
+
+        session["user_id"] = new_user.id
         return redirect("/profile")
 
     return render_template("register.html")
-
 # Logout
 @app.route("/logout")
 def logout():
