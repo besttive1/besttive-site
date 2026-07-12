@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Products</title>
+</head>
+<body>
+
+<h2>Manage Products</h2>
+
+<table border="1" cellpadding="10">
+
+<tr>
+    <th>Image</th>
+    <th>Name</th>
+    <th>Price</th>
+    <th>Stock</th>
+    <th>Action</th>
+</tr>
+
+{% for product in products %}
+
+<tr>
+
+<td>
+<img src="{{ url_for('static', filename=product.image) }}" width="80">
+</td>
+
+<td>{{ product.name }}</td>
+
+<td>₹{{ product.price }}</td>
+
+<td>{{ product.stock }}</td>
+
+<td>
+
+<button>Edit</button>
+
+<button>Delete</button>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+
+<a href="/admin/dashboard">⬅ Back</a>
+
+</body>
+</html>
