@@ -1,10 +1,15 @@
 from flask import Flask, render_template, request, redirect, session, flash
 import os, random, datetime
+from flask_sqlalchemy import SQLAlchemy
+
 app = Flask(__name__)
-app.secret_key = "secret123"  # required for session
-# 🔥 CART LIST
-cart = []
-users = {}
+
+app.secret_key = "secret123"
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///besttive.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
 
 # PRODUCTS DATA
 products = [
@@ -43,7 +48,6 @@ def payment_form():
         return f"Payment Successful! {name} paid ₹{amount}"
     return render_template("payment.html")
 
-from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 
 app.config['SECRET_KEY'] = "CHANGE_THIS_SECRET_KEY"
@@ -51,7 +55,6 @@ app.config['SECRET_KEY'] = "CHANGE_THIS_SECRET_KEY"
 # DB (SQLite)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
 # MAIL CONFIG (Gmail SMTP)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -61,7 +64,7 @@ app.config['MAIL_USERNAME'] = "amitjia2000@gmail.com"
 app.config['MAIL_PASSWORD'] = "qqcvybwavghvijgp"
 mail = Mail(app)
 
-# --------- MODEL ---------
+# ----------- MODEL -----------
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -69,10 +72,18 @@ class User(db.Model):
     address = db.Column(db.String(255), default="")
     dob = db.Column(db.String(50), default="")
 
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    image = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, default="")
+    stock = db.Column(db.Integer, default=0)
+
+# Database create
 with app.app_context():
     db.create_all()
 
-# --------- HELPERS ---------
 # --------- HELPERS ---------
 def send_otp(email, otp):
 
