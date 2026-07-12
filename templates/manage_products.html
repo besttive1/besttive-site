@@ -35,7 +35,10 @@
 
 <button>Edit</button>
 
-<button>Delete</button>
+<a href="/admin/delete-product/{{ product.id }}"
+   onclick="return confirm('Delete this product?')">
+    <button>Delete</button>
+</a>
 
 </td>
 

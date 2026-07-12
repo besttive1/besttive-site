@@ -242,6 +242,26 @@ def manage_products():
 
     return render_template("manage_products.html", products=products)
 
+@app.route("/admin/delete-product/<int:id>")
+def delete_product(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    product = Product.query.get_or_404(id)
+
+    image_path = os.path.join("static", product.image)
+
+    if os.path.exists(image_path):
+        os.remove(image_path)
+
+    db.session.delete(product)
+    db.session.commit()
+
+    flash("Product Deleted Successfully!")
+
+    return redirect("/admin/products")
+
 # Logout
 @app.route("/logout")
 def logout():
