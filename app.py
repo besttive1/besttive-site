@@ -166,12 +166,36 @@ def register():
         return redirect("/profile")
 
     return render_template("register.html")
+
+@app.route("/admin", methods=["GET", "POST"])
+def admin_login():
+
+    if request.method == "POST":
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if username == "admin" and password == "besttive123":
+            session["admin"] = True
+            return redirect("/admin/dashboard")
+
+        flash("Invalid Login")
+
+    return render_template("admin_login.html")
+
+@app.route("/admin/dashboard")
+def admin_dashboard():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    return render_template("admin_dashboard.html")
+
 # Logout
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
-    
 
 @app.route("/orders")
 def orders():
