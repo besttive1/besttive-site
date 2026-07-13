@@ -329,6 +329,19 @@ def admin_orders():
         orders=orders
     )
 
+@app.route("/admin/customers")
+def admin_customers():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    customers = User.query.all()
+
+    return render_template(
+        "admin_customers.html",
+        customers=customers
+    )
+
 # Logout
 @app.route("/logout")
 def logout():
