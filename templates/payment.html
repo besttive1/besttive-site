@@ -6,26 +6,46 @@
 </head>
 <body>
 
-<header>UPI Payment 💳</header>
+<header>Secure Payment 💳</header>
 
 <div style="text-align:center; padding:20px;">
-    <p>UPI ID: 8601362353@slc
 
-    </p>
+    <h2>Choose Payment Method</h2>
 
-    <h4>After Payment, Fill Details</h4>
+    <p><b>Product:</b> {{ name }}</p>
+    <p><b>Amount:</b> ₹{{ price }}</p>
 
-    <h3>Scan & Pay</h3>
+    <hr>
 
-<img src="{{ url_for('static', filename='images/qr.jpeg') }}" width="150">
+    <h3>Option 1 - Pay with PayU (Recommended)</h3>
 
-<p>UPI ID: 8601362353@slc</p>
-<p>Product: {{ name }}</p>
-<p>Amount: ₹{{ price }}</p>
+    <form action="/payu-payment" method="POST">
+        <input type="hidden" name="product_name" value="{{ name }}">
+        <input type="hidden" name="amount" value="{{ price }}">
 
-<a href="https://wa.me/918601362353?text=Order%20for%20{{ name }}%20₹{{ price }}">
-    <button>Confirm Order on WhatsApp</button>
-</a>
+        <button type="submit"
+        style="padding:12px 25px;background:#0d6efd;color:white;border:none;border-radius:8px;font-size:18px;">
+            Pay ₹{{ price }} with PayU
+        </button>
+    </form>
+
+    <br><br>
+
+    <hr>
+
+    <h3>Option 2 - Scan QR & Pay</h3>
+
+    <img src="{{ url_for('static', filename='images/qr.jpeg') }}"
+         width="180">
+
+    <p><b>UPI ID:</b> 8601362353@slc</p>
+
+    <a href="https://wa.me/918601362353?text=I have paid ₹{{ price }} for {{ name }}">
+        <button
+        style="padding:10px 20px;background:green;color:white;border:none;border-radius:8px;">
+            I Have Paid (WhatsApp)
+        </button>
+    </a>
 
 </div>
 

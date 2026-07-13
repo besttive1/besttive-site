@@ -2,9 +2,16 @@ from flask import Flask, render_template, request, redirect, session, flash
 import os, random, datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
+import hashlib
+import uuid
+import requests
 app = Flask(__name__)
 
 app.secret_key = "secret123"
+PAYU_KEY = "YOUR_PAYU_KEY"
+PAYU_SALT = "YOUR_PAYU_SALT"
+
+PAYU_URL = "https://test.payu.in/_payment"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///besttive.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -33,6 +40,50 @@ def home():
 @app.route("/payment/<string:name>/<int:price>")
 def payment(name, price):
     return render_template("payment.html", name=name, price=price)
+
+@app.route("/payu-payment", methods=["POST"])
+def payu_payment():
+
+    product_name = request.form["product_name"]
+    amount = request.form["amount"]
+
+    txnid = str(uuid.uuid4())[:20]
+
+    firstname = "BESTTIVE Customer"
+    email = "customer@example.com"
+
+    success_url = request.url_root + "payment-success"
+    failure_url = request.url_root + "payment-failure"
+
+    hash_string = f"{PAYU_KEY}|{txnid}|{amount}|{product_name}|{firstname}|{email}|||||||||||{PAYU_SALT}"
+
+    hashh = hashlib.sha512(hash_string.encode()).hexdigest()
+
+    return render_template(
+        "payu_redirect.html",
+        payu_url=PAYU_URL,
+        key=PAYU_KEY,
+        txnid=txnid,
+        amount=amount,
+        productinfo=product_name,
+        firstname=firstname,
+        email=email,
+        phone="9999999999",
+        surl=success_url,
+        furl=failure_url,
+        hash=hashh
+    )
+@app.route("/payment-success", methods=["POST"])
+def payment_success():
+    flash("Payment Successful!")
+    return redirect("/")
+
+@app.route("/payment-failure", methods=["POST"])
+def payment_failure():
+
+    flash("Payment Failed!")
+
+    return redirect("/")
 
 # 🔥 ADD TO CART
 @app.route("/add_to_cart/<name>/<int:price>")
