@@ -262,6 +262,40 @@ def delete_product(id):
 
     return redirect("/admin/products")
 
+@app.route("/admin/edit-product/<int:id>", methods=["GET", "POST"])
+def edit_product(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    product = Product.query.get_or_404(id)
+
+    if request.method == "POST":
+
+        product.name = request.form["name"]
+        product.price = int(request.form["price"])
+        product.description = request.form["description"]
+        product.stock = int(request.form["stock"])
+
+        image = request.files.get("image")
+
+        if image and image.filename != "":
+            filename = image.filename
+
+            image.save(
+                os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            )
+
+            product.image = filename
+
+        db.session.commit()
+
+        flash("Product Updated Successfully")
+
+        return redirect("/admin/products")
+
+    return render_template("edit_product.html", product=product)
+
 # Logout
 @app.route("/logout")
 def logout():

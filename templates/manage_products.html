@@ -33,7 +33,9 @@
 
 <td>
 
-<button>Edit</button>
+<a href="{{ url_for('edit_product', id=product.id) }}" class="btn btn-warning">
+    Edit
+</a>
 
 <a href="/admin/delete-product/{{ product.id }}"
    onclick="return confirm('Delete this product?')">
