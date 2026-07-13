@@ -8,10 +8,10 @@ import requests
 app = Flask(__name__)
 
 app.secret_key = "secret123"
-PAYU_KEY = "YOUR_PAYU_KEY"
-PAYU_SALT = "YOUR_PAYU_SALT"
+PAYU_KEY = "BGGPVO"
+PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gaxbT"
 
-PAYU_URL = "https://test.payu.in/_payment"
+PAYU_URL = "https://secure.payu.in/_payment"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///besttive.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
