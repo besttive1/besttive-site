@@ -86,6 +86,21 @@ class Product(db.Model):
     description = db.Column(db.Text, default="")
     stock = db.Column(db.Integer, default=0)
 
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    customer_name = db.Column(db.String(100), nullable=False)
+
+    product_name = db.Column(db.String(200), nullable=False)
+
+    quantity = db.Column(db.Integer, default=1)
+
+    amount = db.Column(db.Integer)
+
+    status = db.Column(db.String(50), default="Pending")
+
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
 # Database create
 with app.app_context():
     db.create_all()
@@ -195,7 +210,12 @@ def admin_dashboard():
     if not session.get("admin"):
         return redirect("/admin")
 
-    return render_template("admin_dashboard.html")
+    total_products = Product.query.count()
+
+    return render_template(
+        "admin_dashboard.html",
+        total_products=total_products
+    )
 
 @app.route("/admin/add-product", methods=["GET", "POST"])
 def add_product():
@@ -295,6 +315,19 @@ def edit_product(id):
         return redirect("/admin/products")
 
     return render_template("edit_product.html", product=product)
+
+@app.route("/admin/orders")
+def admin_orders():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    orders = Order.query.order_by(Order.id.desc()).all()
+
+    return render_template(
+        "admin_orders.html",
+        orders=orders
+    )
 
 # Logout
 @app.route("/logout")
