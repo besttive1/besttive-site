@@ -357,7 +357,7 @@ def edit_product(id):
                 os.path.join(app.config["UPLOAD_FOLDER"], filename)
             )
 
-            product.image = filename
+            product.image = "uploads/" + filename
 
         db.session.commit()
 
