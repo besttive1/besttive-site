@@ -100,9 +100,7 @@ def payment_success():
     db.session.add(new_order)
     db.session.commit()
 
-    flash("Payment Successful! Your Order has been placed.")
-
-    return redirect("/")
+    return render_template("payment_success.html")
 
 @app.route("/payment-failure", methods=["POST"])
 def payment_failure():
