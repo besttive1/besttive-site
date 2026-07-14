@@ -3,3 +3,4 @@ gunicorn
 Flask-Mail
 Flask-SQLAlchemy
 requests
+psycopg2-binary==2.9.10
