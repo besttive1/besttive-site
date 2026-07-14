@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 app.secret_key = "secret123"
 PAYU_KEY = "BGGPVO"
-PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gatvT"
+PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gaxbT"
 
 PAYU_URL = "https://secure.payu.in/_payment"
 
