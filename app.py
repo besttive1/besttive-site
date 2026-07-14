@@ -9,11 +9,11 @@ app = Flask(__name__)
 
 app.secret_key = "secret123"
 PAYU_KEY = "BGGPVO"
-PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gaxbT"
+PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gatvT"
 
 PAYU_URL = "https://secure.payu.in/_payment"
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///besttive.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
@@ -134,7 +134,7 @@ from flask_mail import Mail, Message
 app.config['SECRET_KEY'] = "CHANGE_THIS_SECRET_KEY"
 
 # DB (SQLite)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # MAIL CONFIG (Gmail SMTP)
