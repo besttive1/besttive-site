@@ -68,8 +68,7 @@ else:
 
     hash_string = f"{PAYU_KEY}|{txnid}|{amount}|{product_name}|{firstname}|{email}|||||||||||{PAYU_SALT}"
 
-    hashh = hashlib.sha512(hash_string.encode()).hexdigest()
-
+hashh = hashlib.sha512(hash_string.encode()).hexdigest()
     return render_template(
         "payu_redirect.html",
         payu_url=PAYU_URL,
