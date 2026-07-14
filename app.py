@@ -46,17 +46,16 @@ def payu_payment():
 
     product_name = request.form["product_name"]
     amount = request.form["amount"]
-    
+
     # Save order details in session
+    session["product_name"] = product_name
+    session["amount"] = amount
 
-session["product_name"] = product_name
-session["amount"] = amount
-
-if session.get("user_id"):
-    user = User.query.get(session["user_id"])
-    session["customer_name"] = user.name
-else:
-    session["customer_name"] = "Guest Customer"
+    if session.get("user_id"):
+        user = User.query.get(session["user_id"])
+        session["customer_name"] = user.name
+    else:
+        session["customer_name"] = "Guest Customer"
 
     txnid = str(uuid.uuid4())[:20]
 
@@ -67,8 +66,8 @@ else:
     failure_url = request.url_root + "payment-failure"
 
     hash_string = f"{PAYU_KEY}|{txnid}|{amount}|{product_name}|{firstname}|{email}|||||||||||{PAYU_SALT}"
+    hashh = hashlib.sha512(hash_string.encode()).hexdigest()
 
-hashh = hashlib.sha512(hash_string.encode()).hexdigest()
     return render_template(
         "payu_redirect.html",
         payu_url=PAYU_URL,
