@@ -46,6 +46,17 @@ def payu_payment():
 
     product_name = request.form["product_name"]
     amount = request.form["amount"]
+    
+    # Save order details in session
+
+session["product_name"] = product_name
+session["amount"] = amount
+
+if session.get("user_id"):
+    user = User.query.get(session["user_id"])
+    session["customer_name"] = user.name
+else:
+    session["customer_name"] = "Guest Customer"
 
     txnid = str(uuid.uuid4())[:20]
 
@@ -75,7 +86,24 @@ def payu_payment():
     )
 @app.route("/payment-success", methods=["POST"])
 def payment_success():
-    flash("Payment Successful!")
+
+    customer_name = session.get("customer_name", "Guest Customer")
+    product_name = session.get("product_name")
+    amount = session.get("amount")
+
+    new_order = Order(
+        customer_name=customer_name,
+        product_name=product_name,
+        quantity=1,
+        amount=int(amount),
+        status="Pending"
+    )
+
+    db.session.add(new_order)
+    db.session.commit()
+
+    flash("Payment Successful! Your Order has been placed.")
+
     return redirect("/")
 
 @app.route("/payment-failure", methods=["POST"])
