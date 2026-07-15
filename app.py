@@ -10,7 +10,8 @@ from flask_migrate import Migrate
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-
+from dotenv import load_dotenv
+load_dotenv()
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 from flask import send_file
@@ -20,7 +21,7 @@ app = Flask(__name__)
 
 app.secret_key = "secret123"
 PAYU_KEY = "BGGPVO"
-PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gaxbT"
+PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gxbT"
 PAYU_URL = "https://secure.payu.in/_payment"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
