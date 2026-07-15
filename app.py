@@ -10,12 +10,21 @@ app = Flask(__name__)
 app.secret_key = "secret123"
 PAYU_KEY = "BGGPVO"
 PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gaxbT"
-
 PAYU_URL = "https://secure.payu.in/_payment"
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+cloudinary.config(
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 db = SQLAlchemy(app)
 
 UPLOAD_FOLDER = "static/uploads"
@@ -293,7 +302,7 @@ def admin_dashboard():
     )
 
 @app.route("/admin/add-product", methods=["GET", "POST"])
-def add_product():
+def admin_add_product():
 
     # Admin login check
     if not session.get("admin"):
@@ -308,13 +317,13 @@ def add_product():
 
         image = request.files["image"]
 
-        filename = secure_filename(image.filename)
-        image.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+        upload_result = cloudinary.uploader.upload(image)
+        image_url = upload_result["secure_url"]
 
         new_product = Product(
             name=name,
             price=int(price),
-            image="uploads/" + filename,
+            image=image_url,
             description=description,
             stock=int(stock)
         )
@@ -327,16 +336,6 @@ def add_product():
 
     return render_template("add_product.html")
 
-@app.route("/admin/products")
-def manage_products():
-
-    if not session.get("admin"):
-        return redirect("/admin")
-
-    products = Product.query.all()
-
-    return render_template("manage_products.html", products=products)
-
 @app.route("/admin/delete-product/<int:id>")
 def delete_product(id):
 
@@ -344,11 +343,6 @@ def delete_product(id):
         return redirect("/admin")
 
     product = Product.query.get_or_404(id)
-
-    image_path = os.path.join("static", product.image)
-
-    if os.path.exists(image_path):
-        os.remove(image_path)
 
     db.session.delete(product)
     db.session.commit()
@@ -375,18 +369,13 @@ def edit_product(id):
         image = request.files.get("image")
 
         if image and image.filename != "":
-            filename = image.filename
 
-            image.save(
-                os.path.join(app.config["UPLOAD_FOLDER"], filename)
-            )
+            upload_result = cloudinary.uploader.upload(image)
 
-            product.image = "uploads/" + filename
+            product.image = upload_result["secure_url"]
 
         db.session.commit()
-
         flash("Product Updated Successfully")
-
         return redirect("/admin/products")
 
     return render_template("edit_product.html", product=product)
