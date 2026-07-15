@@ -1,13 +1,10 @@
-from flask import Flask, render_template, request, redirect, session, flash, send_file
-
+from flask import Flask, render_template, request, redirect, session, flash
 import os, random, datetime
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
 import hashlib
 import uuid
 import requests
-import io
-
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
 
 import cloudinary
 import cloudinary.uploader
@@ -15,6 +12,10 @@ import cloudinary.api
 
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
+from flask import send_file
+import io
+
+app = Flask(__name__)
 
 app.secret_key = "secret123"
 PAYU_KEY = "BGGPVO"
