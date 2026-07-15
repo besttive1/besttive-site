@@ -336,6 +336,19 @@ def admin_add_product():
 
     return render_template("add_product.html")
 
+@app.route("/admin/products")
+def manage_products():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    products = Product.query.all()
+
+    return render_template(
+        "manage_products.html",
+        products=products
+    )
+
 @app.route("/admin/delete-product/<int:id>")
 def delete_product(id):
 
