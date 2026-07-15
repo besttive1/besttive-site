@@ -406,6 +406,22 @@ def admin_orders():
         orders=orders
     )
 
+@app.route("/admin/update-order-status/<int:id>", methods=["POST"])
+def update_order_status(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    order = Order.query.get_or_404(id)
+
+    order.status = request.form["status"]
+
+    db.session.commit()
+
+    flash("Order Status Updated Successfully!")
+
+    return redirect("/admin/orders")
+
 @app.route("/admin/customers")
 def admin_customers():
 

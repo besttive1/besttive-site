@@ -47,14 +47,31 @@
 
 <td>
 
-<span class="badge bg-warning">
+<form action="/admin/update-order-status/{{ order.id }}" method="POST">
 
-{{ order.status }}
+<select name="status" class="form-select">
 
-</span>
+<option value="Pending" {% if order.status=="Pending" %}selected{% endif %}>Pending</option>
+
+<option value="Packed" {% if order.status=="Packed" %}selected{% endif %}>Packed</option>
+
+<option value="Shipped" {% if order.status=="Shipped" %}selected{% endif %}>Shipped</option>
+
+<option value="Delivered" {% if order.status=="Delivered" %}selected{% endif %}>Delivered</option>
+
+<option value="Cancelled" {% if order.status=="Cancelled" %}selected{% endif %}>Cancelled</option>
+
+</select>
+
+<br>
+
+<button class="btn btn-success btn-sm">
+Update
+</button>
+
+</form>
 
 </td>
-
 </tr>
 
 {% endfor %}
