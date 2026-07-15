@@ -1,20 +1,25 @@
-from flask import Flask, render_template, request, redirect, session, flash
+from flask import Flask, render_template, request, redirect, session, flash, send_file
+
 import os, random, datetime
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
 import hashlib
 import uuid
 import requests
-app = Flask(__name__)
+import io
+
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 app.secret_key = "secret123"
 PAYU_KEY = "BGGPVO"
 PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gaxbT"
 PAYU_URL = "https://secure.payu.in/_payment"
-
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -167,6 +172,9 @@ class User(db.Model):
     name = db.Column(db.String(120), default="New User")
     address = db.Column(db.String(255), default="")
     dob = db.Column(db.String(50), default="")
+    mobile = db.Column(db.String(15), default="")
+    city = db.Column(db.String(100), default="")
+    pincode = db.Column(db.String(10), default="")
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -462,6 +470,44 @@ def orders():
     return render_template(
         "orders.html",
         orders=orders
+    )
+
+@app.route("/invoice/<int:id>")
+def invoice(id):
+
+    order = Order.query.get_or_404(id)
+
+    buffer = io.BytesIO()
+
+    doc = SimpleDocTemplate(buffer)
+
+    styles = getSampleStyleSheet()
+
+    story = []
+
+    story.append(Paragraph("<b>BESTTIVE</b>", styles["Title"]))
+    story.append(Paragraph("Invoice", styles["Heading2"]))
+    story.append(Paragraph("<hr/>", styles["Normal"]))
+    story.append(Paragraph("<br/>", styles["Normal"]))
+
+    story.append(Paragraph(f"Customer : {order.customer_name}", styles["Normal"]))
+    story.append(Paragraph(f"Product : {order.product_name}", styles["Normal"]))
+    story.append(Paragraph(f"Amount : ₹{order.amount}", styles["Normal"]))
+    story.append(Paragraph(f"Status : {order.status}", styles["Normal"]))
+    story.append(Paragraph(f"Date : {order.created_at.strftime('%d-%m-%Y %H:%M')}", styles["Normal"]))
+
+    story.append(Paragraph("<br/><br/>", styles["Normal"]))
+    story.append(Paragraph("Thank you for shopping with BESTTIVE ❤️", styles["Heading3"]))
+
+    doc.build(story)
+
+    buffer.seek(0)
+
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f"BESTTIVE_Invoice_{order.id}.pdf",
+        mimetype="application/pdf"
     )
 
 @app.route("/wishlist")

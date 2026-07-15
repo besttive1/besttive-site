@@ -17,6 +17,7 @@
     <tr>
         <th>Product</th>
         <th>Amount</th>
+        <th>Invoice</th>
         <th>Status</th>
         <th>Order Date</th>
     </tr>
@@ -25,19 +26,25 @@
 
     <tr>
 
-        <td>{{ order.product_name }}</td>
+    <td>{{ order.product_name }}</td>
 
-        <td>₹{{ order.amount }}</td>
+    <td>₹{{ order.amount }}</td>
 
-        <td>
-            <span class="badge bg-primary">
-                {{ order.status }}
-            </span>
-        </td>
+    <td>
+        <a href="/invoice/{{ order.id }}" class="btn btn-primary btn-sm">
+            Download Invoice
+        </a>
+    </td>
 
-        <td>{{ order.created_at.strftime("%d-%m-%Y %I:%M %p") }}</td>
+    <td>
+        <span class="badge bg-primary">
+            {{ order.status }}
+        </span>
+    </td>
 
-    </tr>
+    <td>{{ order.created_at.strftime("%d-%m-%Y %I:%M %p") }}</td>
+
+</tr>
 
     {% endfor %}
 
