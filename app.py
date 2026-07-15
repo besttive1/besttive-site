@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, redirect, session, flash
 import os, random, datetime
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import hashlib
 import uuid
 import requests
-
+from flask_migrate import Migrate
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
@@ -32,6 +33,8 @@ cloudinary.config(
     secure=True
 )
 db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
 
 UPLOAD_FOLDER = "static/uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
