@@ -443,7 +443,20 @@ def logout():
 
 @app.route("/orders")
 def orders():
-    return "<h2>Your Orders</h2>"
+
+    customer_name = session.get("customer_name", "Guest Customer")
+
+    orders = (
+        Order.query
+        .filter_by(customer_name=customer_name)
+        .order_by(Order.created_at.desc())
+        .all()
+    )
+
+    return render_template(
+        "orders.html",
+        orders=orders
+    )
 
 @app.route("/wishlist")
 def wishlist():
