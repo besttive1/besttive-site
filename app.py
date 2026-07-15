@@ -109,7 +109,13 @@ def payment_success():
     db.session.add(new_order)
     db.session.commit()
 
-    return render_template("payment_success.html")
+    return render_template(
+    "payment_success.html",
+    customer_name=customer_name,
+    product_name=product_name,
+    amount=amount,
+    status="Pending"
+)
 
 @app.route("/payment-failure", methods=["POST"])
 def payment_failure():
