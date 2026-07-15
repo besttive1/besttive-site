@@ -173,10 +173,7 @@ class User(db.Model):
     name = db.Column(db.String(120), default="New User")
     address = db.Column(db.String(255), default="")
     dob = db.Column(db.String(50), default="")
-    mobile = db.Column(db.String(15), default="")
-    city = db.Column(db.String(100), default="")
-    pincode = db.Column(db.String(10), default="")
-
+    
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
