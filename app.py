@@ -55,6 +55,137 @@ def home():
     products = Product.query.all()
     return render_template("home.html", products=products)
 
+@app.route("/add-to-cart/<int:id>")
+def add_to_cart(id):
+
+    product = Product.query.get_or_404(id)
+
+    customer_name = session.get("customer_name", "Guest Customer")
+
+    cart_item = Cart.query.filter_by(
+        customer_name=customer_name,
+        product_id=id
+    ).first()
+
+    if cart_item:
+        cart_item.quantity += 1
+    else:
+        cart_item = Cart(
+            customer_name=customer_name,
+            product_id=id,
+            quantity=1
+        )
+        db.session.add(cart_item)
+
+    db.session.commit()
+
+    flash("Product added to cart!")
+
+    return redirect("/")
+
+@app.route("/cart")
+def cart():
+
+    customer_name = session.get("customer_name", "Guest Customer")
+
+    cart_items = Cart.query.filter_by(
+        customer_name=customer_name
+    ).all()
+
+    products = []
+
+    total = 0
+
+    for item in cart_items:
+
+        product = Product.query.get(item.product_id)
+
+        if product:
+
+            subtotal = product.price * item.quantity
+
+            total += subtotal
+
+            products.append({
+                "id": item.id,
+                "name": product.name,
+                "image": product.image,
+                "price": product.price,
+                "quantity": item.quantity,
+                "subtotal": subtotal
+            })
+
+    return render_template(
+        "cart.html",
+        products=products,
+        total=total
+    )
+
+@app.route("/cart/increase/<int:id>")
+def increase_cart(id):
+
+    item = Cart.query.get_or_404(id)
+
+    item.quantity += 1
+
+    db.session.commit()
+
+    return redirect("/cart")
+
+@app.route("/cart/decrease/<int:id>")
+def decrease_cart(id):
+
+    item = Cart.query.get_or_404(id)
+
+    if item.quantity > 1:
+        item.quantity -= 1
+    else:
+        db.session.delete(item)
+
+    db.session.commit()
+
+    return redirect("/cart")
+
+@app.route("/cart/delete/<int:id>")
+def delete_cart(id):
+
+    item = Cart.query.get_or_404(id)
+
+    db.session.delete(item)
+
+    db.session.commit()
+
+    return redirect("/cart")
+
+@app.route("/checkout-cart")
+def checkout_cart():
+
+    customer_name = session.get("customer_name", "Guest Customer")
+
+    cart_items = Cart.query.filter_by(
+        customer_name=customer_name
+    ).all()
+
+    if not cart_items:
+        flash("Your cart is empty!")
+        return redirect("/cart")
+
+    total = 0
+
+    for item in cart_items:
+
+        product = Product.query.get(item.product_id)
+
+        if product:
+            total += product.price * item.quantity
+
+    session["cart_total"] = total
+    session["product_name"] = "BESTTIVE-CART"
+
+    session["amount"] = str(total)
+
+    return redirect("/payment/BESTTIVE-CART/" + str(total))
+
 # 🔥 PAYMENT PAGE
 @app.route("/payment/<string:name>/<int:price>")
 def payment(name, price):
@@ -87,6 +218,16 @@ def payu_payment():
     hash_string = f"{PAYU_KEY}|{txnid}|{amount}|{product_name}|{firstname}|{email}|||||||||||{PAYU_SALT}"
     hashh = hashlib.sha512(hash_string.encode()).hexdigest()
 
+    print("KEY:", PAYU_KEY)
+    print("SALT:", PAYU_SALT)
+    print("TXNID:", txnid)
+    print("AMOUNT:", amount)
+    print("PRODUCT:", product_name)
+    print("FIRSTNAME:", firstname)
+    print("EMAIL:", email)
+    print("HASH STRING:", hash_string)
+    print("HASH:", hashh)
+
     return render_template(
         "payu_redirect.html",
         payu_url=PAYU_URL,
@@ -108,24 +249,51 @@ def payment_success():
     product_name = session.get("product_name")
     amount = session.get("amount")
 
-    new_order = Order(
-        customer_name=customer_name,
-        product_name=product_name,
-        quantity=1,
-        amount=int(amount),
-        status="Pending"
-    )
+    if product_name == "BESTTIVE Shopping Cart":
 
-    db.session.add(new_order)
-    db.session.commit()
+        cart_items = Cart.query.filter_by(
+            customer_name=customer_name
+        ).all()
+
+        for item in cart_items:
+
+            product = Product.query.get(item.product_id)
+
+            if product:
+
+                new_order = Order(
+                    customer_name=customer_name,
+                    product_name=product.name,
+                    quantity=item.quantity,
+                    amount=product.price * item.quantity,
+                    status="Pending"
+                )
+
+                db.session.add(new_order)
+                db.session.delete(item)
+
+        db.session.commit()
+
+    else:
+
+        new_order = Order(
+            customer_name=customer_name,
+            product_name=product_name,
+            quantity=1,
+            amount=int(amount),
+            status="Pending"
+        )
+
+        db.session.add(new_order)
+        db.session.commit()
 
     return render_template(
-    "payment_success.html",
-    customer_name=customer_name,
-    product_name=product_name,
-    amount=amount,
-    status="Pending"
-)
+        "payment_success.html",
+        customer_name=customer_name,
+        product_name=product_name,
+        amount=amount,
+        status="Pending"
+    )
 
 @app.route("/payment-failure", methods=["POST"])
 def payment_failure():
@@ -135,16 +303,6 @@ def payment_failure():
     return redirect("/")
 
 # 🔥 ADD TO CART
-@app.route("/add_to_cart/<name>/<int:price>")
-def add_to_cart(name, price):
-    cart.append({"name": name, "price": price})
-    return redirect("/cart")
-
-# 🔥 RUN APP (ONLY ONCE)
-@app.route("/cart")
-def view_cart():
-    total = sum(item["price"] for item in cart)
-    return render_template("cart.html", cart=cart, total=total)
 
 @app.route("/payment", methods=["GET", "POST"])
 def payment_form():
@@ -201,6 +359,20 @@ class Order(db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
+class Cart(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    customer_name = db.Column(db.String(100), nullable=False)
+
+    product_id = db.Column(db.Integer, nullable=False)
+
+    quantity = db.Column(db.Integer, default=1)
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.utcnow
+    )
+    
 # Database create
 with app.app_context():
     db.create_all()

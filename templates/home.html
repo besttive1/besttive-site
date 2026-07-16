@@ -23,8 +23,10 @@
   <div class="top-links">
     <span class="login-btn" onclick="toggleMenu()">Login</span>
     <span>More</span>
-    <span>Cart</span>
-  </div>
+    <a href="/cart" style="text-decoration:none; color:black; font-weight:bold;">
+        Cart
+    </a>
+</div>
 
 </div>
 
@@ -58,9 +60,17 @@
         <img src="{{ product.image }}">
         <h3>{{ product.name }}</h3>
         <p>₹{{ product.price }}</p>
-        <a href="/payment/{{ product.name }}/{{ product.price }}">
-            <button>Buy Now</button>
-        </a>
+        <div style="display:flex; gap:10px; justify-content:center;">
+
+    <a href="/add-to-cart/{{ product.id }}">
+        <button>🛒 Add to Cart</button>
+    </a>
+
+    <a href="/payment/{{ product.name }}/{{ product.price }}">
+        <button>Buy Now</button>
+    </a>
+
+</div>
     </div>
     {% endfor %}
 </div>
