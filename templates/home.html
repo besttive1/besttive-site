@@ -3,7 +3,9 @@
 <head>
     <title>BESTTIVE</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+  </head>
 
 <body>
 
@@ -15,9 +17,20 @@
    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="BESTTIVE Logo">
   </div>
 
-  <!-- CENTER SEARCH -->  <div class="search-bar">
-    <input type="text" placeholder="Search for Products, Brands and More">
-  </div>
+  <!-- CENTER SEARCH -->  
+   <form action="/" method="GET" class="search-bar">
+
+    <input
+        type="text"
+        name="search"
+        placeholder="Search for Products, Brands and More"
+        value="{{ request.args.get('search','') }}"
+    >
+
+    <button type="submit">
+    <i class="fas fa-search"></i>
+</button>
+</form>
 
   <!-- RIGHT LINKS -->
   <div class="top-links">

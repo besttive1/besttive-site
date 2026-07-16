@@ -52,8 +52,23 @@ products = [
 # 🔥 HOME PAGE (ONLY ONCE)
 @app.route("/")
 def home():
-    products = Product.query.all()
-    return render_template("home.html", products=products)
+
+    search = request.args.get("search")
+
+    if search:
+
+        products = Product.query.filter(
+            Product.name.ilike(f"%{search}%")
+        ).all()
+
+    else:
+
+        products = Product.query.all()
+
+    return render_template(
+        "home.html",
+        products=products
+    )
 
 @app.route("/add-to-cart/<int:id>")
 def add_to_cart(id):
