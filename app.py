@@ -66,9 +66,10 @@ def home():
         products = Product.query.all()
 
     return render_template(
-        "home.html",
-        products=products
-    )
+    "home.html",
+    products=products,
+    search=search
+)
 
 @app.route("/add-to-cart/<int:id>")
 def add_to_cart(id):
@@ -331,6 +332,16 @@ from flask_mail import Mail, Message
 
 app.config['SECRET_KEY'] = "CHANGE_THIS_SECRET_KEY"
 
+@app.route("/product/<int:id>")
+def product_details(id):
+
+    product = Product.query.get_or_404(id)
+
+    return render_template(
+        "product_details.html",
+        product=product
+    )
+    
 # DB (SQLite)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -445,13 +456,18 @@ def verify():
 
             email = session.get("email")
 
-            existing_user = User.query.filter_by(email=email).first()
+            user = User.query.filter_by(email=email).first()
 
-    if existing_user:
-      session["user_id"] = existing_user.id
-      return redirect("/profile")
-            
-    flash("Wrong OTP")
+            if not user:
+                user = User(email=email)
+                db.session.add(user)
+                db.session.commit()
+
+            session["user_id"] = user.id
+
+            return redirect("/profile")
+
+        flash("Wrong OTP")
 
     return render_template("verify.html")
 

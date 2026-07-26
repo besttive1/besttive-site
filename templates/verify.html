@@ -1,20 +1,30 @@
-# VERIFY OTP
-@app.route("/verify", methods=["GET", "POST"])
-def verify():
-    if request.method == "POST":
-        user_otp = request.form.get("otp")
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify OTP - BESTTIVE</title>
+</head>
+<body>
 
-        if user_otp == session.get("otp"):
-            email = session.get("email")
+<h2>Verify OTP</h2>
 
-            existing_user = User.query.filter_by(email=email).first()
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <p style="color:red;">{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
-            if existing_user:
-                session["user_id"] = existing_user.id
-                return redirect("/profile")
+<form method="POST">
+    <input
+        type="text"
+        name="otp"
+        placeholder="Enter OTP"
+        required
+    >
 
-            return redirect("/register")
+    <button type="submit">Verify OTP</button>
+</form>
 
-        flash("Wrong OTP")
-
-    return render_template("verify.html")
+</body>
+</html>

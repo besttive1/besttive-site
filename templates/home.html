@@ -67,11 +67,27 @@
 </div>
 
 <!-- PRODUCTS -->
+ {% if search and products|length == 0 %}
+<div style="text-align:center; padding:40px;">
+
+</div>
+{% endif %}
+
+ {% if products|length == 0 %}
+<h2 style="text-align:center; margin:40px;">No Products Found 😔</h2>
+{% endif %}
 <div class="products">
     {% for product in products %}
     <div class="card">
-        <img src="{{ product.image }}">
-        <h3>{{ product.name }}</h3>
+        <a href="/product/{{ product.id }}">
+    <img src="{{ product.image }}">
+</a>
+        <h3>
+    <a href="/product/{{ product.id }}"
+       style="text-decoration:none;color:black;">
+        {{ product.name }}
+    </a>
+</h3>
         <p>₹{{ product.price }}</p>
         <div style="display:flex; gap:10px; justify-content:center;">
 

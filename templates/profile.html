@@ -1,10 +1,39 @@
-<h2>My Profile</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile - BESTTIVE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
 
-{% if user %}
-  <p>Name: {{ user.name }}</p>
-  <p>Phone: {{ user.phone }}</p>
-  <a href="/logout">Logout</a>
-{% else %}
-  <p>Please login</p>
-  <a href="/login">Login</a>
-{% endif %}
+<div class="profile-container">
+
+    <h2>👤 My Profile</h2>
+
+    <form method="POST">
+
+        <label>Full Name</label><br>
+        <input type="text" name="name" value="{{ user.name }}"><br><br>
+
+        <label>Email</label><br>
+        <input type="email" value="{{ user.email }}" readonly><br><br>
+
+        <label>Address</label><br>
+        <textarea name="address">{{ user.address }}</textarea><br><br>
+
+        <label>Date of Birth</label><br>
+        <input type="date" name="dob" value="{{ user.dob }}"><br><br>
+
+        <button type="submit">💾 Save Changes</button>
+
+    </form>
+
+    <br>
+
+    <a href="/">🏠 Back to Home</a> |
+    <a href="/logout">Logout</a>
+
+</div>
+
+</body>
+</html>
