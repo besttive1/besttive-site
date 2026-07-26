@@ -337,11 +337,16 @@ def product_details(id):
 
     product = Product.query.get_or_404(id)
 
+    images = ProductImage.query.filter_by(
+        product_id=product.id
+    ).all()
+
     return render_template(
         "product_details.html",
-        product=product
+        product=product,
+        images=images
     )
-    
+
 # DB (SQLite)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -369,6 +374,22 @@ class Product(db.Model):
     image = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, default="")
     stock = db.Column(db.Integer, default=0)
+    
+class ProductImage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    product_id = db.Column(
+        db.Integer,
+        db.ForeignKey("product.id"),
+        nullable=False
+    )
+
+    image = db.Column(db.String(500), nullable=False)
+
+    product = db.relationship(
+        "Product",
+        backref=db.backref("images", lazy=True)
+    )
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -534,6 +555,7 @@ def admin_add_product():
         description = request.form.get("description")
         stock = request.form.get("stock")
 
+        # Main Image
         image = request.files["image"]
 
         upload_result = cloudinary.uploader.upload(image)
@@ -548,6 +570,29 @@ def admin_add_product():
         )
 
         db.session.add(new_product)
+        db.session.commit()
+
+        # Extra Images
+        extra_images = [
+            request.files.get("image2"),
+            request.files.get("image3"),
+            request.files.get("image4"),
+            request.files.get("image5")
+        ]
+
+        for img in extra_images:
+
+            if img and img.filename != "":
+
+                upload = cloudinary.uploader.upload(img)
+
+                product_image = ProductImage(
+                    product_id=new_product.id,
+                    image=upload["secure_url"]
+                )
+
+                db.session.add(product_image)
+
         db.session.commit()
 
         flash("Product Added Successfully!")

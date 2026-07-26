@@ -15,16 +15,50 @@
             display:flex;
             gap:50px;
             box-shadow:0 5px 20px rgba(0,0,0,.1);">
-
+    
     <!-- LEFT IMAGE -->
-    <div style="flex:1;text-align:center;">
 
-        <img src="{{ product.image }}"
-             style="width:100%;
-                    max-width:420px;
-                    border-radius:15px;">
+<div style="display:flex;gap:20px;flex:1;">
+
+    <!-- Thumbnails -->
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+        <!-- Main Image -->
+
+        <img
+            src="{{ product.image }}"
+            onclick="changeImage(this.src)"
+            style="width:80px;height:80px;object-fit:cover;border:1px solid #ddd;cursor:pointer;border-radius:8px;"
+        >
+
+        <!-- Extra Images -->
+
+        {% for img in images %}
+
+        <img
+            src="{{ img.image }}"
+            onclick="changeImage(this.src)"
+            style="width:80px;height:80px;object-fit:cover;border:1px solid #ddd;cursor:pointer;border-radius:8px;"
+        >
+
+        {% endfor %}
 
     </div>
+
+    <!-- Large Image -->
+
+    <div style="flex:1;text-align:center;">
+
+        <img
+            id="mainImage"
+            src="{{ product.image }}"
+            style="width:100%;max-width:450px;border-radius:15px;"
+        >
+
+    </div>
+
+</div>
 
     <!-- RIGHT DETAILS -->
     <div style="flex:1;">
@@ -85,6 +119,14 @@
     </div>
 
 </div>
+<script>
 
+function changeImage(src){
+
+    document.getElementById("mainImage").src = src;
+
+}
+
+</script>
 </body>
 </html>
