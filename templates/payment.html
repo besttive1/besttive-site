@@ -38,14 +38,24 @@
     <img src="{{ url_for('static', filename='images/qr.jpeg') }}"
          width="180">
 
-    <p><b>UPI ID:</b> 8601362353@slc</p>
+    <p><b>UPI ID:</b>besttive.business@slc</p>
 
-    <a href="https://wa.me/918601362353?text=I have paid ₹{{ price }} for {{ name }}">
-        <button
-        style="padding:10px 20px;background:green;color:white;border:none;border-radius:8px;">
-            I Have Paid (WhatsApp)
-        </button>
-    </a>
+    <form action="/qr-payment-success" method="POST">
+
+    <input type="hidden" name="product_name" value="{{ name }}">
+    <input type="hidden" name="amount" value="{{ price }}">
+
+    <button
+        type="submit"
+        style="padding:10px 20px;
+               background:green;
+               color:white;
+               border:none;
+               border-radius:8px;">
+        I Have Paid
+    </button>
+
+</form>
 
 </div>
 

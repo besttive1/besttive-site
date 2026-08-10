@@ -210,39 +210,54 @@ def payment(name, price):
 @app.route("/payu-payment", methods=["POST"])
 def payu_payment():
 
+    # Login required
+    if not session.get("user_id"):
+        return redirect("/login")
+
+    user = User.query.get(session["user_id"])
+
+    if not user:
+        session.clear()
+        return redirect("/login")
+
     product_name = request.form["product_name"]
     amount = request.form["amount"]
 
-    # Save order details in session
-    session["product_name"] = product_name
-    session["amount"] = amount
+    # Find product
+    product = Product.query.filter_by(
+        name=product_name
+    ).first()
 
-    if session.get("user_id"):
-        user = User.query.get(session["user_id"])
-        session["customer_name"] = user.name
-    else:
-        session["customer_name"] = "Guest Customer"
+    if not product:
+        flash("Product not found!")
+        return redirect("/")
+
+    # Save order information temporarily
+    session["product_name"] = product.name
+    session["product_id"] = product.id
+    session["amount"] = amount
+    session["customer_name"] = user.name
+    session["customer_email"] = user.email
+    session["customer_phone"] = user.phone
+    session["customer_address"] = user.address
 
     txnid = str(uuid.uuid4())[:20]
 
-    firstname = "BESTTIVE Customer"
-    email = "customer@example.com"
+    firstname = user.name or "BESTTIVE Customer"
+    email = user.email
+    phone = user.phone or "9999999999"
 
     success_url = request.url_root + "payment-success"
     failure_url = request.url_root + "payment-failure"
 
-    hash_string = f"{PAYU_KEY}|{txnid}|{amount}|{product_name}|{firstname}|{email}|||||||||||{PAYU_SALT}"
-    hashh = hashlib.sha512(hash_string.encode()).hexdigest()
+    hash_string = (
+        f"{PAYU_KEY}|{txnid}|{amount}|{product.name}|"
+        f"{firstname}|{email}|||||||||||{PAYU_SALT}"
+    )
 
-    print("KEY:", PAYU_KEY)
-    print("SALT:", PAYU_SALT)
-    print("TXNID:", txnid)
-    print("AMOUNT:", amount)
-    print("PRODUCT:", product_name)
-    print("FIRSTNAME:", firstname)
-    print("EMAIL:", email)
-    print("HASH STRING:", hash_string)
-    print("HASH:", hashh)
+    hashh = hashlib.sha512(
+        hash_string.encode()
+    ).hexdigest()
 
     return render_template(
         "payu_redirect.html",
@@ -250,26 +265,88 @@ def payu_payment():
         key=PAYU_KEY,
         txnid=txnid,
         amount=amount,
-        productinfo=product_name,
+        productinfo=product.name,
         firstname=firstname,
         email=email,
-        phone="9999999999",
+        phone=phone,
         surl=success_url,
         furl=failure_url,
         hash=hashh
     )
+@app.route("/qr-payment-success", methods=["POST"])
+def qr_payment_success():
+
+    # Login required
+    if not session.get("user_id"):
+        return redirect("/login")
+
+    user = User.query.get(session["user_id"])
+
+    if not user:
+        session.clear()
+        return redirect("/login")
+
+    product_name = request.form.get("product_name")
+    amount = request.form.get("amount")
+
+    product = Product.query.filter_by(
+        name=product_name
+    ).first()
+
+    if not product:
+        flash("Product not found.")
+        return redirect("/")
+
+    new_order = Order(
+        user_id=user.id,
+        product_id=product.id,
+        quantity=1,
+        price=product.price,
+        total_amount=int(amount),
+        address=user.address or "",
+        status="Payment Verification"
+    )
+
+    db.session.add(new_order)
+    db.session.commit()
+
+    return render_template(
+        "payment_success.html",
+        customer_name=user.name,
+        product_name=product.name,
+        amount=amount,
+        status="Payment Verification"
+    )
+
 @app.route("/payment-success", methods=["POST"])
 def payment_success():
 
-    customer_name = session.get("customer_name", "Guest Customer")
+    # Login check
+    if not session.get("user_id"):
+        return redirect("/login")
+
+    user = User.query.get(session["user_id"])
+
+    if not user:
+        session.clear()
+        return redirect("/login")
+
+    customer_name = user.name
     product_name = session.get("product_name")
     amount = session.get("amount")
 
+    if not product_name:
+        flash("Order information not found.")
+        return redirect("/")
+
+    # CART ORDER
     if product_name == "BESTTIVE Shopping Cart":
 
         cart_items = Cart.query.filter_by(
             customer_name=customer_name
         ).all()
+
+        total_amount = 0
 
         for item in cart_items:
 
@@ -277,36 +354,62 @@ def payment_success():
 
             if product:
 
+                item_total = product.price * item.quantity
+
                 new_order = Order(
-                    customer_name=customer_name,
-                    product_name=product.name,
+                    user_id=user.id,
+                    product_id=product.id,
                     quantity=item.quantity,
-                    amount=product.price * item.quantity,
+                    price=product.price,
+                    total_amount=item_total,
+                    address=user.address or "",
                     status="Pending"
                 )
 
                 db.session.add(new_order)
+
+                total_amount += item_total
+
                 db.session.delete(item)
 
         db.session.commit()
 
-    else:
-
-        new_order = Order(
+        return render_template(
+            "payment_success.html",
             customer_name=customer_name,
-            product_name=product_name,
-            quantity=1,
-            amount=int(amount),
+            product_name="BESTTIVE Shopping Cart",
+            amount=total_amount,
             status="Pending"
         )
 
-        db.session.add(new_order)
-        db.session.commit()
+    # SINGLE PRODUCT ORDER
+
+    product_id = session.get("product_id")
+    product = Product.query.get(product_id)
+
+    if not product:
+
+        flash("Product not found.")
+        return redirect("/")
+
+    new_order = Order(
+        user_id=user.id,
+        product_id=product.id,
+        quantity=1,
+        price=product.price,
+        total_amount=int(amount),
+        address=user.address or "",
+        status="Pending"
+    )
+
+    db.session.add(new_order)
+
+    db.session.commit()
 
     return render_template(
         "payment_success.html",
         customer_name=customer_name,
-        product_name=product_name,
+        product_name=product.name,
         amount=amount,
         status="Pending"
     )
@@ -419,19 +522,56 @@ class Wishlist(db.Model):
     product = db.relationship("Product")
 
 class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
 
-    customer_name = db.Column(db.String(100), nullable=False)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
-    product_name = db.Column(db.String(200), nullable=False)
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False
+    )
 
-    quantity = db.Column(db.Integer, default=1)
+    product_id = db.Column(
+        db.Integer,
+        db.ForeignKey("product.id"),
+        nullable=False
+    )
 
-    amount = db.Column(db.Integer)
+    quantity = db.Column(
+        db.Integer,
+        default=1
+    )
 
-    status = db.Column(db.String(50), default="Pending")
+    price = db.Column(
+        db.Integer,
+        nullable=False
+    )
 
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    total_amount = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    address = db.Column(
+        db.String(255),
+        default=""
+    )
+
+    status = db.Column(
+        db.String(50),
+        default="Pending"
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.utcnow
+    )
+
+    user = db.relationship("User")
+    product = db.relationship("Product")
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -768,11 +908,18 @@ def logout():
 @app.route("/orders")
 def orders():
 
-    customer_name = session.get("customer_name", "Guest Customer")
+    if not session.get("user_id"):
+        return redirect("/login")
+
+    user = User.query.get(session["user_id"])
+
+    if not user:
+        session.clear()
+        return redirect("/login")
 
     orders = (
         Order.query
-        .filter_by(customer_name=customer_name)
+        .filter_by(user_id=user.id)
         .order_by(Order.created_at.desc())
         .all()
     )
