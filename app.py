@@ -391,6 +391,24 @@ class ProductImage(db.Model):
         backref=db.backref("images", lazy=True)
     )
 
+class Wishlist(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=False
+    )
+
+    product_id = db.Column(
+        db.Integer,
+        db.ForeignKey("product.id"),
+        nullable=False
+    )
+
+    user = db.relationship("User", backref="wishlist")
+    product = db.relationship("Product")
+
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -764,6 +782,31 @@ def invoice(id):
         download_name=f"BESTTIVE_Invoice_{order.id}.pdf",
         mimetype="application/pdf"
     )
+
+@app.route("/wishlist/add/<int:product_id>")
+def add_to_wishlist(product_id):
+
+    if not session.get("user_id"):
+        return redirect("/login")
+
+    existing = Wishlist.query.filter_by(
+        user_id=session["user_id"],
+        product_id=product_id
+    ).first()
+
+    if not existing:
+
+        item = Wishlist(
+            user_id=session["user_id"],
+            product_id=product_id
+        )
+
+        db.session.add(item)
+        db.session.commit()
+
+    flash("Added to Wishlist ❤️")
+
+    return redirect(request.referrer or "/")
 
 @app.route("/wishlist")
 def wishlist():

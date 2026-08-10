@@ -48,16 +48,31 @@
 
     <!-- Large Image -->
 
-    <div style="flex:1;text-align:center;">
+<div style="display:flex;gap:20px;align-items:flex-start;">
+
+    <!-- Main Image -->
+
+    <div
+        style="overflow:hidden;
+               border-radius:15px;
+               width:100%;
+               max-width:450px;">
 
         <img
             id="mainImage"
             src="{{ product.image }}"
-            style="width:100%;max-width:450px;border-radius:15px;"
+            style="
+                width:100%;
+                display:block;
+                cursor:zoom-in;
+                border-radius:15px;
+            "
+            onmousemove="zoom(event)"
+            onmouseleave="resetZoom()"
         >
 
     </div>
-
+    </div>
 </div>
 
     <!-- RIGHT DETAILS -->
@@ -124,6 +139,30 @@
 function changeImage(src){
 
     document.getElementById("mainImage").src = src;
+
+}
+
+function zoom(e){
+
+    let img = document.getElementById("mainImage");
+
+    let rect = img.getBoundingClientRect();
+
+    let x = ((e.clientX - rect.left)/rect.width)*100;
+
+    let y = ((e.clientY - rect.top)/rect.height)*100;
+
+    img.style.transformOrigin = x + "% " + y + "%";
+
+    img.style.transform = "scale(2)";
+
+}
+
+function resetZoom(){
+
+    let img = document.getElementById("mainImage");
+
+    img.style.transform = "scale(1)";
 
 }
 
