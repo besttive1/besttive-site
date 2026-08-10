@@ -16,7 +16,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 from flask import send_file
 import io
-
+import resend
 app = Flask(__name__)
 
 app.secret_key = "secret123"
@@ -364,6 +364,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(120), default="New User")
+    phone = db.Column(db.String(20), default="")
     address = db.Column(db.String(255), default="")
     dob = db.Column(db.String(50), default="")
     
@@ -438,30 +439,26 @@ class Cart(db.Model):
         default=datetime.datetime.utcnow
     )
     
-# Database create
-with app.app_context():
-    db.create_all()
-
 # --------- HELPERS ---------
+
 def send_otp(email, otp):
 
     try:
 
-        msg = Message(
-            subject="BESTTIVE Login OTP",
-            sender=app.config['MAIL_USERNAME'],
-            recipients=[email],
-            body=f"Your OTP is: {otp}"
-        )
+        resend.api_key = os.environ.get("RESEND_API_KEY")
 
-        mail.send(msg)
+        resend.Emails.send({
+            "from": "BESTTIVE <onboarding@resend.dev>",
+            "to": [email],
+            "subject": "BESTTIVE Login OTP",
+            "text": f"Your BESTTIVE Login OTP is: {otp}"
+        })
 
-        print("MAIL SENT")
+        print("OTP MAIL SENT")
 
     except Exception as e:
 
         print("MAIL ERROR:", e)
-# --------- ROUTES ---------
 
 # Home (yahan tumhara existing home render kar sakte ho)
 
@@ -837,6 +834,7 @@ def profile():
     if request.method == "POST":
         user.name = request.form.get("name")
         user.address = request.form.get("address")
+        user.phone = request.form.get("phone")
         user.dob = request.form.get("dob")
         db.session.commit()
         return redirect("/profile")

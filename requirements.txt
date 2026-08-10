@@ -8,3 +8,4 @@ cloudinary
 reportlab
 Flask-Migrate
 python-dotenv
+resend
