@@ -719,6 +719,31 @@ def admin_customers():
         customers=customers
     )
 
+@app.route("/admin/delete-customers", methods=["POST"])
+def delete_customers():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    customer_ids = request.form.getlist("customer_ids")
+
+    if not customer_ids:
+        flash("Please select at least one customer.")
+        return redirect("/admin/customers")
+
+    for customer_id in customer_ids:
+
+        customer = User.query.get(int(customer_id))
+
+        if customer:
+            db.session.delete(customer)
+
+    db.session.commit()
+
+    flash("Selected customers removed successfully!")
+
+    return redirect("/admin/customers")
+
 # Logout
 @app.route("/logout")
 def logout():
