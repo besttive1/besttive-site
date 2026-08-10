@@ -393,7 +393,11 @@ class ProductImage(db.Model):
     )
 
 class Wishlist(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     user_id = db.Column(
         db.Integer,
@@ -407,7 +411,11 @@ class Wishlist(db.Model):
         nullable=False
     )
 
-    user = db.relationship("User", backref="wishlist")
+    user = db.relationship(
+        "User",
+        backref="wishlist"
+    )
+
     product = db.relationship("Product")
 
 class Order(db.Model):
@@ -736,6 +744,13 @@ def delete_customers():
         customer = User.query.get(int(customer_id))
 
         if customer:
+
+            # Delete customer's wishlist first
+            Wishlist.query.filter_by(
+                user_id=customer.id
+            ).delete()
+
+            # Then delete customer
             db.session.delete(customer)
 
     db.session.commit()
@@ -805,34 +820,79 @@ def invoice(id):
         mimetype="application/pdf"
     )
 
+
 @app.route("/wishlist/add/<int:product_id>")
 def add_to_wishlist(product_id):
 
     if not session.get("user_id"):
         return redirect("/login")
 
+    user_id = session["user_id"]
+
+    # Check that logged-in user still exists
+    user = User.query.get(user_id)
+
+    if not user:
+        session.clear()
+        return redirect("/login")
+
+    product = Product.query.get_or_404(product_id)
+
     existing = Wishlist.query.filter_by(
-        user_id=session["user_id"],
-        product_id=product_id
+        user_id=user_id,
+        product_id=product.id
     ).first()
 
     if not existing:
 
         item = Wishlist(
-            user_id=session["user_id"],
-            product_id=product_id
+            user_id=user_id,
+            product_id=product.id
         )
 
         db.session.add(item)
         db.session.commit()
 
-    flash("Added to Wishlist ❤️")
+        flash("Added to Wishlist ❤️")
+
+    else:
+
+        flash("Product already in Wishlist ❤️")
 
     return redirect(request.referrer or "/")
 
+@app.route("/wishlist/remove/<int:item_id>")
+def remove_from_wishlist(item_id):
+
+    if not session.get("user_id"):
+        return redirect("/login")
+
+    item = Wishlist.query.filter_by(
+        id=item_id,
+        user_id=session["user_id"]
+    ).first_or_404()
+
+    db.session.delete(item)
+    db.session.commit()
+
+    flash("Removed from Wishlist")
+
+    return redirect("/wishlist")
+
 @app.route("/wishlist")
 def wishlist():
-    return "<h2>Your Wishlist</h2>"
+
+    if not session.get("user_id"):
+        return redirect("/login")
+
+    items = Wishlist.query.filter_by(
+        user_id=session["user_id"]
+    ).all()
+
+    return render_template(
+        "wishlist.html",
+        items=items
+    )
 
 @app.route("/notifications")
 def notifications():
