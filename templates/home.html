@@ -382,18 +382,17 @@
 
                         <a href="/product/{{ product.id }}"
                            style="text-decoration:none;color:black;">
-
                             {{ product.name }}
-
                         </a>
-
                     </h3>
 
-
+                    <p class="product-description">
+                        {{ product.description }}
+                    </p>
+                    
                     <p>
                         ₹{{ product.price }}
                     </p>
-
 
                     <div class="product-actions">
 
@@ -482,7 +481,9 @@
                 </a>
 
             </h3>
-
+             <p class="product-description">
+                 {{ product.description }}
+             </p>
 
             <p>
                 ₹{{ product.price }}

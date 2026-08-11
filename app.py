@@ -107,7 +107,7 @@ def home():
         )
 
     products = query.all()
-
+    
     # Get subcategories automatically from database
     subcategories = []
 
