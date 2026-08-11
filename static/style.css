@@ -1143,25 +1143,25 @@ button:hover{
 .product-image-box .wishlist-icon {
     position: absolute !important;
 
-    top: 8px !important;
-    right: 8px !important;
+    top: 4px !important;
+    right: 4px !important;
 
-    width: 42px !important;
-    height: 42px !important;
+    width: 38px !important;
+    height: 38px !important;
 
-    min-width: 42px !important;
-    max-width: 42px !important;
+    min-width: 38px !important;
+    max-width: 38px !important;
 
     padding: 0 !important;
     margin: 0 !important;
 
-    background: #ffffff !important;
+    background:  rgba(255, 255, 255, 0.75) !important;
 
-    border: 1px solid #dddddd !important;
-    border-radius: 10px !important;
+    border: 1px solid rgba(200, 200, 200, 0.6) ! !important;
+    border-radius: 9px !important;
 
     box-sizing: border-box !important;
-
+    backdrop-filter: blur(2px);
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1170,7 +1170,7 @@ button:hover{
 
     z-index: 10;
 
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 /* Heart */
@@ -1215,14 +1215,14 @@ button:hover{
 @media (max-width: 768px) {
 
     .product-image-box .wishlist-icon {
-        top: 7px !important;
-        right: 7px !important;
+        top: 4px !important;
+        right: 4px !important;
 
-        width: 38px !important;
-        height: 38px !important;
+        width: 34px !important;
+        height: 34px !important;
 
-        min-width: 38px !important;
-        max-width: 38px !important;
+        min-width: 34px !important;
+        max-width: 34px !important;
 
         padding: 0 !important;
     }
