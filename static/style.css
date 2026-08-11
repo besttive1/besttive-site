@@ -471,3 +471,67 @@ button:hover{
     font-size:16px;
     font-weight:600;
 }
+
+/* SUBCATEGORY FILTER */
+
+.subcategory-bar {
+    display: flex;
+    gap: 12px;
+    padding: 15px 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.subcat {
+    text-decoration: none;
+    color: #333;
+    background: #f5f5f5;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.subcat:hover {
+    background: #222;
+    color: white;
+}
+/* PRICE FILTER */
+
+.filter-bar {
+    padding: 15px 20px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.filter-bar form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-bar input,
+.filter-bar select {
+    padding: 9px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.filter-bar button {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #222;
+    color: white;
+    cursor: pointer;
+}
+
+.clear-filter {
+    text-decoration: none;
+    color: #e91e63;
+    font-weight: bold;
+}

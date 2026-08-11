@@ -57,15 +57,148 @@
 
 <!-- 🛍 CATEGORY BAR -->
 <div class="category-bar">
-  <div class="cat">👕<p>Fashion</p></div>
-  <div class="cat">📱<p>Mobiles</p></div>
-  <div class="cat">💄<p>Beauty</p></div>
-  <div class="cat">💻<p>Electronics</p></div>
-  <div class="cat">🏠<p>Home</p></div>
-  <div class="cat">🧸<p>Toys</p></div>
-  <div class="cat">📚<p>Books</p></div>
+
+    <a href="/?category=Clothes" class="cat">
+        👕
+        <p>Clothes</p>
+    </a>
+
+    <a href="/?category=Electronics" class="cat">
+        💻
+        <p>Electronics</p>
+    </a>
+
+    <a href="/?category=Beauty" class="cat">
+        💄
+        <p>Beauty</p>
+    </a>
+
+    <a href="/?category=Home" class="cat">
+        🏠
+        <p>Home</p>
+    </a>
+
+    <a href="/?category=Toys" class="cat">
+        🧸
+        <p>Toys</p>
+    </a>
+
+    <a href="/?category=Jewellery" class="cat">
+        💎
+        <p>Jewellery</p>
+    </a>
+
+    <a href="/?category=Shoes" class="cat">
+        👟
+        <p>Shoes</p>
+    </a>
+
+</div>
+<!-- SUBCATEGORY FILTER -->
+{% if category and subcategories %}
+
+<div class="subcategory-bar">
+
+    <a href="/?category={{ category }}" class="subcat">
+        All
+    </a>
+
+    {% for sub in subcategories %}
+
+        <a href="/?category={{ category }}&subcategory={{ sub }}"
+           class="subcat">
+
+            {{ sub }}
+
+        </a>
+
+    {% endfor %}
+
 </div>
 
+{% endif %}
+<!-- PRICE & SORT FILTER -->
+
+<div class="filter-bar">
+
+    <form action="/" method="GET">
+
+        {% if category %}
+            <input type="hidden" name="category" value="{{ category }}">
+        {% endif %}
+
+        {% if subcategory %}
+            <input type="hidden" name="subcategory" value="{{ subcategory }}">
+        {% endif %}
+
+        {% if search %}
+            <input type="hidden" name="search" value="{{ search }}">
+        {% endif %}
+
+        <label>
+            Min Price
+        </label>
+
+        <input
+            type="number"
+            name="min_price"
+            placeholder="₹0"
+            value="{{ min_price or '' }}"
+        >
+
+        <label>
+            Max Price
+        </label>
+
+        <input
+            type="number"
+            name="max_price"
+            placeholder="₹5000"
+            value="{{ max_price or '' }}"
+        >
+
+        <label>
+            Sort By
+        </label>
+
+        <select name="sort">
+
+            <option value="">Default</option>
+
+            <option value="newest"
+                {% if sort == "newest" %}selected{% endif %}>
+                Newest
+            </option>
+
+            <option value="low"
+                {% if sort == "low" %}selected{% endif %}>
+                Price: Low to High
+            </option>
+
+            <option value="high"
+                {% if sort == "high" %}selected{% endif %}>
+                Price: High to Low
+            </option>
+
+        </select>
+
+        <button type="submit">
+            Apply Filter
+        </button>
+
+        {% if category %}
+            <a href="/?category={{ category }}" class="clear-filter">
+                Clear
+            </a>
+        {% else %}
+            <a href="/" class="clear-filter">
+                Clear
+            </a>
+        {% endif %}
+
+    </form>
+
+</div>
 <!-- PRODUCTS -->
  {% if search and products|length == 0 %}
 <div style="text-align:center; padding:40px;">

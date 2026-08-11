@@ -54,22 +54,88 @@ products = [
 def home():
 
     search = request.args.get("search")
+    category = request.args.get("category")
+    subcategory = request.args.get("subcategory")
+    min_price = request.args.get("min_price", type=int)
+    max_price = request.args.get("max_price", type=int)
+    sort = request.args.get("sort")
+    query = Product.query
 
+    # Search
     if search:
-
-        products = Product.query.filter(
+        query = query.filter(
             Product.name.ilike(f"%{search}%")
-        ).all()
+        )
 
-    else:
+    # Category filter
+    if category:
+        query = query.filter(
+            Product.category == category
+        )
 
-        products = Product.query.all()
+    # Subcategory filter
+    if subcategory:
+        query = query.filter(
+            Product.subcategory == subcategory
+        )
+
+    # Price filter
+    if min_price is not None:
+       query = query.filter(
+           Product.price >= min_price
+        )
+
+    if max_price is not None:
+       query = query.filter(
+           Product.price <= max_price
+        )
+
+    # Sorting
+    if sort == "low":
+       query = query.order_by(
+           Product.price.asc()
+            )
+
+    elif sort == "high":
+       query = query.order_by(
+           Product.price.desc()
+        )
+
+    elif sort == "newest":
+       query = query.order_by(
+           Product.id.desc()
+        )
+
+    products = query.all()
+
+    # Get subcategories automatically from database
+    subcategories = []
+
+    if category:
+        subcategories = (
+            db.session.query(Product.subcategory)
+            .filter(
+                Product.category == category,
+                Product.subcategory.isnot(None),
+                Product.subcategory != ""
+            )
+            .distinct()
+            .all()
+
+        )
+        subcategories = [item[0] for item in subcategories]
 
     return render_template(
-    "home.html",
-    products=products,
-    search=search
-)
+        "home.html",
+        products=products,
+        search=search,
+        category=category,
+        subcategory=subcategory,
+        subcategories=subcategories,
+        min_price=min_price,
+        max_price=max_price,
+        sort=sort
+    )
 
 @app.route("/add-to-cart/<int:id>")
 def add_to_cart(id):
@@ -478,6 +544,8 @@ class Product(db.Model):
     image = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, default="")
     stock = db.Column(db.Integer, default=0)
+    category = db.Column(db.String(100), default="")
+    subcategory = db.Column(db.String(100), default="")
     
 class ProductImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -717,6 +785,8 @@ def admin_add_product():
         price = request.form.get("price")
         description = request.form.get("description")
         stock = request.form.get("stock")
+        category = request.form.get("category")
+        subcategory = request.form.get("subcategory")
 
         # Main Image
         image = request.files["image"]
@@ -729,8 +799,10 @@ def admin_add_product():
             price=int(price),
             image=image_url,
             description=description,
-            stock=int(stock)
-        )
+            stock=int(stock),
+            category=category,
+            subcategory=subcategory
+       )
 
         db.session.add(new_product)
         db.session.commit()
