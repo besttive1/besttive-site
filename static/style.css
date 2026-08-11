@@ -1066,3 +1066,182 @@ button:hover{
     }
 
 }
+/* WISHLIST ICON */
+
+.product-image-box {
+    position: relative;
+}
+
+.product-image-box img {
+    width: 100%;
+    display: block;
+}
+
+.wishlist-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+
+    width: 38px;
+    height: 38px;
+
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    z-index: 5;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+}
+
+.heart-icon {
+    font-size: 23px;
+    color: #555;
+    line-height: 1;
+}
+
+.wishlist-symbol {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    margin-left: -2px;
+}
+
+
+@media (max-width: 768px) {
+
+    .wishlist-icon {
+        width: 34px;
+        height: 34px;
+        top: 6px;
+        right: 6px;
+    }
+
+    .heart-icon {
+        font-size: 20px;
+    }
+
+    .wishlist-symbol {
+        font-size: 14px;
+    }
+
+}
+/* ================================= */
+/* WISHLIST ICON - FINAL FIX */
+/* ================================= */
+
+.product-image-box {
+    position: relative;
+}
+
+/* Wishlist button ko normal product button se alag rakho */
+.product-image-box .wishlist-icon {
+    position: absolute !important;
+
+    top: 8px !important;
+    right: 8px !important;
+
+    width: 42px !important;
+    height: 42px !important;
+
+    min-width: 42px !important;
+    max-width: 42px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: #ffffff !important;
+
+    border: 1px solid #dddddd !important;
+    border-radius: 10px !important;
+
+    box-sizing: border-box !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    cursor: pointer;
+
+    z-index: 10;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.10);
+}
+
+/* Heart */
+.product-image-box .heart-icon {
+    font-size: 25px !important;
+    line-height: 1 !important;
+    color: #555555 !important;
+    font-family: Arial, sans-serif;
+}
+
+/* Plus / Minus */
+.product-image-box .wishlist-symbol {
+    font-size: 17px !important;
+    font-weight: bold !important;
+
+    color: #555555 !important;
+
+    margin-left: -3px !important;
+    margin-top: 8px !important;
+
+    line-height: 1 !important;
+}
+
+
+/* =============================== */
+/* ACTIVE WISHLIST */
+/* =============================== */
+
+.product-image-box .wishlist-icon.active .heart-icon {
+    color: #ff0000 !important;
+}
+
+.product-image-box .wishlist-icon.active .wishlist-symbol {
+    color: #ff0000 !important;
+}
+
+
+/* =============================== */
+/* MOBILE */
+/* =============================== */
+
+@media (max-width: 768px) {
+
+    .product-image-box .wishlist-icon {
+        top: 7px !important;
+        right: 7px !important;
+
+        width: 38px !important;
+        height: 38px !important;
+
+        min-width: 38px !important;
+        max-width: 38px !important;
+
+        padding: 0 !important;
+    }
+
+    .product-image-box .heart-icon {
+        font-size: 23px !important;
+    }
+
+    .product-image-box .wishlist-symbol {
+        font-size: 15px !important;
+        margin-left: -3px !important;
+        margin-top: 7px !important;
+    }
+
+}
+.product-image-box .wishlist-icon.active .heart-icon {
+    color: red !important;
+}
+
+.product-image-box .wishlist-icon.active .wishlist-symbol {
+    color: red !important;
+}

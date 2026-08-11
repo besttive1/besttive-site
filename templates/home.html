@@ -408,12 +408,7 @@
                                 Buy Now
                             </button>
                         </a>
-
-                        <a href="/wishlist/add/{{ product.id }}"
-                           class="wishlist-btn">
-                            ❤️
-                        </a>
-
+                    
                     </div>
 
                 </div>
@@ -454,26 +449,28 @@
     {% for product in products %}
 
         <div class="card">
+           
+             <div class="product-image-box">
 
+                 <a href="/product/{{ product.id }}">
+                     <img src="{{ product.image }}">
+                 </a>
 
-            <div style="text-align:right; margin-bottom:8px;">
+                 <button type="button"
+                         class="wishlist-icon {% if product.id in wishlist_product_ids %}active{% endif %}"
+                         onclick="toggleWishlist(this, {{ product.id }})">
 
-                <a href="/wishlist/add/{{ product.id }}"
-                   style="text-decoration:none;font-size:24px;color:#e91e63;">
+                     <span class="heart-icon">
+                         {% if product.id in wishlist_product_ids %}♥{% else %}♡{% endif %}
+                     </span>
 
-                    🤍
+                     <span class="wishlist-symbol">
+                         {% if product.id in wishlist_product_ids %}−{% else %}+{% endif %}
+                     </span>
 
-                </a>
+                 </button>
 
-            </div>
-
-
-            <a href="/product/{{ product.id }}">
-
-                <img src="{{ product.image }}">
-
-            </a>
-
+             </div>
 
             <h3>
 
@@ -538,6 +535,53 @@
 function toggleMenu() {
   let menu = document.getElementById("loginMenu");
   menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+function toggleWishlist(button, productId) {
+
+    fetch("/wishlist/toggle/" + productId, {
+        method: "POST"
+    })
+
+    .then(response => {
+
+        if (response.status === 401) {
+            window.location.href = "/login";
+            return;
+        }
+
+        return response.json();
+    })
+
+    .then(data => {
+
+        if (!data || !data.success) {
+            return;
+        }
+
+        const heart = button.querySelector(".heart-icon");
+        const symbol = button.querySelector(".wishlist-symbol");
+
+        if (data.added) {
+
+            button.classList.add("active");
+
+            heart.textContent = "♥";
+            symbol.textContent = "−";
+
+        } else {
+
+            button.classList.remove("active");
+
+            heart.textContent = "♡";
+            symbol.textContent = "+";
+
+        }
+
+    })
+
+    .catch(error => {
+        console.error("Wishlist error:", error);
+    });
 }
 function openMobileFilters() {
     document.getElementById("mobileFilterDrawer").style.display = "block";

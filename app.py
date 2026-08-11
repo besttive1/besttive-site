@@ -125,6 +125,15 @@ def home():
         )
         subcategories = [item[0] for item in subcategories]
 
+    wishlist_product_ids = []
+    
+    if session.get("user_id"):
+            wishlist_product_ids = [
+              item.product_id
+              for item in Wishlist.query.filter_by(
+                  user_id=session["user_id"]
+              ).all()
+            ]
     return render_template(
         "home.html",
         products=products,
@@ -134,7 +143,8 @@ def home():
         subcategories=subcategories,
         min_price=min_price,
         max_price=max_price,
-        sort=sort
+        sort=sort,
+        wishlist_product_ids=wishlist_product_ids
     )
 
 @app.route("/add-to-cart/<int:id>")
@@ -569,24 +579,20 @@ class Wishlist(db.Model):
         db.Integer,
         primary_key=True
     )
-
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("user.id"),
         nullable=False
     )
-
     product_id = db.Column(
         db.Integer,
         db.ForeignKey("product.id"),
         nullable=False
     )
-
     user = db.relationship(
         "User",
         backref="wishlist"
     )
-
     product = db.relationship("Product")
 
 class Order(db.Model):
@@ -1112,7 +1118,52 @@ def wishlist():
         "wishlist.html",
         items=items
     )
+@app.route("/wishlist/toggle/<int:product_id>", methods=["POST"])
+def toggle_wishlist(product_id):
 
+    if not session.get("user_id"):
+        return {"success": False, "login": True}, 401
+
+    user_id = session["user_id"]
+
+    user = User.query.get(user_id)
+
+    if not user:
+        session.clear()
+        return {"success": False, "login": True}, 401
+
+    product = Product.query.get_or_404(product_id)
+
+    existing = Wishlist.query.filter_by(
+        user_id=user_id,
+        product_id=product.id
+    ).first()
+
+    if existing:
+
+        db.session.delete(existing)
+        db.session.commit()
+
+        return {
+            "success": True,
+            "added": False
+        }
+
+    else:
+
+        item = Wishlist(
+            user_id=user_id,
+            product_id=product.id
+        )
+
+        db.session.add(item)
+        db.session.commit()
+
+        return {
+            "success": True,
+            "added": True
+        }
+    
 @app.route("/notifications")
 def notifications():
     return "<h2>Notifications</h2>"
