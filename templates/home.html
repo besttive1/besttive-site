@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BESTTIVE</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
-  </head>
-
-<body>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
 
 <!-- 🔥 HEADER -->
 <div class="top-header">
@@ -57,195 +56,472 @@
 
 <!-- 🛍 CATEGORY BAR -->
 <div class="category-bar">
-
     <a href="/?category=Clothes" class="cat">
         👕
         <p>Clothes</p>
     </a>
-
     <a href="/?category=Electronics" class="cat">
         💻
         <p>Electronics</p>
     </a>
-
     <a href="/?category=Beauty" class="cat">
         💄
         <p>Beauty</p>
     </a>
-
     <a href="/?category=Home" class="cat">
         🏠
         <p>Home</p>
     </a>
-
     <a href="/?category=Toys" class="cat">
         🧸
         <p>Toys</p>
     </a>
-
     <a href="/?category=Jewellery" class="cat">
         💎
         <p>Jewellery</p>
     </a>
-
     <a href="/?category=Shoes" class="cat">
         👟
         <p>Shoes</p>
     </a>
-
 </div>
-<!-- SUBCATEGORY FILTER -->
-{% if category and subcategories %}
 
-<div class="subcategory-bar">
+<!-- CATEGORY PAGE -->
+{% if category %}
+<!-- MOBILE FILTER & SORT BUTTONS -->
 
-    <a href="/?category={{ category }}" class="subcat">
-        All
-    </a>
+<div class="mobile-filter-buttons">
+    <button type="button" onclick="openMobileFilters()">
+        🔽 FILTER
+    </button>
+    <button type="button" onclick="openMobileSort()">
+        ⇅ SORT
+    </button>
+</div>
 
-    {% for sub in subcategories %}
+<div class="category-layout">
 
-        <a href="/?category={{ category }}&subcategory={{ sub }}"
-           class="subcat">
+<!-- MOBILE FILTER DRAWER -->
 
-            {{ sub }}
+<div id="mobileFilterDrawer" class="mobile-filter-drawer">
+
+    <div class="mobile-filter-header">
+
+        <h3>Filters</h3>
+
+        <button type="button" onclick="closeMobileFilters()">
+            ✕
+        </button>
+
+    </div>
+
+
+    <!-- SUBCATEGORY -->
+
+    <div class="mobile-filter-section">
+
+        <h4>SUBCATEGORY</h4>
+
+        <a href="/?category={{ category }}"
+           class="filter-option">
+
+            All
 
         </a>
 
-    {% endfor %}
+        {% for sub in subcategories %}
+
+            <a href="/?category={{ category }}&subcategory={{ sub }}"
+               class="filter-option">
+
+                {{ sub }}
+
+            </a>
+
+        {% endfor %}
+
+    </div>
+
+
+    <hr>
+
+
+    <!-- PRICE -->
+
+    <div class="mobile-filter-section">
+
+        <h4>PRICE</h4>
+
+        <form action="/" method="GET">
+
+            <input type="hidden"
+                   name="category"
+                   value="{{ category }}">
+
+            {% if subcategory %}
+
+                <input type="hidden"
+                       name="subcategory"
+                       value="{{ subcategory }}">
+
+            {% endif %}
+
+            <input type="number"
+                   name="min_price"
+                   placeholder="Min Price"
+                   value="{{ min_price or '' }}">
+
+            <input type="number"
+                   name="max_price"
+                   placeholder="Max Price"
+                   value="{{ max_price or '' }}">
+
+            <button type="submit">
+                Apply Filter
+            </button>
+
+        </form>
+
+    </div>
 
 </div>
 
-{% endif %}
-<!-- PRICE & SORT FILTER -->
+<!-- MOBILE SORT DRAWER -->
 
-<div class="filter-bar">
+<div id="mobileSortDrawer" class="mobile-sort-drawer">
 
-    <form action="/" method="GET">
+    <div class="mobile-filter-header">
 
-        {% if category %}
-            <input type="hidden" name="category" value="{{ category }}">
-        {% endif %}
+        <h3>Sort By</h3>
 
-        {% if subcategory %}
-            <input type="hidden" name="subcategory" value="{{ subcategory }}">
-        {% endif %}
-
-        {% if search %}
-            <input type="hidden" name="search" value="{{ search }}">
-        {% endif %}
-
-        <label>
-            Min Price
-        </label>
-
-        <input
-            type="number"
-            name="min_price"
-            placeholder="₹0"
-            value="{{ min_price or '' }}"
-        >
-
-        <label>
-            Max Price
-        </label>
-
-        <input
-            type="number"
-            name="max_price"
-            placeholder="₹5000"
-            value="{{ max_price or '' }}"
-        >
-
-        <label>
-            Sort By
-        </label>
-
-        <select name="sort">
-
-            <option value="">Default</option>
-
-            <option value="newest"
-                {% if sort == "newest" %}selected{% endif %}>
-                Newest
-            </option>
-
-            <option value="low"
-                {% if sort == "low" %}selected{% endif %}>
-                Price: Low to High
-            </option>
-
-            <option value="high"
-                {% if sort == "high" %}selected{% endif %}>
-                Price: High to Low
-            </option>
-
-        </select>
-
-        <button type="submit">
-            Apply Filter
+        <button type="button" onclick="closeMobileSort()">
+            ✕
         </button>
 
-        {% if category %}
-            <a href="/?category={{ category }}" class="clear-filter">
-                Clear
-            </a>
-        {% else %}
-            <a href="/" class="clear-filter">
-                Clear
-            </a>
-        {% endif %}
-
-    </form>
-
-</div>
-<!-- PRODUCTS -->
- {% if search and products|length == 0 %}
-<div style="text-align:center; padding:40px;">
-
-</div>
-{% endif %}
-
- {% if products|length == 0 %}
-<h2 style="text-align:center; margin:40px;">No Products Found 😔</h2>
-{% endif %}
-<div class="products">
-    {% for product in products %}
-    <div class="card">
-      <div style="text-align:right; margin-bottom:8px;">
-
-    <a href="/wishlist/add/{{ product.id }}"
-       style="text-decoration:none;font-size:24px;color:#e91e63;">
-
-        🤍
-
-    </a>
-
-</div>
-        <a href="/product/{{ product.id }}">
-    <img src="{{ product.image }}">
-</a>
-        <h3>
-    <a href="/product/{{ product.id }}"
-       style="text-decoration:none;color:black;">
-        {{ product.name }}
-    </a>
-</h3>
-        <p>₹{{ product.price }}</p>
-        <div style="display:flex; gap:10px; justify-content:center;">
-
-    <a href="/add-to-cart/{{ product.id }}">
-        <button>🛒 Add to Cart</button>
-    </a>
-
-    <a href="/payment/{{ product.name }}/{{ product.price }}">
-        <button>Buy Now</button>
-    </a>
-
-</div>
     </div>
-    {% endfor %}
+
+
+    <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=newest">
+        Newest
+    </a>
+
+    <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=low">
+        Price: Low to High
+    </a>
+
+    <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=high">
+        Price: High to Low
+    </a>
+
 </div>
+
+    <!-- LEFT FILTER SIDEBAR -->
+    <aside class="filter-sidebar">
+        <div class="filter-title">
+            <h3>Filters</h3>
+            <a href="/?category={{ category }}">
+                CLEAR ALL
+            </a>
+        </div>
+        <hr>
+
+        <!-- SUBCATEGORY -->
+
+        <div class="filter-section">
+
+            <h4>SUBCATEGORY</h4>
+
+            <a href="/?category={{ category }}"
+               class="filter-option">
+
+                All
+
+            </a>
+
+            {% for sub in subcategories %}
+
+                <a href="/?category={{ category }}&subcategory={{ sub }}"
+                   class="filter-option">
+
+                    {{ sub }}
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+
+        <hr>
+
+
+        <!-- PRICE -->
+
+        <div class="filter-section">
+
+            <h4>PRICE</h4>
+
+            <form action="/" method="GET">
+
+                <input type="hidden"
+                       name="category"
+                       value="{{ category }}">
+
+                {% if subcategory %}
+
+                    <input type="hidden"
+                           name="subcategory"
+                           value="{{ subcategory }}">
+
+                {% endif %}
+
+
+                <input type="number"
+                       name="min_price"
+                       placeholder="Min Price"
+                       value="{{ min_price or '' }}">
+
+
+                <input type="number"
+                       name="max_price"
+                       placeholder="Max Price"
+                       value="{{ max_price or '' }}">
+
+
+                <button type="submit">
+                    Apply
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <hr>
+
+
+        <!-- SORT -->
+
+        <div class="filter-section">
+
+            <h4>SORT BY</h4>
+
+
+            <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=newest"
+               class="filter-option">
+
+                Newest
+
+            </a>
+
+
+            <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=low"
+               class="filter-option">
+
+                Price: Low to High
+
+            </a>
+
+
+            <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=high"
+               class="filter-option">
+
+                Price: High to Low
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- RIGHT SIDE PRODUCTS -->
+
+    <main class="category-products">
+
+
+        <div class="category-heading">
+
+            <h2>
+                {{ category }}
+            </h2>
+
+
+            {% if subcategory %}
+
+                <p>
+                    {{ subcategory }}
+                </p>
+
+            {% endif %}
+
+
+            <span>
+                {{ products|length }} Products
+            </span>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+
+        <div class="products">
+
+            {% for product in products %}
+
+                <div class="card">
+                    
+                    <a href="/product/{{ product.id }}">
+
+                        <img src="{{ product.image }}">
+
+                    </a>
+
+
+                    <h3>
+
+                        <a href="/product/{{ product.id }}"
+                           style="text-decoration:none;color:black;">
+
+                            {{ product.name }}
+
+                        </a>
+
+                    </h3>
+
+
+                    <p>
+                        ₹{{ product.price }}
+                    </p>
+
+
+                    <div class="product-actions">
+
+                        <a href="/add-to-cart/{{ product.id }}">
+                            <button>
+                                🛒 Add to Cart
+                            </button>
+                        </a>
+
+                        <a href="/payment/{{ product.name }}/{{ product.price }}">
+                            <button>
+                                Buy Now
+                            </button>
+                        </a>
+
+                        <a href="/wishlist/add/{{ product.id }}"
+                           class="wishlist-btn">
+                            ❤️
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </main>
+
+</div>
+
+
+{% else %}
+
+
+<!-- NORMAL HOME PAGE -->
+
+{% if search and products|length == 0 %}
+
+    <div style="text-align:center; padding:40px;">
+    </div>
+
+{% endif %}
+
+
+{% if products|length == 0 %}
+
+    <h2 style="text-align:center; margin:40px;">
+        No Products Found 😔
+    </h2>
+
+{% endif %}
+
+
+<div class="products">
+
+    {% for product in products %}
+
+        <div class="card">
+
+
+            <div style="text-align:right; margin-bottom:8px;">
+
+                <a href="/wishlist/add/{{ product.id }}"
+                   style="text-decoration:none;font-size:24px;color:#e91e63;">
+
+                    🤍
+
+                </a>
+
+            </div>
+
+
+            <a href="/product/{{ product.id }}">
+
+                <img src="{{ product.image }}">
+
+            </a>
+
+
+            <h3>
+
+                <a href="/product/{{ product.id }}"
+                   style="text-decoration:none;color:black;">
+
+                    {{ product.name }}
+
+                </a>
+
+            </h3>
+
+
+            <p>
+                ₹{{ product.price }}
+            </p>
+
+
+            <div style="display:flex; gap:10px; justify-content:center;">
+
+                <a href="/add-to-cart/{{ product.id }}">
+
+                    <button>
+                        🛒 Add to Cart
+                    </button>
+
+                </a>
+
+
+                <a href="/payment/{{ product.name }}/{{ product.price }}">
+
+                    <button>
+                        Buy Now
+                    </button>
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+
+{% endif %}
 
 <!-- INSTAGRAM -->
 <a href="https://instagram.com/besttive.business" class="insta-float" target="_blank">
@@ -262,6 +538,21 @@
 function toggleMenu() {
   let menu = document.getElementById("loginMenu");
   menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+function openMobileFilters() {
+    document.getElementById("mobileFilterDrawer").style.display = "block";
+}
+
+function closeMobileFilters() {
+    document.getElementById("mobileFilterDrawer").style.display = "none";
+}
+
+function openMobileSort() {
+    document.getElementById("mobileSortDrawer").style.display = "block";
+}
+
+function closeMobileSort() {
+    document.getElementById("mobileSortDrawer").style.display = "none";
 }
 
 document.addEventListener("click", function(e) {
