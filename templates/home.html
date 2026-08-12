@@ -477,7 +477,8 @@
 
                  <button type="button"
                          class="wishlist-icon {% if product.id in wishlist_product_ids %}active{% endif %}"
-                         onclick="toggleWishlist(this, {{ product.id }})">
+                         data-product-id="{{ product.id }}"
+                         onclick="toggleWishlist(this, this.dataset.productId)">
 
                      <span class="heart-icon">
                          {% if product.id in wishlist_product_ids %}♥{% else %}♡{% endif %}
@@ -510,26 +511,15 @@
             </p>
 
 
-            <div style="display:flex; gap:10px; justify-content:center;">
+             <div class="product-actions">
 
-                <a href="/add-to-cart/{{ product.id }}">
+                 <a href="/payment/{{ product.name }}/{{ product.price }}">
+                     <button class="buy-now-full">
+                        🛍️ Buy Now
+                     </button>
+                 </a>
 
-                    <button>
-                        🛒 Add to Cart
-                    </button>
-
-                </a>
-
-
-                <a href="/payment/{{ product.name }}/{{ product.price }}">
-
-                    <button>
-                        Buy Now
-                    </button>
-
-                </a>
-
-            </div>
+             </div>
 
 
         </div>
