@@ -445,6 +445,25 @@
 
 
 <!-- NORMAL HOME PAGE -->
+ 
+<div class="hero-slider">
+
+    <div class="hero-slides">
+        <img src="{{ url_for('static', filename='images/banner1.jpg') }}" alt="BESTTIVE Banner">
+        <img src="{{ url_for('static', filename='images/banner2.jpg') }}" alt="BESTTIVE Banner">
+        <img src="{{ url_for('static', filename='images/banner3.jpg') }}" alt="BESTTIVE Banner">
+    </div>
+
+    <button class="hero-prev" onclick="changeHeroSlide(-1)">❮</button>
+    <button class="hero-next" onclick="changeHeroSlide(1)">❯</button>
+
+    <div class="hero-dots">
+        <span onclick="showHeroSlide(0)" class="hero-dot active"></span>
+        <span onclick="showHeroSlide(1)" class="hero-dot"></span>
+        <span onclick="showHeroSlide(2)" class="hero-dot"></span>
+    </div>
+
+</div>
 
 {% if search and products|length == 0 %}
 
@@ -542,6 +561,46 @@
 </a>
 
 <!-- 🔥 SCRIPT (ONLY ONCE) -->
+ <script>
+let heroSlideIndex = 0;
+
+function showHeroSlide(index) {
+    const slides = document.querySelector(".hero-slides");
+    const dots = document.querySelectorAll(".hero-dot");
+
+    if (!slides) return;
+
+    heroSlideIndex = index;
+
+    slides.style.transform =
+        "translateX(-" + (heroSlideIndex * 100) + "%)";
+
+    dots.forEach(dot => dot.classList.remove("active"));
+
+    if (dots[heroSlideIndex]) {
+        dots[heroSlideIndex].classList.add("active");
+    }
+}
+
+function changeHeroSlide(direction) {
+    heroSlideIndex += direction;
+
+    if (heroSlideIndex > 2) {
+        heroSlideIndex = 0;
+    }
+
+    if (heroSlideIndex < 0) {
+        heroSlideIndex = 2;
+    }
+
+    showHeroSlide(heroSlideIndex);
+}
+
+setInterval(function() {
+    changeHeroSlide(1);
+}, 4000);
+</script>
+
 <script>
 function toggleMenu() {
   let menu = document.getElementById("loginMenu");
@@ -622,3 +681,4 @@ document.addEventListener("click", function(e) {
 
 </body>
 </html>
+
