@@ -1314,3 +1314,503 @@ button:hover{
     overflow: hidden !important;
     text-overflow: ellipsis !important;
 }
+/* =====================================================
+   BESTTIVE NEW PREMIUM HOMEPAGE
+   ===================================================== */
+
+.besttive-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+
+    min-height: 88px;
+    padding: 10px 5%;
+
+    background: linear-gradient(90deg, #18002f, #2b0758);
+    color: white;
+
+    box-sizing: border-box;
+}
+
+/* BRAND */
+
+.besttive-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.besttive-brand img {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-text strong {
+    font-family: Georgia, serif;
+    font-size: 30px;
+    color: #f4d06f;
+    line-height: 1;
+}
+
+.brand-text span {
+    font-size: 14px;
+    color: white;
+    margin-top: 5px;
+}
+
+
+/* SEARCH */
+
+.besttive-search {
+    flex: 1;
+    max-width: 670px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+.besttive-search .search-left {
+    color: #222;
+    font-size: 22px;
+    margin-left: 20px;
+}
+
+.besttive-search input {
+    flex: 1;
+    height: 100%;
+
+    border: none;
+    outline: none;
+
+    padding: 0 15px;
+    font-size: 15px;
+    background: transparent;
+}
+
+.besttive-search button {
+    width: 70px;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    border: none;
+    border-radius: 0;
+
+    background: #e3ad22;
+    color: #21103b;
+
+    font-size: 21px;
+}
+
+
+/* TOP LINKS */
+
+.besttive-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-shrink: 0;
+}
+
+.besttive-links span,
+.besttive-links a {
+    color: white;
+    text-decoration: none;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.besttive-links i {
+    font-size: 21px;
+}
+
+.besttive-links a:hover,
+.besttive-links span:hover {
+    color: #f4d06f;
+}
+
+
+/* =====================================================
+   PREMIUM CATEGORY BAR
+   ===================================================== */
+
+.category-bar {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 18px;
+
+    padding: 22px 5%;
+
+    background: white;
+    box-shadow: none;
+}
+
+.category-bar .cat {
+    min-height: 78px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    text-decoration: none;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    transition: 0.25s;
+}
+
+.category-bar .cat:nth-child(1) {
+    background: #fff1f6;
+    color: #d81b60;
+}
+
+.category-bar .cat:nth-child(2) {
+    background: #f1f5ff;
+    color: #1856b8;
+}
+
+.category-bar .cat:nth-child(3) {
+    background: #f8f1ff;
+    color: #6b1595;
+}
+
+.category-bar .cat:nth-child(4) {
+    background: #f2f9f2;
+    color: #218c42;
+}
+
+.category-bar .cat:nth-child(n+5) {
+    background: #fff8ed;
+    color: #a86b00;
+}
+
+.category-bar .cat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+}
+
+.category-bar .cat p {
+    margin: 7px 0 0;
+    font-size: 17px;
+}
+
+
+/* =====================================================
+   DESKTOP PRODUCT AREA
+   ===================================================== */
+
+body {
+    background: #fafafa;
+}
+
+.products {
+    gap: 22px;
+}
+
+.card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 15px;
+    box-shadow: 0 3px 12px rgba(50,20,80,.08);
+
+    transition: .25s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(50,20,80,.14);
+}
+
+
+/* PRODUCT IMAGE */
+
+.product-image-box {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.product-image-box img {
+    width: 100%;
+    height: 220px;
+    object-fit: contain;
+}
+
+
+/* PRODUCT NAME */
+
+.card h3 {
+    font-size: 16px !important;
+    font-weight: 700;
+    margin: 9px 0 3px !important;
+}
+
+
+/* DESCRIPTION */
+
+.product-description {
+    font-size: 13px !important;
+    color: #777;
+    font-weight: 400 !important;
+
+    margin: 3px 0 7px !important;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* PRICE */
+
+.card > p {
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    color: #4b0082;
+
+    margin: 4px 0 10px !important;
+}
+
+
+/* ACTION BUTTONS */
+
+.product-actions button,
+.card > div:last-child button {
+    background: #4b0082;
+    color: white;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+}
+
+.product-actions button:hover,
+.card > div:last-child button:hover {
+    background: #310058;
+}
+/* =====================================================
+   BESTTIVE MOBILE
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+    /* =========================
+       MOBILE HEADER
+       ========================= */
+
+    .besttive-header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+
+        grid-template-rows: auto auto;
+
+        gap: 10px;
+
+        padding: 10px 12px;
+
+        min-height: auto;
+    }
+
+
+    /* LOGO */
+
+    .besttive-brand {
+        gap: 7px;
+    }
+
+    .besttive-brand img {
+        width: 52px;
+        height: 52px;
+    }
+
+    .brand-text strong {
+        font-size: 21px;
+    }
+
+    .brand-text span {
+        font-size: 9px;
+    }
+
+
+    /* LOGIN / MORE / CART */
+
+    .besttive-links {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .besttive-links span,
+    .besttive-links a {
+        font-size: 11px;
+        gap: 3px;
+        white-space: nowrap;
+    }
+
+    .besttive-links i {
+        font-size: 15px;
+    }
+
+
+    /* SEARCH — SECOND ROW */
+
+    .besttive-search {
+        grid-column: 1 / -1;
+        grid-row: 2;
+
+        width: 100%;
+        max-width: none;
+
+        height: 46px;
+
+        margin: 0;
+
+        border-radius: 8px;
+    }
+
+    .besttive-search .search-left {
+        font-size: 19px;
+        margin-left: 14px;
+    }
+
+    .besttive-search input {
+        font-size: 12px;
+        padding: 0 10px;
+    }
+
+    .besttive-search button {
+        width: 55px;
+        font-size: 18px;
+    }
+
+
+    /* =========================
+       MOBILE CATEGORY SLIDER
+       ========================= */
+
+    .category-bar {
+        display: flex !important;
+
+        flex-wrap: nowrap !important;
+
+        overflow-x: auto !important;
+        overflow-y: hidden;
+
+        gap: 10px;
+
+        padding: 12px;
+
+        background: white;
+
+        justify-content: flex-start !important;
+
+        -webkit-overflow-scrolling: touch;
+
+        scrollbar-width: none;
+    }
+
+    .category-bar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category-bar .cat {
+        flex: 0 0 105px !important;
+
+        width: 105px !important;
+        min-width: 105px !important;
+
+        height: 72px;
+        min-height: 72px;
+
+        border-radius: 10px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .category-bar .cat p {
+        margin: 5px 0 0;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+
+    /* =========================
+       MOBILE PRODUCTS
+       ========================= */
+
+    body > .products,
+    .category-products .products {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+
+        padding: 10px;
+    }
+
+    .card {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 8px !important;
+        border-radius: 14px;
+    }
+
+    .product-image-box img {
+        height: 150px;
+    }
+
+    .card h3 {
+        font-size: 13px !important;
+        line-height: 17px !important;
+    }
+
+    .product-description {
+        font-size: 11px !important;
+        line-height: 14px;
+    }
+
+    .card > p {
+        font-size: 15px !important;
+    }
+
+    .product-actions {
+        gap: 5px !important;
+    }
+
+    .product-actions button {
+        font-size: 10px !important;
+        padding: 8px 4px !important;
+    }
+
+}

@@ -8,39 +8,59 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
-<!-- 🔥 HEADER -->
-<div class="top-header">
+<!-- BESTTIVE PREMIUM HEADER -->
+<header class="besttive-header">
 
-  <!-- LEFT LOGO -->
-  <div class="logo">
-   <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="BESTTIVE Logo">
-  </div>
+    <!-- LOGO -->
+    <div class="besttive-brand">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}"
+             alt="BESTTIVE Logo">
 
-  <!-- CENTER SEARCH -->  
-   <form action="/" method="GET" class="search-bar">
+        <div class="brand-text">
+            <strong>Besttive</strong>
+            <span>Style That Speaks</span>
+        </div>
+    </div>
 
-    <input
-        type="text"
-        name="search"
-        placeholder="Search for Products, Brands and More"
-        value="{{ request.args.get('search','') }}"
-    >
+    <!-- SEARCH -->
+    <form action="/" method="GET" class="besttive-search">
 
-    <button type="submit">
-    <i class="fas fa-search"></i>
-</button>
-</form>
+        <i class="fas fa-search search-left"></i>
 
-  <!-- RIGHT LINKS -->
-  <div class="top-links">
-    <span class="login-btn" onclick="toggleMenu()">Login</span>
-    <span>More</span>
-    <a href="/cart" style="text-decoration:none; color:black; font-weight:bold;">
-        Cart
-    </a>
-</div>
+        <input
+            type="text"
+            name="search"
+            placeholder="Search for Products, Brands and More"
+            value="{{ request.args.get('search','') }}"
+        >
 
-</div>
+        <button type="submit">
+            <i class="fas fa-search"></i>
+        </button>
+
+    </form>
+
+    <!-- RIGHT MENU -->
+    <div class="besttive-links">
+
+        <span class="login-btn" onclick="toggleMenu()">
+            <i class="far fa-user"></i>
+            Login
+        </span>
+
+        <span>
+            <i class="fas fa-ellipsis-h"></i>
+            More
+        </span>
+
+        <a href="/cart">
+            <i class="fas fa-shopping-cart"></i>
+            Cart
+        </a>
+
+    </div>
+
+</header>
 
 <!-- 🔥 LOGIN DROPDOWN -->
 <div id="loginMenu" class="login-menu">
