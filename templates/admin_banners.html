@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Banners - BESTTIVE</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: auto;
+            padding: 25px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            background: #4b0082;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 7px;
+        }
+
+        /* ADD BANNER */
+
+        .add-box {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .add-box h2 {
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .add-btn {
+            width: 100%;
+            border: none;
+            background: #4b0082;
+            color: white;
+            padding: 13px;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            background: #310058;
+        }
+
+        /* BANNER CARD */
+
+        .banner-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .banner-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .banner-top h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .active {
+            background: #d9f7df;
+            color: #137333;
+        }
+
+        .inactive {
+            background: #eee;
+            color: #666;
+        }
+
+        .preview {
+            width: 100%;
+            height: 230px;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #eee;
+            margin-bottom: 18px;
+        }
+
+        .preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .edit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .edit-form input,
+        .edit-form select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .save-btn,
+        .toggle-btn,
+        .delete-btn {
+            border: none;
+            padding: 10px 16px;
+            border-radius: 7px;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .save-btn {
+            background: #4b0082;
+        }
+
+        .toggle-btn {
+            background: #555;
+        }
+
+        .delete-btn {
+            background: #d00000;
+        }
+
+        .save-btn:hover {
+            background: #310058;
+        }
+
+        .delete-btn:hover {
+            background: #a00000;
+        }
+
+        .empty {
+            background: white;
+            padding: 35px;
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 768px) {
+
+            .page {
+                padding: 12px;
+            }
+
+            .header h1 {
+                font-size: 21px;
+            }
+
+            .back-btn {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+
+            .preview {
+                height: 170px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .save-btn,
+            .toggle-btn,
+            .delete-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>🖼️ Manage Banners</h1>
+
+        <a href="/admin/dashboard" class="back-btn">
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- ADD NEW BANNER -->
+
+    <div class="add-box">
+
+        <h2>➕ Add New Banner</h2>
+
+        <form
+            action="/admin/banners/add"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <div class="form-group">
+
+                <label>Banner Image</label>
+
+                <input
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Banner Title</label>
+
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Example: BESTTIVE Summer Sale"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Banner Position</label>
+
+                <select name="position" required>
+
+                    {% for position in range(1, 9) %}
+
+                    <option value="{{ position }}">
+                        Position {{ position }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <button type="submit" class="add-btn">
+                ➕ Add Banner
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- EXISTING BANNERS -->
+
+    {% if banners %}
+
+        {% for banner in banners %}
+
+        <div class="banner-card">
+
+            <div class="banner-top">
+
+                <h2>
+                    Banner Position {{ banner.position }}
+                </h2>
+
+                {% if banner.active %}
+
+                    <span class="status active">
+                        ACTIVE
+                    </span>
+
+                {% else %}
+
+                    <span class="status inactive">
+                        INACTIVE
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- IMAGE PREVIEW -->
+
+            <div class="preview">
+
+                <img
+                    src="{{ banner.image }}"
+                    alt="{{ banner.title or 'BESTTIVE Banner' }}"
+                >
+
+            </div>
+
+
+            <!-- EDIT -->
+
+            <form
+                action="/admin/banners/{{ banner.id }}/update"
+                method="POST"
+                enctype="multipart/form-data"
+                class="edit-form"
+            >
+
+                <input
+                    type="text"
+                    name="title"
+                    value="{{ banner.title or '' }}"
+                    placeholder="Banner title"
+                >
+
+
+                <input
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                >
+
+
+                <select name="position">
+
+                    {% for position in range(1, 9) %}
+
+                    <option
+                        value="{{ position }}"
+                        {% if banner.position == position %}
+                            selected
+                        {% endif %}
+                    >
+                        Position {{ position }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <div class="buttons">
+
+                    <button
+                        type="submit"
+                        class="save-btn"
+                    >
+                        💾 Save / Change
+                    </button>
+
+
+                    <a
+                        href="/admin/banners/{{ banner.id }}/toggle"
+                        class="toggle-btn"
+                    >
+                        {% if banner.active %}
+                            🔴 Disable
+                        {% else %}
+                            🟢 Activate
+                        {% endif %}
+                    </a>
+
+
+                    <a
+                        href="/admin/banners/{{ banner.id }}/delete"
+                        class="delete-btn"
+                        onclick="return confirm('Are you sure you want to delete this banner?');"
+                    >
+                        🗑️ Delete
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+
+            <h2>No Banners Yet</h2>
+
+            <p>
+                Add your first BESTTIVE banner above.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

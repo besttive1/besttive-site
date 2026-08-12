@@ -61,6 +61,12 @@ def home():
     sort = request.args.get("sort")
     query = Product.query
 
+    banners = Banner.query.filter_by(
+        active=True
+    ).order_by(
+        Banner.position.asc()
+    ).all()
+
     # Search
     if search:
         query = query.filter(
@@ -144,6 +150,7 @@ def home():
         min_price=min_price,
         max_price=max_price,
         sort=sort,
+        banners=banners,
         wishlist_product_ids=wishlist_product_ids
     )
 
@@ -556,7 +563,18 @@ class Product(db.Model):
     stock = db.Column(db.Integer, default=0)
     category = db.Column(db.String(100), default="")
     subcategory = db.Column(db.String(100), default="")
-    
+
+class Banner(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    image = db.Column(db.String(500), nullable=False)
+    title = db.Column(db.String(200), default="")
+    position = db.Column(db.Integer, default=1, nullable=False)
+    active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.utcnow
+    )
+
 class ProductImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -777,6 +795,180 @@ def admin_dashboard():
         "admin_dashboard.html",
         total_products=total_products
     )
+
+# =========================
+# ADMIN BANNER MANAGEMENT
+# =========================
+
+@app.route("/admin/banners")
+def admin_banners():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    banners = Banner.query.order_by(Banner.id.desc()).all()
+
+    return render_template(
+        "admin_banners.html",
+        banners=banners
+    )
+
+# =========================
+# ADD BANNER
+# =========================
+
+@app.route("/admin/banners/add", methods=["POST"])
+def add_banner():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    image = request.files.get("image")
+    title = request.form.get("title", "").strip()
+    position = request.form.get("position", "1")
+
+    if not image or image.filename == "":
+        flash("Please select a banner image.")
+        return redirect("/admin/banners")
+
+    try:
+        position = int(position)
+
+        if position < 1 or position > 8:
+            flash("Banner position must be between 1 and 8.")
+            return redirect("/admin/banners")
+
+    except ValueError:
+        flash("Invalid banner position.")
+        return redirect("/admin/banners")
+
+    # Check whether position is already occupied
+    existing_banner = Banner.query.filter_by(
+        position=position
+    ).first()
+
+    if existing_banner:
+        flash(f"Position {position} is already occupied.")
+        return redirect("/admin/banners")
+
+    # Upload image to Cloudinary
+    upload_result = cloudinary.uploader.upload(
+        image,
+        folder="besttive/banners"
+    )
+
+    image_url = upload_result["secure_url"]
+
+    new_banner = Banner(
+        image=image_url,
+        title=title,
+        position=position,
+        active=True
+    )
+
+    db.session.add(new_banner)
+    db.session.commit()
+
+    flash("Banner added successfully!")
+
+    return redirect("/admin/banners")
+
+
+# =========================
+# CHANGE / REPLACE BANNER
+# =========================
+
+@app.route("/admin/banners/<int:id>/update", methods=["POST"])
+def update_banner(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    banner = Banner.query.get_or_404(id)
+
+    title = request.form.get("title", "").strip()
+    position = request.form.get("position", str(banner.position))
+
+    try:
+        position = int(position)
+
+        if position < 1 or position > 8:
+            flash("Banner position must be between 1 and 8.")
+            return redirect("/admin/banners")
+
+    except ValueError:
+        flash("Invalid banner position.")
+        return redirect("/admin/banners")
+
+    # Check duplicate position
+    existing_banner = Banner.query.filter(
+        Banner.position == position,
+        Banner.id != banner.id
+    ).first()
+
+    if existing_banner:
+        flash(f"Position {position} is already occupied.")
+        return redirect("/admin/banners")
+
+    image = request.files.get("image")
+
+    if image and image.filename != "":
+        upload_result = cloudinary.uploader.upload(
+            image,
+            folder="besttive/banners"
+        )
+
+        banner.image = upload_result["secure_url"]
+
+    banner.title = title
+    banner.position = position
+
+    db.session.commit()
+
+    flash("Banner updated successfully!")
+
+    return redirect("/admin/banners")
+
+
+# =========================
+# DELETE BANNER
+# =========================
+
+@app.route("/admin/banners/<int:id>/delete")
+def delete_banner(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    banner = Banner.query.get_or_404(id)
+
+    db.session.delete(banner)
+    db.session.commit()
+
+    flash("Banner deleted successfully!")
+
+    return redirect("/admin/banners")
+
+
+# =========================
+# TOGGLE BANNER ACTIVE
+# =========================
+
+@app.route("/admin/banners/<int:id>/toggle")
+def toggle_banner(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    banner = Banner.query.get_or_404(id)
+
+    banner.active = not banner.active
+
+    db.session.commit()
+
+    flash("Banner status updated!")
+
+    return redirect("/admin/banners")
 
 @app.route("/admin/add-product", methods=["GET", "POST"])
 def admin_add_product():

@@ -1637,20 +1637,6 @@ text-align: left !important;
     }
 }
 
-.hero-banner {
-    width: 100%;
-    margin: 15px 0;
-    overflow: hidden;
-    border-radius: 12px;
-}
-
-.hero-banner img {
-    width: 100%;
-    height: 200;
-    display: block;
-    object-fit: cover;
-}
-
 @media (max-width: 768px) {
 
     .hero-slider {
@@ -1671,10 +1657,12 @@ text-align: left !important;
 
 .hero-slider {
     position: relative;
-    width: 90%;
+    width: 95% !important;
+    max-width: 1400px !important;
+    height: 450px !important;
     overflow: hidden;
     border-radius: 12px;
-    margin: 15px 0;
+    margin: 15px auto !important;
 }
 
 .hero-slides {
@@ -1683,10 +1671,11 @@ text-align: left !important;
 }
 
 .hero-slides img {
-    width: 100%;
+    width: 100% !important;
+    height: 450px !important;
     flex: 0 0 100%;
     display: block;
-    object-fit: cover;
+    object-fit: cover !important;
 }
 
 .hero-prev,
