@@ -1780,3 +1780,9 @@ text-align: left !important;
         background: transparent !important;
     }
 }
+@media (max-width: 768px) {
+    .hero-prev,
+    .hero-next {
+        display: none !important;
+    }
+}

@@ -640,6 +640,34 @@ function changeHeroSlide(direction) {
 setInterval(function() {
     changeHeroSlide(1);
 }, 4000);
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+const heroSlider = document.querySelector(".hero-slider");
+
+if (heroSlider) {
+
+    heroSlider.addEventListener("touchstart", function(e) {
+        touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+
+    heroSlider.addEventListener("touchend", function(e) {
+        touchEndX = e.changedTouches[0].clientX;
+
+        let swipeDistance = touchEndX - touchStartX;
+
+        if (Math.abs(swipeDistance) > 50) {
+
+            if (swipeDistance < 0) {
+                changeHeroSlide(1);
+            } else {
+                changeHeroSlide(-1);
+            }
+
+        }
+    }, { passive: true });
+}
 </script>
 
 <script>
