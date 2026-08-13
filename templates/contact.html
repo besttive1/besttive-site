@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Contact Us - BESTTIVE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='mobile.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='desktop.css') }}">
+</head>
+
+<body>
+
+    <!-- CONTACT HERO -->
+
+    <section class="contact-hero">
+
+        <h1>Contact Us</h1>
+
+        <p>
+            We're here to help you.
+        </p>
+
+    </section>
+
+
+    <!-- CONTACT CONTENT -->
+
+    <section class="contact-section">
+
+        <div class="contact-container">
+
+            <!-- CONTACT INFORMATION -->
+
+            <div class="contact-info">
+
+                <h2>Get in Touch</h2>
+
+                <p>
+                    Have a question about your order, product or
+                    shopping experience? Contact BESTTIVE and
+                    we'll be happy to help.
+                </p>
+
+                <div class="contact-item">
+                    <span>📞</span>
+                    <div>
+                        <h3>Phone</h3>
+                        <p>Your phone number</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <span>💬</span>
+                    <div>
+                        <h3>WhatsApp</h3>
+                        <p>Chat with BESTTIVE</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <span>📧</span>
+                    <div>
+                        <h3>Email</h3>
+                        <p>Your email address</p>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- CONTACT FORM -->
+
+            <div class="contact-form">
+
+                <h2>Send Us a Message</h2>
+                {% if success %}
+
+                    <div class="contact-success">
+                        {{ success }}
+                    </div>
+                {% endif %}
+
+                {% if error %}
+                    <div class="contact-error">
+                        {{ error }}
+                    </div>
+                {% endif %}    
+                
+                <form method="POST">
+
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Your Name"
+                        required
+                    >
+
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Your Email"
+                        required
+                    >
+
+                    <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Your Phone Number"
+                    >
+
+                    <textarea
+                        name="message"
+                        rows="5"
+                        placeholder="Write your message..."
+                        required
+                    ></textarea>
+
+                    <button type="submit">
+                        Send Message
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- BACK TO SHOP -->
+
+    <div class="contact-back">
+
+        <a href="/">
+            ← Continue Shopping
+        </a>
+
+    </div>
+
+</body>
+</html>

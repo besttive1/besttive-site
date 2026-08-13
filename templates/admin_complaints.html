@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Customer Complaints - BESTTIVE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        .contact-admin {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .contact-admin h1 {
+            color: #4b0082;
+            margin-bottom: 20px;
+        }
+
+        /* TOOLBAR */
+
+        .complaint-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .delete-mode-btn,
+        .confirm-delete-btn {
+            border: none;
+            border-radius: 7px;
+            padding: 10px 16px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .delete-mode-btn {
+            background: #dc3545;
+        }
+
+        .confirm-delete-btn {
+            display: none;
+            background: #b00020;
+        }
+
+        /* COMPLAINT CARD */
+
+        .message-card {
+            position: relative;
+
+            background: white;
+
+            border: 1px solid #eee;
+            border-radius: 12px;
+
+            padding: 20px;
+            margin-bottom: 15px;
+
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .message-card h3 {
+            margin: 0 0 8px;
+            color: #333;
+        }
+
+        .message-card p {
+            margin: 6px 0;
+            color: #555;
+        }
+
+        .message-text {
+            margin-top: 15px !important;
+            padding: 12px;
+
+            background: #faf7ff;
+
+            border-radius: 8px;
+        }
+
+        /* CHECKBOX */
+
+        .complaint-checkbox {
+            display: none;
+
+            width: 18px;
+            height: 18px;
+
+            margin-bottom: 12px;
+
+            cursor: pointer;
+        }
+
+        /* EMPTY */
+
+        .no-messages {
+            padding: 30px;
+
+            text-align: center;
+
+            color: #777;
+
+            background: white;
+
+            border-radius: 10px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            .contact-admin {
+                width: 92%;
+                margin: 20px auto;
+            }
+
+            .complaint-toolbar {
+                flex-wrap: wrap;
+            }
+
+            .delete-mode-btn,
+            .confirm-delete-btn {
+                font-size: 13px;
+                padding: 9px 13px;
+            }
+
+            .message-card {
+                padding: 15px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="contact-admin">
+
+        <h1>Customer Complaints</h1>
+
+
+        <!-- DELETE BUTTONS -->
+
+        <div class="complaint-toolbar">
+
+            <button type="button"
+                    class="delete-mode-btn"
+                    onclick="enableDeleteMode()">
+                🗑️ Delete
+            </button>
+
+            <form action="/admin/delete-complaints"
+                  method="POST"
+                  id="deleteForm">
+
+                <button type="submit"
+                        class="confirm-delete-btn"
+                        id="confirmDeleteBtn"
+                        onclick="return confirmDelete()">
+                    🗑️ Delete Selected
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- COMPLAINTS -->
+
+        {% if messages %}
+
+            {% for msg in messages %}
+
+                <div class="message-card">
+
+                    <input type="checkbox"
+                           class="complaint-checkbox"
+                           name="complaint_ids"
+                           value="{{ msg.id }}"
+                           form="deleteForm">
+
+
+                    <h3>
+                        {{ msg.name }}
+                    </h3>
+
+                    <p>
+                        <strong>Email:</strong>
+                        {{ msg.email }}
+                    </p>
+
+                    <p>
+                        <strong>Phone:</strong>
+                        {{ msg.phone or "Not provided" }}
+                    </p>
+
+                    <p class="message-text">
+
+                        <strong>Message:</strong><br>
+
+                        {{ msg.message }}
+
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="no-messages">
+                No customer complaints yet.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        function enableDeleteMode() {
+
+            const checkboxes =
+                document.querySelectorAll(".complaint-checkbox");
+
+            const confirmButton =
+                document.getElementById("confirmDeleteBtn");
+
+
+            checkboxes.forEach(function (checkbox) {
+
+                checkbox.style.display = "block";
+
+            });
+
+
+            confirmButton.style.display = "inline-block";
+
+        }
+
+
+        function confirmDelete() {
+
+            const selected =
+                document.querySelectorAll(
+                    ".complaint-checkbox:checked"
+                );
+
+
+            if (selected.length === 0) {
+
+                alert("Please select at least one complaint.");
+
+                return false;
+
+            }
+
+
+            return confirm(
+                "Are you sure you want to delete the selected complaint(s)?"
+            );
+
+        }
+
+    </script>
+
+</body>
+</html>

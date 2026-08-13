@@ -1173,3 +1173,759 @@ background: #310058;
     background: #f5efff !important;
     color: #4b0082 !important;
 }
+
+/* =========================================
+   BESTTIVE FOOTER - COMMON RESPONSIVE
+   DESKTOP + MOBILE
+   ========================================= */
+
+.besttive-footer {
+    width: 100%;
+    background: linear-gradient(135deg, #18002f, #2b0758);
+    color: white;
+    margin-top: 40px;
+    box-sizing: border-box;
+}
+
+.footer-container {
+    width: 92%;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 40px;
+
+    padding: 45px 0 35px;
+    box-sizing: border-box;
+}
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.footer-column h3 {
+    margin: 0 0 18px;
+
+    color: #f4d06f;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.footer-column p {
+    margin: 0 0 15px;
+
+    max-width: 300px;
+
+    color: #e8e2ef;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.footer-column a {
+    display: block;
+
+    margin: 0 0 10px;
+
+    color: #f5f2f8;
+    text-decoration: none;
+
+    font-size: 14px;
+    line-height: 1.5;
+
+    transition: 0.2s ease;
+}
+
+.footer-column a:hover {
+    color: #f4d06f;
+    transform: translateX(3px);
+}
+
+/* SOCIAL MEDIA */
+
+.footer-social a {
+    display: block;
+}
+
+/* FOOTER BOTTOM */
+
+.footer-bottom {
+    width: 92%;
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    padding: 18px 0;
+
+    border-top: 1px solid rgba(255,255,255,0.15);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    box-sizing: border-box;
+}
+
+.footer-bottom p {
+    margin: 0;
+
+    color: #d8d0df;
+    font-size: 13px;
+}
+
+.footer-policies {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-policies a {
+    color: #d8d0df;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.footer-policies a:hover {
+    color: #f4d06f;
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .footer-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .besttive-footer {
+        margin-top: 25px;
+    }
+
+    .footer-container {
+        width: 90%;
+
+        grid-template-columns: 1fr;
+
+        gap: 25px;
+
+        padding: 32px 0 25px;
+    }
+
+    .footer-column h3 {
+        font-size: 17px;
+        margin-bottom: 12px;
+    }
+
+    .footer-column p {
+        max-width: 100%;
+        font-size: 13px;
+    }
+
+    .footer-column a {
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .footer-bottom {
+        width: 90%;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 12px;
+
+        padding: 16px 0;
+    }
+
+    .footer-policies {
+        width: 100%;
+
+        display: flex;
+        flex-wrap: wrap;
+
+        gap: 10px 18px;
+    }
+
+    .footer-policies a {
+        font-size: 12px;
+    }
+
+    .footer-bottom p {
+        font-size: 12px;
+    }
+
+}
+
+/* =========================================
+   BESTTIVE - ABOUT US PAGE
+   COMMON RESPONSIVE CSS
+   ========================================= */
+
+.about-hero {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 55px 20px;
+
+    text-align: center;
+
+    background: linear-gradient(135deg, #18002f, #2b0758);
+    color: white;
+}
+
+.about-hero h1 {
+    margin: 0;
+
+    color: #f4d06f;
+
+    font-family: Georgia, serif;
+    font-size: 38px;
+    line-height: 1.2;
+}
+
+.about-hero p {
+    margin: 10px 0 0;
+
+    color: #ffffff;
+    font-size: 16px;
+}
+
+
+/* ABOUT CONTENT */
+
+.about-section {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 45px 20px;
+    background: #ffffff;
+}
+
+.about-container {
+    width: 92%;
+    max-width: 1000px;
+
+    margin: 0 auto;
+
+    text-align: center;
+}
+
+.about-container h2 {
+    margin: 0 0 15px;
+
+    color: #4b0082;
+
+    font-size: 26px;
+}
+
+.about-container h2:not(:first-child) {
+    margin-top: 40px;
+}
+
+.about-container > p {
+    max-width: 800px;
+
+    margin: 0 auto 15px;
+
+    color: #555;
+
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+
+/* WHY BESTTIVE */
+
+.about-points {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+
+    margin-top: 25px;
+}
+
+.about-points > div {
+    padding: 25px 20px;
+
+    background: #faf7ff;
+
+    border: 1px solid #eee5fa;
+    border-radius: 12px;
+
+    box-sizing: border-box;
+}
+
+.about-points h3 {
+    margin: 0 0 10px;
+
+    color: #4b0082;
+
+    font-size: 18px;
+}
+
+.about-points p {
+    margin: 0;
+
+    color: #666;
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* BACK TO SHOP */
+
+.about-back {
+    width: 100%;
+
+    padding: 0 20px 45px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+}
+
+.about-back a {
+    display: inline-block;
+
+    padding: 11px 22px;
+
+    background: #4b0082;
+    color: white;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.about-back a:hover {
+    background: #310058;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+
+    .about-hero {
+        padding: 38px 15px;
+    }
+
+    .about-hero h1 {
+        font-size: 28px;
+    }
+
+    .about-hero p {
+        font-size: 13px;
+    }
+
+    .about-section {
+        padding: 32px 15px;
+    }
+
+    .about-container {
+        width: 100%;
+    }
+
+    .about-container h2 {
+        font-size: 22px;
+    }
+
+    .about-container > p {
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .about-points {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .about-points > div {
+        padding: 20px 15px;
+    }
+
+    .about-points h3 {
+        font-size: 16px;
+    }
+
+    .about-points p {
+        font-size: 13px;
+    }
+
+    .about-back {
+        padding-bottom: 30px;
+    }
+
+}
+
+/* =========================================
+   BESTTIVE - CONTACT US
+   COMMON RESPONSIVE CSS
+   ========================================= */
+
+.contact-hero {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 50px 20px;
+
+    text-align: center;
+
+    background: linear-gradient(135deg, #18002f, #2b0758);
+    color: white;
+}
+
+.contact-hero h1 {
+    margin: 0;
+
+    color: #f4d06f;
+
+    font-family: Georgia, serif;
+    font-size: 38px;
+    line-height: 1.2;
+}
+
+.contact-hero p {
+    margin: 10px 0 0;
+
+    color: white;
+    font-size: 16px;
+}
+
+
+/* CONTACT SECTION */
+
+.contact-section {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 45px 20px;
+
+    background: #ffffff;
+}
+
+.contact-container {
+    width: 92%;
+    max-width: 1100px;
+
+    margin: 0 auto;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 40px;
+
+    box-sizing: border-box;
+}
+
+
+/* CONTACT INFORMATION */
+
+.contact-info {
+    padding: 25px;
+
+    background: #faf7ff;
+
+    border: 1px solid #eee5fa;
+    border-radius: 14px;
+
+    box-sizing: border-box;
+}
+
+.contact-info h2,
+.contact-form h2 {
+    margin: 0 0 15px;
+
+    color: #4b0082;
+
+    font-size: 25px;
+}
+
+.contact-info > p {
+    margin: 0 0 25px;
+
+    color: #666;
+
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.contact-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid #eee;
+}
+
+.contact-item:last-child {
+    border-bottom: none;
+}
+
+.contact-item > span {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #eee5fa;
+
+    border-radius: 50%;
+
+    font-size: 20px;
+}
+
+.contact-item h3 {
+    margin: 0 0 4px;
+
+    color: #333;
+
+    font-size: 15px;
+}
+
+.contact-item p {
+    margin: 0;
+
+    color: #777;
+
+    font-size: 13px;
+}
+
+
+/* CONTACT FORM */
+
+.contact-form {
+    padding: 25px;
+
+    background: white;
+
+    border: 1px solid #eee;
+
+    border-radius: 14px;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+
+    box-sizing: border-box;
+}
+
+.contact-form form {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    outline: none;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    background: #fff;
+}
+
+.contact-form textarea {
+    resize: vertical;
+
+    min-height: 120px;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: #4b0082;
+
+    box-shadow: 0 0 0 2px rgba(75,0,130,0.08);
+}
+
+.contact-form button {
+    width: 100%;
+
+    padding: 12px 20px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #4b0082;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.contact-form button:hover {
+    background: #310058;
+}
+
+
+/* BACK TO SHOP */
+
+.contact-back {
+    width: 100%;
+
+    padding: 0 20px 45px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+}
+
+.contact-back a {
+    display: inline-block;
+
+    padding: 11px 22px;
+
+    background: #4b0082;
+    color: white;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    .contact-hero {
+        padding: 38px 15px;
+    }
+
+    .contact-hero h1 {
+        font-size: 28px;
+    }
+
+    .contact-hero p {
+        font-size: 13px;
+    }
+
+    .contact-section {
+        padding: 30px 15px;
+    }
+
+    .contact-container {
+        width: 100%;
+
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+    }
+
+    .contact-info,
+    .contact-form {
+        padding: 20px;
+    }
+
+    .contact-info h2,
+    .contact-form h2 {
+        font-size: 21px;
+    }
+
+    .contact-info > p {
+        font-size: 13px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        font-size: 13px;
+    }
+
+    .contact-form button {
+        font-size: 14px;
+    }
+
+    .contact-back {
+        padding-bottom: 30px;
+    }
+
+}
+
+.complaint-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.delete-mode-btn,
+.confirm-delete-btn {
+    border: none;
+    border-radius: 7px;
+    padding: 10px 16px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.delete-mode-btn {
+    background: #dc3545;
+}
+
+.confirm-delete-btn {
+    display: none;
+    background: #b00020;
+}
+
+.complaint-checkbox {
+    display: none;
+    width: 18px;
+    height: 18px;
+    margin-bottom: 12px;
+    cursor: pointer;
+}

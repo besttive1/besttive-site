@@ -533,6 +533,67 @@ def product_details(id):
         images=images
     )
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+
+    if request.method == "POST":
+
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip()
+        phone = request.form.get("phone", "").strip()
+        message = request.form.get("message", "").strip()
+
+        if not name or not email or not message:
+            return render_template(
+                "contact.html",
+                error="Please fill all required fields."
+            )
+
+        new_message = ContactMessage(
+            name=name,
+            email=email,
+            phone=phone,
+            message=message
+        )
+
+        db.session.add(new_message)
+        db.session.commit()
+
+        return render_template(
+            "contact.html",
+            success="Your message has been sent successfully!"
+        )
+
+    return render_template("contact.html")
+
+@app.route("/admin/complaints")
+def admin_complaints():
+    messages = ContactMessage.query.order_by(
+        ContactMessage.id.desc()
+    ).all()
+
+    return render_template(
+        "admin_complaints.html",
+        messages=messages
+    )
+@app.route("/admin/delete-complaints", methods=["POST"])
+def delete_complaints():
+
+    complaint_ids = request.form.getlist("complaint_ids")
+
+    for complaint_id in complaint_ids:
+        complaint = ContactMessage.query.get(int(complaint_id))
+
+        if complaint:
+            db.session.delete(complaint)
+
+    db.session.commit()
+
+    return redirect("/admin/complaints")
 # DB (SQLite)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -564,6 +625,13 @@ class Product(db.Model):
     category = db.Column(db.String(100), default="")
     subcategory = db.Column(db.String(100), default="")
 
+class ContactMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    phone = db.Column(db.String(20), default="")
+    message = db.Column(db.Text, nullable=False)
+    
 class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(500), nullable=False)
