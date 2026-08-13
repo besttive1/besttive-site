@@ -903,10 +903,11 @@ width: 100%;
 }
 
 .product-actions {
-display: flex;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     justify-content: center;
-    gap: 10px;
+    gap: 10px !important;
 }
 
 .wishlist-btn {
@@ -920,18 +921,22 @@ color: #e91e63;
 }
 
 @media (max-width: 768px) {
-.product-actions {
-gap: 10px;
-}
+    .product-actions {
+        display: flex;
+        flex-direction: column !important;
+        gap: 10px !important;
+        width: 100%;
+    }
 
-.wishlist-btn {
-font-size: 22px;
-}
+    .wishlist-btn {
+        font-size: 22px;
+    }
 
-.product-actions button {
-font-size: 10px;
+    .product-actions button {
+        font-size: 10px;
         padding: 7px 5px;
-}
+        margin: 0 !important;
+    }
 }
 
 /* WISHLIST ICON */
@@ -1638,19 +1643,18 @@ text-align: left !important;
 }
 
 @media (max-width: 768px) {
-
     .hero-slider {
         width: 100% !important;
         margin: 10px 0 !important;
         border-radius: 8px !important;
+        overflow: hidden !important;
     }
 
     .hero-slides img {
         width: 100% !important;
-        height: 170px !important;
+        height: 105px !important;
         object-fit: cover !important;
     }
-
 }
 
 /* HERO SLIDER */
@@ -1722,4 +1726,58 @@ text-align: left !important;
 .hero-dot.active {
     opacity: 1;
     transform: scale(1.25);
+}
+@media (max-width: 768px) {
+    .product-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .product-actions a {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .product-actions button {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+}
+
+/* FINAL MOBILE HERO BANNER */
+
+@media (max-width: 768px) {
+
+    .hero-slider {
+        width: 100% !important;
+        height: 110px !important;
+        margin: 10px 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+    }
+
+    .hero-slides {
+        width: 100% !important;
+        height: 110px !important;
+        display: flex !important;
+    }
+
+    .hero-slides img {
+        width: 100% !important;
+        height: 110px !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+        display: block !important;
+
+        /* Full image box ko fill kare */
+        object-fit: fill !important;
+        object-position: center !important;
+
+        background: transparent !important;
+    }
 }
