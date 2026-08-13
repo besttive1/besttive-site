@@ -1751,30 +1751,29 @@ text-align: left !important;
 @media (max-width: 768px) {
 
     .hero-slider {
-        width: 100% !important;
-        height: 110px !important;
-        margin: 10px 0 !important;
+        width: 94% !important;
+        height: 125px !important;
+        margin: 10px auto !important;
         padding: 0 !important;
         overflow: hidden !important;
-        border-radius: 0 !important;
+        border-radius: 10px !important;
         background: transparent !important;
     }
 
     .hero-slides {
         width: 100% !important;
-        height: 110px !important;
+        height: 125px !important;
         display: flex !important;
     }
 
     .hero-slides img {
         width: 100% !important;
-        height: 110px !important;
+        height: 125px !important;
         min-width: 100% !important;
         max-width: 100% !important;
         flex: 0 0 100% !important;
         display: block !important;
 
-        /* Full image box ko fill kare */
         object-fit: fill !important;
         object-position: center !important;
 
