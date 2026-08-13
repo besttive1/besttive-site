@@ -1,88 +1,474 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Add Product</title>
+
+    <title>Add Product | BESTTIVE</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+
+            font-family: Arial, sans-serif;
+
+            background: #f7f4fb;
+
+            color: #222;
+        }
+
+
+        /* MAIN CARD */
+
+        .add-product-container {
+
+            width: 100%;
+            max-width: 850px;
+
+            margin: 0 auto;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 10px 35px rgba(75, 0, 130, 0.12);
+        }
+
+
+        /* HEADING */
+
+        h2 {
+
+            margin: 0 0 30px;
+
+            color: #4b0082;
+
+            font-size: 30px;
+
+            text-align: center;
+        }
+
+
+        /* FORM */
+
+        form {
+            width: 100%;
+        }
+
+
+        /* LABEL / TEXT */
+
+        form p {
+
+            margin: 18px 0 7px;
+
+            color: #333;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+
+        /* INPUTS */
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+
+            width: 100%;
+
+            padding: 12px 13px;
+
+            border: 1px solid #d8cde5;
+
+            border-radius: 8px;
+
+            background: white;
+
+            color: #222;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition: 0.2s;
+        }
+
+
+        /* TEXTAREA */
+
+        textarea {
+
+            min-height: 120px;
+
+            resize: vertical;
+        }
+
+
+        /* SELECT */
+
+        select {
+
+            cursor: pointer;
+        }
+
+
+        /* FOCUS */
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+
+            border-color: #4b0082;
+
+            box-shadow:
+                0 0 0 3px rgba(75, 0, 130, 0.10);
+        }
+
+
+        /* FILE INPUT */
+
+        input[type="file"] {
+
+            width: 100%;
+
+            padding: 10px;
+
+            border: 1px solid #d8cde5;
+
+            border-radius: 8px;
+
+            background: #faf8fd;
+
+            cursor: pointer;
+
+            font-size: 14px;
+        }
+
+
+        input[type="file"]:hover {
+
+            border-color: #4b0082;
+        }
+
+
+        /* SAVE BUTTON */
+
+        button[type="submit"] {
+
+            width: 100%;
+
+            margin-top: 30px;
+
+            padding: 14px 18px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #4b0082;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        button[type="submit"]:hover {
+
+            background: #310058;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 15px 10px;
+            }
+
+
+            .add-product-container {
+
+                padding: 25px 18px;
+
+                border-radius: 14px;
+            }
+
+
+            h2 {
+
+                font-size: 24px;
+
+                margin-bottom: 25px;
+            }
+
+
+            form p {
+
+                font-size: 13px;
+
+                margin-top: 16px;
+            }
+
+
+            input[type="text"],
+            input[type="number"],
+            textarea,
+            select {
+
+                padding: 11px 12px;
+
+                font-size: 14px;
+            }
+
+
+            textarea {
+
+                min-height: 110px;
+            }
+
+
+            input[type="file"] {
+
+                font-size: 13px;
+
+                padding: 9px;
+            }
+
+
+            button[type="submit"] {
+
+                padding: 13px;
+
+                font-size: 15px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
+
 <body>
 
-<h2>Add New Product</h2>
 
-<form method="POST" enctype="multipart/form-data">
+<div class="add-product-container">
 
-    <p>Product Name</p>
-    <input type="text" name="name" required>
 
-    <p>Price</p>
-    <input type="number" name="price" required>
+    <h2>➕ Add New Product</h2>
 
-    <p>Description</p>
-    <textarea name="description"></textarea>
-<p>Category</p>
 
-<select name="category" required onchange="updateSubcategories()">
-    <option value="">Select Category</option>
-    <option value="Clothes">Clothes</option>
-    <option value="Toys">Toys</option>
-    <option value="Jewellery">Jewellery</option>
-    <option value="Beauty">Beauty</option>
-    <option value="Shoes">Shoes</option>
-    <option value="Watches">Watches</option>
-    <option value="Electronics">Electronics</option>
-    <option value="Home">Home</option>
-</select>
+    <form method="POST"
+          enctype="multipart/form-data">
 
-<p>Subcategory</p>
 
-<select name="subcategory" required>
-    <option value="">Select Subcategory</option>
-    <option value="Jeans">Jeans</option>
-    <option value="Shirts">Shirts</option>
-    <option value="T-Shirts">T-Shirts</option>
-    <option value="Dresses">Dresses</option>
-    <option value="Bangles">Bangles</option>
-    <option value="Earrings">Earrings</option>
-    <option value="Necklace">Necklace</option>
-    <option value="Cars">Cars</option>
-    <option value="Dolls">Dolls</option>
-</select>
+        <p>Product Name</p>
 
-    <p>Stock</p>
-    <input type="number" name="stock">
+        <input type="text"
+               name="name"
+               required>
 
-    <p>Main Product Image</p>
-<input type="file" name="image" accept="image/*" required>
 
-<br><br>
+        <p>Price</p>
 
-<p>Extra Image 1</p>
-<input type="file" name="image2" accept="image/*">
+        <input type="number"
+               name="price"
+               required>
 
-<br><br>
 
-<p>Extra Image 2</p>
-<input type="file" name="image3" accept="image/*">
+        <p>Description</p>
 
-<br><br>
+        <textarea name="description"></textarea>
 
-<p>Extra Image 3</p>
-<input type="file" name="image4" accept="image/*">
 
-<br><br>
+        <p>Category</p>
 
-<p>Extra Image 4</p>
-<input type="file" name="image5" accept="image/*">
-    <br><br>
+        <select name="category"
+                required
+                onchange="updateSubcategories()">
 
-    <button type="submit">Save Product</button>
+            <option value="">
+                Select Category
+            </option>
 
-</form>
+            <option value="Clothes">
+                Clothes
+            </option>
+
+            <option value="Toys">
+                Toys
+            </option>
+
+            <option value="Jewellery">
+                Jewellery
+            </option>
+
+            <option value="Beauty">
+                Beauty
+            </option>
+
+            <option value="Shoes">
+                Shoes
+            </option>
+
+            <option value="Watches">
+                Watches
+            </option>
+
+            <option value="Electronics">
+                Electronics
+            </option>
+
+            <option value="Home">
+                Home
+            </option>
+
+        </select>
+
+
+        <p>Subcategory</p>
+
+        <select name="subcategory"
+                required>
+
+            <option value="">
+                Select Subcategory
+            </option>
+
+            <option value="Jeans">
+                Jeans
+            </option>
+
+            <option value="Shirts">
+                Shirts
+            </option>
+
+            <option value="T-Shirts">
+                T-Shirts
+            </option>
+
+            <option value="Dresses">
+                Dresses
+            </option>
+
+            <option value="Bangles">
+                Bangles
+            </option>
+
+            <option value="Earrings">
+                Earrings
+            </option>
+
+            <option value="Necklace">
+                Necklace
+            </option>
+
+            <option value="Cars">
+                Cars
+            </option>
+
+            <option value="Dolls">
+                Dolls
+            </option>
+
+        </select>
+
+
+        <p>Stock</p>
+
+        <input type="number"
+               name="stock">
+
+
+        <p>Main Product Image</p>
+
+        <input type="file"
+               name="image"
+               accept="image/*"
+               required>
+
+
+        <p>Extra Image 1</p>
+
+        <input type="file"
+               name="image2"
+               accept="image/*">
+
+
+        <p>Extra Image 2</p>
+
+        <input type="file"
+               name="image3"
+               accept="image/*">
+
+
+        <p>Extra Image 3</p>
+
+        <input type="file"
+               name="image4"
+               accept="image/*">
+
+
+        <p>Extra Image 4</p>
+
+        <input type="file"
+               name="image5"
+               accept="image/*">
+
+
+        <button type="submit">
+            💾 Save Product
+        </button>
+
+
+    </form>
+
+</div>
+
+
 <script>
+
 function updateSubcategories() {
 
-    const category = document.querySelector('select[name="category"]').value;
-    const subcategory = document.querySelector('select[name="subcategory"]');
+    const category =
+        document.querySelector(
+            'select[name="category"]'
+        ).value;
+
+    const subcategory =
+        document.querySelector(
+            'select[name="subcategory"]'
+        );
+
 
     const options = {
+
         "Clothes": [
             "Jeans",
             "Shirts",
@@ -136,26 +522,36 @@ function updateSubcategories() {
             "Kitchen",
             "Storage"
         ]
+
     };
+
 
     subcategory.innerHTML =
         '<option value="">Select Subcategory</option>';
+
 
     if (options[category]) {
 
         options[category].forEach(function(item) {
 
-            const option = document.createElement("option");
+            const option =
+                document.createElement("option");
 
             option.value = item;
+
             option.textContent = item;
 
             subcategory.appendChild(option);
 
         });
+
     }
+
 }
+
 </script>
 
+
 </body>
+
 </html>

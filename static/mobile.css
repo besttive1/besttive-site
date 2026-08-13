@@ -792,3 +792,63 @@
     }
 
 }
+
+/* =========================================
+   ADMIN ORDERS - MOBILE
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    body {
+        overflow-x: hidden;
+    }
+
+    /* Orders heading */
+    h2 {
+        font-size: 24px !important;
+        margin-bottom: 18px;
+    }
+
+    /* Orders table ko mobile par scrollable rakho */
+    table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+
+    thead,
+    tbody {
+        width: 100%;
+    }
+
+    table th,
+    table td {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+        vertical-align: middle;
+    }
+
+    /* Status dropdown */
+    table select.form-select {
+        width: 140px !important;
+        min-width: 140px;
+        font-size: 13px !important;
+        padding: 7px 9px !important;
+    }
+
+    /* Update button */
+    table .btn-success {
+        background: #4b0082 !important;
+        border-color: #4b0082 !important;
+        font-size: 12px !important;
+        padding: 7px 12px !important;
+    }
+
+    table .btn-success:hover {
+        background: #310058 !important;
+        border-color: #310058 !important;
+    }
+
+}

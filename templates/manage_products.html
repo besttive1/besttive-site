@@ -1,85 +1,386 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Manage Products</title>
+
+    <title>Manage Products | BESTTIVE</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background: #f7f4fb;
+            color: #222;
+        }
+
+        .products-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h2 {
+            color: #4b0082;
+            margin-bottom: 25px;
+            font-size: 30px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(75, 0, 130, 0.10);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+        }
+
+        th {
+            background: #4b0082;
+            color: white;
+            padding: 13px 12px;
+            text-align: left;
+            font-size: 14px;
+
+            /* vertical line */
+            border-right: 1px solid rgba(255,255,255,0.35);
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e5e5;
+
+            /* vertical lines */
+            border-right: 1px solid #e5e5e5;
+
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        td:last-child {
+            border-right: none;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* SERIAL NUMBER */
+
+        .serial-number {
+            width: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: #4b0082;
+        }
+
+        /* PRODUCT IMAGE */
+
+        .product-image {
+            width: 75px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* ACTION */
+
+        .action-buttons {
+            white-space: nowrap;
+        }
+
+        .edit-btn,
+        .delete-btn {
+            display: inline-block;
+
+            padding: 8px 13px;
+
+            background: #4b0082;
+            color: white;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            border: none;
+
+            cursor: pointer;
+
+            margin: 2px;
+        }
+
+        .edit-btn:hover,
+        .delete-btn:hover {
+            background: #310058;
+        }
+
+        /* BACK BUTTON */
+
+        .back-btn {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-top: 20px;
+
+            padding: 9px 16px;
+
+            background: #4b0082;
+            color: white;
+
+            text-decoration: none;
+
+            border: none;
+            border-radius: 7px;
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: #310058;
+        }
+
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 768px) {
+
+            body {
+                padding: 15px 10px;
+            }
+
+            h2 {
+                font-size: 24px;
+                margin-bottom: 18px;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                min-width: 750px;
+            }
+
+            th {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            td {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .serial-number {
+                width: 50px;
+            }
+
+            .product-image {
+                width: 65px;
+                height: 65px;
+            }
+
+            .edit-btn,
+            .delete-btn {
+                padding: 7px 11px;
+                font-size: 12px;
+            }
+
+            .back-btn {
+                width: 100%;
+                margin-top: 15px;
+                padding: 10px 14px;
+                font-size: 14px;
+            }
+
+        }
+
+
+        /* SMALL MOBILE */
+
+        @media (max-width: 480px) {
+
+            h2 {
+                font-size: 22px;
+            }
+
+            table {
+                min-width: 700px;
+            }
+
+            .product-image {
+                width: 60px;
+                height: 60px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
+
 <body>
 
-<h2>Manage Products</h2>
+<div class="products-container">
 
-<table border="1" cellpadding="10">
+    <h2>Manage Products</h2>
 
-<tr>
-    <th>Image</th>
-    <th>Name</th>
-    <th>Price</th>
-    <th>Stock</th>
-    <th>Action</th>
-</tr>
 
-{% for product in products %}
+    <div class="table-wrapper">
 
-<tr>
+        <table>
 
-<td>
-<img src="{{ product.image }}" width="120" height="120" style="object-fit:cover; border-radius:8px;">
-</td>
+            <thead>
 
-<td>{{ product.name }}</td>
+            <tr>
 
-<td>₹{{ product.price }}</td>
+                <th class="serial-number">
+                    S.No.
+                </th>
 
-<td>{{ product.stock }}</td>
+                <th>
+                    Image
+                </th>
 
-<td>
+                <th>
+                    Name
+                </th>
 
-    <a href="{{ url_for('edit_product', id=product.id) }}"
-       style="
-       display:inline-block;
-       padding:8px 14px;
-       background:#4b0082;
-       color:white;
-       border-radius:7px;
-       text-decoration:none;
-       font-size:14px;
-       font-weight:600;
-       margin:2px;
-       ">
-        Edit
+                <th>
+                    Price
+                </th>
+
+                <th>
+                    Stock
+                </th>
+
+                <th>
+                    Action
+                </th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for product in products %}
+
+            <tr>
+
+                <!-- SERIAL NUMBER -->
+
+                <td class="serial-number">
+                    {{ loop.index }}
+                </td>
+
+
+                <!-- IMAGE -->
+
+                <td>
+
+                    <img
+                        src="{{ product.image }}"
+                        class="product-image"
+                        alt="{{ product.name }}"
+                    >
+
+                </td>
+
+
+                <!-- NAME -->
+
+                <td>
+                    {{ product.name }}
+                </td>
+
+
+                <!-- PRICE -->
+
+                <td>
+                    ₹{{ product.price }}
+                </td>
+
+
+                <!-- STOCK -->
+
+                <td>
+                    {{ product.stock }}
+                </td>
+
+
+                <!-- ACTION -->
+
+                <td class="action-buttons">
+
+                    <a
+                        href="{{ url_for('edit_product', id=product.id) }}"
+                        class="edit-btn"
+                    >
+                        Edit
+                    </a>
+
+
+                    <a
+                        href="/admin/delete-product/{{ product.id }}"
+                        onclick="return confirm('Delete this product?')"
+                        class="delete-btn"
+                    >
+                        Delete
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- BACK -->
+
+    <a
+        href="/admin/dashboard"
+        class="back-btn"
+    >
+        ⬅ Back
     </a>
 
-    <a href="/admin/delete-product/{{ product.id }}"
-       onclick="return confirm('Delete this product?')"
-       style="text-decoration:none;">
-
-        <button type="button"
-                style="
-                padding:8px 14px;
-                background:#4b0082;
-                color:white;
-                border:none;
-                border-radius:7px;
-                font-size:14px;
-                font-weight:600;
-                cursor:pointer;
-                margin:2px;
-                ">
-            Delete
-        </button>
-
-    </a>
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-
-<br>
-
-<a href="/admin/dashboard">⬅ Back</a>
+</div>
 
 </body>
+
 </html>

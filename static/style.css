@@ -1946,3 +1946,42 @@ background: #310058;
     background: #310058 !important; 
 }
 
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 20px;
+    padding: 9px 16px;
+
+    background: #4b0082;
+    color: white;
+
+    text-decoration: none;
+
+    border: none;
+    border-radius: 7px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.back-btn:hover {
+    background: #310058;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .back-btn {
+        width: 100%;
+        margin-top: 15px;
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+
+}
