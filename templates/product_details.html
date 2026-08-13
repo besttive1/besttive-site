@@ -3,6 +3,39 @@
 <head>
     <title>{{ product.name }} | BESTTIVE</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+    .product-detail-btn {
+        width: 220px;
+        height: 48px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .add-cart-btn {
+        background: white;
+        color: #4b0082;
+        border: 2px solid #4b0082;
+    }
+
+    .add-cart-btn:hover {
+        background: #4b0082;
+        color: white;
+    }
+
+    .buy-now-btn {
+        background: #4b0082;
+        color: white;
+        border: 2px solid #4b0082;
+    }
+
+    .buy-now-btn:hover {
+        background: #310058;
+        border-color: #310058;
+    }
+</style>
 </head>
 
 <body style="background:#f5f5f5;">
@@ -112,7 +145,7 @@
         <br>
 
         <a href="/add-to-cart/{{ product.id }}">
-            <button style="width:220px;">
+            <button class="product-detail-btn add-cart-btn">
                 🛒 Add To Cart
             </button>
         </a>
@@ -120,8 +153,8 @@
         <br><br>
 
         <a href="/payment/{{ product.name }}/{{ product.price }}">
-            <button style="width:220px;background:#fb641b;">
-                ⚡ Buy Now
+            <button class="product-detail-btn buy-now-btn">
+                🛍️ Buy Now
             </button>
         </a>
 
