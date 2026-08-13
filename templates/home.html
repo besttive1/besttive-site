@@ -3,7 +3,17 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BESTTIVE</title>
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='mobile.css') }}"
+          media="(max-width: 768px)">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='desktop.css') }}"
+          media="(min-width: 769px)">
+
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -48,9 +58,29 @@
             Login
         </span>
 
-        <span>
-            More
-        </span>
+        <div class="more-menu-wrapper">
+
+    <span class="more-btn" onclick="toggleMoreMenu()">
+        More ›
+    </span>
+
+    <div id="moreMenu" class="more-dropdown">
+
+        <a href="#">🏠 ABOUT BESTTIVE</a>
+        <a href="#">📞 Contact Us</a>
+        <a href="#">❓ Help & FAQs</a>
+        <a href="#">🚚 Track Order</a>
+        <a href="#">↩️ Returns & Refunds</a>
+        <a href="#">🚚 Shipping Information</a>
+        <a href="#">💳 Payment Information</a>
+        <a href="#">⭐ Customer Reviews</a>
+        <a href="#">📱 Download App</a>
+        <a href="#">📜 Terms & Conditions</a>
+        <a href="#">🔒 Privacy Policy</a>
+
+    </div>
+
+    </div>
 
         <a href="/cart">
             <i class="fas fa-shopping-cart"></i>
@@ -647,6 +677,26 @@ if (desktopHero) {
         isDraggingHero = false;
     });
 }
+
+function toggleMoreMenu() {
+    const menu = document.getElementById("moreMenu");
+
+    if (menu.style.display === "block") {
+        menu.style.display = "none";
+    } else {
+        menu.style.display = "block";
+    }
+}
+
+document.addEventListener("click", function(event) {
+    const wrapper = document.querySelector(".more-menu-wrapper");
+    const menu = document.getElementById("moreMenu");
+
+    if (wrapper && menu && !wrapper.contains(event.target)) {
+        menu.style.display = "none";
+    }
+});
+
 </script>
 
 <script>

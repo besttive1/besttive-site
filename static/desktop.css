@@ -1,0 +1,103 @@
+/* DESKTOP PRODUCT CONTENT ALIGNMENT */
+
+@media (min-width: 769px) {
+
+    .card {
+        text-align: left !important;
+    }
+
+    .card h3,
+    .card h3 a,
+    .card .product-description,
+    .card > p {
+        text-align: left !important;
+        display: block !important;
+        width: 100% !important;
+    }
+
+}
+
+
+/* DESKTOP HERO - FINAL */
+
+@media (min-width: 769px) {
+
+    .hero-slider {
+        width: 92% !important;
+        max-width: 1400px !important;
+        height: 400px !important;
+        margin: 15px auto !important;
+
+        overflow: hidden !important;
+        border-radius: 12px !important;
+        background: white !important;
+    }
+
+    .hero-slides {
+        width: 100% !important;
+        height: 400px !important;
+        display: flex !important;
+    }
+
+    .hero-slides img {
+        width: 100% !important;
+        height: 400px !important;
+        min-width: 100% !important;
+        flex: 0 0 100% !important;
+
+        display: block !important;
+
+        object-fit: fill !important;
+        object-position: center !important;
+
+        background: white !important;
+    }
+
+    /* DESKTOP ARROWS HIDE */
+
+    .hero-prev,
+    .hero-next {
+        display: none !important;
+    }
+
+}
+@media (min-width: 769px) {
+    .mobile-filter-buttons {
+        display: none !important;
+    }
+
+    .mobile-filter-drawer,
+    .mobile-sort-drawer {
+        display: none !important;
+    }
+}
+
+/* =========================================
+   DESKTOP SEARCH - MOBILE STYLE
+   ========================================= */
+
+@media (min-width: 769px) {
+
+    .besttive-search {
+        height: 46px !important;
+        max-width: 670px !important;
+        border-radius: 8px !important;
+    }
+
+    .besttive-search .search-left {
+        font-size: 19px !important;
+        margin-left: 14px !important;
+    }
+
+    .besttive-search input {
+        font-size: 12px !important;
+        padding: 0 10px !important;
+    }
+
+    .besttive-search button {
+        width: 55px !important;
+        height: 46px !important;
+        font-size: 18px !important;
+    }
+
+}
