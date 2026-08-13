@@ -22,33 +22,42 @@
             margin-bottom: 20px;
         }
 
-        /* TOOLBAR */
+
+        /* DELETE BUTTON */
 
         .complaint-toolbar {
+            width: 100%;
             display: flex;
+            justify-content: flex-end;
             align-items: center;
-            gap: 10px;
             margin-bottom: 20px;
         }
 
-        .delete-mode-btn,
-        .confirm-delete-btn {
+        .delete-mode-btn {
             border: none;
             border-radius: 7px;
-            padding: 10px 16px;
+
+            padding: 9px 16px;
+
+            background: #4b0082 !important;
             color: white;
+
+            font-size: 14px;
             font-weight: 600;
+
             cursor: pointer;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: auto !important;
         }
 
-        .delete-mode-btn {
-            background: #dc3545;
+        .delete-mode-btn:hover {
+            background: #310058 !important;
         }
 
-        .confirm-delete-btn {
-            display: none;
-            background: #b00020;
-        }
 
         /* COMPLAINT CARD */
 
@@ -85,6 +94,7 @@
             border-radius: 8px;
         }
 
+
         /* CHECKBOX */
 
         .complaint-checkbox {
@@ -97,6 +107,7 @@
 
             cursor: pointer;
         }
+
 
         /* EMPTY */
 
@@ -112,6 +123,7 @@
             border-radius: 10px;
         }
 
+
         /* MOBILE */
 
         @media (max-width: 600px) {
@@ -122,11 +134,10 @@
             }
 
             .complaint-toolbar {
-                flex-wrap: wrap;
+                justify-content: flex-end;
             }
 
-            .delete-mode-btn,
-            .confirm-delete-btn {
+            .delete-mode-btn {
                 font-size: 13px;
                 padding: 9px 13px;
             }
@@ -140,6 +151,7 @@
     </style>
 </head>
 
+
 <body>
 
     <div class="contact-admin">
@@ -147,30 +159,24 @@
         <h1>Customer Complaints</h1>
 
 
-        <!-- DELETE BUTTONS -->
+        <!-- SINGLE DELETE BUTTON -->
 
         <div class="complaint-toolbar">
 
-            <button type="button"
-                    class="delete-mode-btn"
-                    onclick="enableDeleteMode()">
-                🗑️ Delete
-            </button>
+    <form action="/admin/delete-complaints"
+          method="POST"
+          id="deleteForm">
 
-            <form action="/admin/delete-complaints"
-                  method="POST"
-                  id="deleteForm">
+        <button type="button"
+                class="delete-mode-btn"
+                id="deleteBtn"
+                onclick="handleDeleteClick()">
+            🗑️ Delete
+        </button>
 
-                <button type="submit"
-                        class="confirm-delete-btn"
-                        id="confirmDeleteBtn"
-                        onclick="return confirmDelete()">
-                    🗑️ Delete Selected
-                </button>
+    </form>
 
-            </form>
-
-        </div>
+</div>
 
 
         <!-- COMPLAINTS -->
@@ -192,15 +198,18 @@
                         {{ msg.name }}
                     </h3>
 
+
                     <p>
                         <strong>Email:</strong>
                         {{ msg.email }}
                     </p>
 
+
                     <p>
                         <strong>Phone:</strong>
                         {{ msg.phone or "Not provided" }}
                     </p>
+
 
                     <p class="message-text">
 
@@ -213,6 +222,7 @@
                 </div>
 
             {% endfor %}
+
 
         {% else %}
 
@@ -229,28 +239,10 @@
 
     <script>
 
-        function enableDeleteMode() {
+        function handleDeleteClick(event) {
 
             const checkboxes =
                 document.querySelectorAll(".complaint-checkbox");
-
-            const confirmButton =
-                document.getElementById("confirmDeleteBtn");
-
-
-            checkboxes.forEach(function (checkbox) {
-
-                checkbox.style.display = "block";
-
-            });
-
-
-            confirmButton.style.display = "inline-block";
-
-        }
-
-
-        function confirmDelete() {
 
             const selected =
                 document.querySelectorAll(
@@ -258,22 +250,61 @@
                 );
 
 
+            /* FIRST CLICK
+               SHOW CHECKBOXES */
+
             if (selected.length === 0) {
 
-                alert("Please select at least one complaint.");
+                event.preventDefault();
+
+                checkboxes.forEach(function (checkbox) {
+
+                    checkbox.style.display = "block";
+
+                });
 
                 return false;
-
             }
 
+
+            /* SECOND CLICK
+               DELETE SELECTED */
 
             return confirm(
                 "Are you sure you want to delete the selected complaint(s)?"
             );
-
         }
 
     </script>
+<script>
+function handleDeleteClick() {
+
+    const checkboxes = document.querySelectorAll(".complaint-checkbox");
+
+    const selected = document.querySelectorAll(
+        ".complaint-checkbox:checked"
+    );
+
+    // First click: show checkboxes
+    if (selected.length === 0) {
+
+        checkboxes.forEach(function (checkbox) {
+            checkbox.style.display = "block";
+        });
+
+        return;
+    }
+
+    // Second click: confirm and delete
+    const confirmDelete = confirm(
+        "Are you sure you want to delete the selected complaint(s)?"
+    );
+
+    if (confirmDelete) {
+        document.getElementById("deleteForm").submit();
+    }
+}
+</script>
 
 </body>
 </html>

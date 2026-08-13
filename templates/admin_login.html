@@ -1,31 +1,396 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Admin Login</title>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>BESTTIVE Admin Login</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-family: Arial, sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f8f5ff,
+                    #eee4ff
+                );
+        }
+
+
+        /* LOGIN CARD */
+
+        .admin-login-card {
+
+            width: 90%;
+            max-width: 420px;
+
+            background: white;
+
+            padding: 40px 35px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 15px 40px rgba(75, 0, 130, 0.15);
+
+            border: 1px solid #eee5ff;
+
+        }
+
+
+        /* LOGO */
+
+        .admin-logo {
+
+            width: 70px;
+            height: 70px;
+
+            margin: 0 auto 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #4b0082;
+
+            color: white;
+
+            font-size: 30px;
+            font-weight: bold;
+
+            box-shadow:
+                0 8px 20px rgba(75, 0, 130, 0.25);
+
+        }
+
+
+        /* TITLE */
+
+        h1 {
+
+            text-align: center;
+
+            margin: 0;
+
+            color: #4b0082;
+
+            font-size: 28px;
+
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            color: #777;
+
+            font-size: 14px;
+
+            margin: 8px 0 30px;
+
+        }
+
+
+        /* LABEL */
+
+        label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #333;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+        }
+
+
+        /* INPUT */
+
+        .input-group {
+
+            margin-bottom: 20px;
+
+        }
+
+
+        input {
+
+            width: 100%;
+
+            padding: 13px 14px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+
+            outline: none;
+
+            font-size: 15px;
+
+            transition: 0.2s;
+
+        }
+
+
+        input:focus {
+
+            border-color: #4b0082;
+
+            box-shadow:
+                0 0 0 3px rgba(75, 0, 130, 0.10);
+
+        }
+
+
+        /* LOGIN BUTTON */
+
+        .login-btn {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #4b0082;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+
+        .login-btn:hover {
+
+            background: #310058;
+
+            transform: translateY(-1px);
+
+        }
+
+
+        /* ERROR */
+
+        .error-message {
+
+            background: #fff0f0;
+
+            color: #c62828;
+
+            padding: 10px;
+
+            border-radius: 7px;
+
+            margin-bottom: 18px;
+
+            text-align: center;
+
+            font-size: 14px;
+
+        }
+
+
+        /* FOOTER */
+
+        .admin-footer {
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: #999;
+
+            font-size: 12px;
+
+        }
+
+
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 20px;
+
+            }
+
+            .admin-login-card {
+
+                width: 100%;
+
+                padding: 32px 22px;
+
+                border-radius: 15px;
+
+            }
+
+            .admin-logo {
+
+                width: 60px;
+                height: 60px;
+
+                font-size: 26px;
+
+            }
+
+            h1 {
+
+                font-size: 24px;
+
+            }
+
+            .subtitle {
+
+                margin-bottom: 25px;
+
+            }
+
+            input {
+
+                padding: 12px;
+
+            }
+
+            .login-btn {
+
+                padding: 12px;
+
+            }
+
+        }
+
+    </style>
+
 </head>
+
+
 <body>
 
-<h2>Besttive Admin Login</h2>
 
-<form method="POST">
+<div class="admin-login-card">
 
-    <input type="text"
-           name="username"
-           placeholder="Username"
-           required>
 
-    <br><br>
+    <div class="admin-logo">
+        B
+    </div>
 
-    <input type="password"
-           name="password"
-           placeholder="Password"
-           required>
 
-    <br><br>
+    <h1>BESTTIVE</h1>
 
-    <button type="submit">Login</button>
+    <div class="subtitle">
+        Admin Panel Login
+    </div>
 
-</form>
+
+    {% if error %}
+
+        <div class="error-message">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+
+    <!-- IMPORTANT:
+         Apna existing form action/method yahin rakho
+         agar tumhare current admin login me alag hai.
+    -->
+
+    <form method="POST">
+
+
+        <div class="input-group">
+
+            <label for="username">
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                name="username"
+                value="admin"
+                placeholder="Enter username"
+                required
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter password"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="login-btn">
+
+            🔐 Login
+
+        </button>
+
+
+    </form>
+
+
+    <div class="admin-footer">
+
+        BESTTIVE Admin Panel
+
+    </div>
+
+
+</div>
+
 
 </body>
+
 </html>

@@ -33,14 +33,41 @@
 
 <td>
 
-<a href="{{ url_for('edit_product', id=product.id) }}" class="btn btn-warning">
-    Edit
-</a>
+    <a href="{{ url_for('edit_product', id=product.id) }}"
+       style="
+       display:inline-block;
+       padding:8px 14px;
+       background:#4b0082;
+       color:white;
+       border-radius:7px;
+       text-decoration:none;
+       font-size:14px;
+       font-weight:600;
+       margin:2px;
+       ">
+        Edit
+    </a>
 
-<a href="/admin/delete-product/{{ product.id }}"
-   onclick="return confirm('Delete this product?')">
-    <button>Delete</button>
-</a>
+    <a href="/admin/delete-product/{{ product.id }}"
+       onclick="return confirm('Delete this product?')"
+       style="text-decoration:none;">
+
+        <button type="button"
+                style="
+                padding:8px 14px;
+                background:#4b0082;
+                color:white;
+                border:none;
+                border-radius:7px;
+                font-size:14px;
+                font-weight:600;
+                cursor:pointer;
+                margin:2px;
+                ">
+            Delete
+        </button>
+
+    </a>
 
 </td>
 

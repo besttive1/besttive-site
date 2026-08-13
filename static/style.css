@@ -1896,36 +1896,53 @@ background: #310058;
 
 }
 
-.complaint-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+/* ========================================= 
+   COMPLAINT DELETE BUTTON 
+   ========================================= */ 
+
+.complaint-toolbar { 
+    width: 100%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: flex-end; 
+    gap: 10px; 
+    margin-bottom: 20px; 
+    box-sizing: border-box; 
+} 
+
+.delete-mode-btn, 
+.confirm-delete-btn { 
+    width: auto !important; 
+    min-width: auto !important; 
+
+    display: inline-flex !important; 
+    align-items: center; 
+    justify-content: center; 
+
+    padding: 9px 16px !important; 
+
+    border: none; 
+    border-radius: 7px; 
+
+    color: white; 
+
+    font-size: 14px; 
+    font-weight: 600; 
+
+    cursor: pointer; 
+} 
+
+.delete-mode-btn { 
+    background: #4b0082 !important; 
+} 
+
+.confirm-delete-btn { 
+    display: none; 
+    background: #4b0082 !important; 
+} 
+
+.delete-mode-btn:hover, 
+.confirm-delete-btn:hover { 
+    background: #310058 !important; 
 }
 
-.delete-mode-btn,
-.confirm-delete-btn {
-    border: none;
-    border-radius: 7px;
-    padding: 10px 16px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.delete-mode-btn {
-    background: #dc3545;
-}
-
-.confirm-delete-btn {
-    display: none;
-    background: #b00020;
-}
-
-.complaint-checkbox {
-    display: none;
-    width: 18px;
-    height: 18px;
-    margin-bottom: 12px;
-    cursor: pointer;
-}

@@ -734,3 +734,61 @@
     }
 
 }
+
+/* =========================================
+   ADMIN DASHBOARD - MOBILE ONLY
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    /* Main dashboard area */
+    .main-content,
+    .content,
+    .admin-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px !important;
+    }
+
+
+    /* Sidebar */
+    .sidebar {
+        width: 100% !important;
+        height: auto !important;
+        position: relative !important;
+    }
+
+
+    /* Dashboard heading */
+    h1,
+    h2 {
+        font-size: 24px !important;
+        margin-bottom: 20px !important;
+    }
+
+
+    /* Dashboard cards */
+    .dashboard-cards,
+    .stats-container,
+    .cards {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+
+    .dashboard-card,
+    .stat-card,
+    .card {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+
+    /* General tables */
+    table {
+        width: 100% !important;
+        font-size: 13px !important;
+    }
+
+}

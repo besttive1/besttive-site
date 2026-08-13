@@ -1192,6 +1192,22 @@ def update_order_status(id):
 
     return redirect("/admin/orders")
 
+@app.route("/admin/delete-orders", methods=["POST"])
+def delete_orders():
+
+    order_ids = request.form.getlist("order_ids")
+
+    for order_id in order_ids:
+
+        order = Order.query.get(int(order_id))
+
+        if order:
+            db.session.delete(order)
+
+    db.session.commit()
+
+    return redirect("/admin/orders")
+
 @app.route("/admin/customers")
 def admin_customers():
 
