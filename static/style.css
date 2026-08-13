@@ -1328,20 +1328,16 @@ color: #f4d06f;
    ===================================================== */
 
 .category-bar .cat {
-min-height: 78px;
+min-height: 70px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     border-radius: 12px;
-
     text-decoration: none;
-
     font-size: 15px;
     font-weight: 600;
-
     transition: 0.25s;
 }
 
@@ -1511,17 +1507,11 @@ display: flex !important;
 
         overflow-x: auto !important;
         overflow-y: hidden;
-
         gap: 10px;
-
         padding: 12px;
-
         background: white;
-
         justify-content: flex-start !important;
-
         -webkit-overflow-scrolling: touch;
-
         scrollbar-width: none;
 }
 
@@ -1535,8 +1525,8 @@ flex: 0 0 105px !important;
         width: 105px !important;
         min-width: 105px !important;
 
-        height: 72px;
-        min-height: 72px;
+        height: 63px;
+        min-height: 63px;
 
         border-radius: 10px;
 
@@ -1781,6 +1771,75 @@ text-align: left !important;
     }
 }
 @media (max-width: 768px) {
+    .hero-prev,
+    .hero-next {
+        display: none !important;
+    }
+}
+/* FIX MOBILE FILTER + SORT TEXT */
+
+@media (max-width: 768px) {
+
+    .mobile-filter-buttons {
+        display: flex !important;
+        gap: 10px !important;
+    }
+
+    .mobile-filter-buttons button {
+        color: #222 !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        text-indent: 0 !important;
+        white-space: nowrap !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        overflow: visible !important;
+    }
+}   
+/* CATEGORY ICON SIZE - DESKTOP + MOBILE */
+
+.category-icon {
+    font-size: 38px !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+}
+/* DESKTOP HERO - FINAL */
+
+@media (min-width: 769px) {
+
+    .hero-slider {
+        width: 92% !important;
+        max-width: 1400px !important;
+        height: 400px !important;
+        margin: 15px auto !important;
+
+        overflow: hidden !important;
+        border-radius: 12px !important;
+        background: white !important;
+    }
+
+    .hero-slides {
+        width: 100% !important;
+        height: 400px !important;
+        display: flex !important;
+    }
+
+    .hero-slides img {
+        width: 100% !important;
+        height: 400px !important;
+        min-width: 100% !important;
+        flex: 0 0 100% !important;
+
+        display: block !important;
+
+        /* IMAGE POORI DIKHEGI - CUT NAHI HOGI */
+        object-fit: fill !important;
+        object-position: center !important;
+
+        background: white !important;
+    }
+
+    /* DESKTOP ARROWS HIDE */
     .hero-prev,
     .hero-next {
         display: none !important;

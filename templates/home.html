@@ -49,7 +49,6 @@
         </span>
 
         <span>
-            <i class="fas fa-ellipsis-h"></i>
             More
         </span>
 
@@ -74,36 +73,43 @@
   </ul>
 </div>
 
-<!-- 🛍 CATEGORY BAR -->
 <div class="category-bar">
+
     <a href="/?category=Clothes" class="cat">
-        👕
+        <span class="category-icon">👕</span>
         <p>Clothes</p>
     </a>
+
     <a href="/?category=Electronics" class="cat">
-        💻
+        <span class="category-icon">💻</span>
         <p>Electronics</p>
     </a>
+
     <a href="/?category=Beauty" class="cat">
-        💄
+        <span class="category-icon">💄</span>
         <p>Beauty</p>
     </a>
+
     <a href="/?category=Home" class="cat">
-        🏠
+        <span class="category-icon">🏠</span>
         <p>Home</p>
     </a>
+
     <a href="/?category=Toys" class="cat">
-        🧸
+        <span class="category-icon">🧸</span>
         <p>Toys</p>
     </a>
+
     <a href="/?category=Jewellery" class="cat">
-        💎
+        <span class="category-icon">💎</span>
         <p>Jewellery</p>
     </a>
+
     <a href="/?category=Shoes" class="cat">
-        👟
+        <span class="category-icon">👟</span>
         <p>Shoes</p>
     </a>
+
 </div>
 
 <!-- CATEGORY PAGE -->
@@ -111,11 +117,11 @@
 <!-- MOBILE FILTER & SORT BUTTONS -->
 
 <div class="mobile-filter-buttons">
-    <button type="button" onclick="openMobileFilters()">
+    <button type="button" onclick="openMobileFilters()"> 
         🔽 FILTER
     </button>
-    <button type="button" onclick="openMobileSort()">
-        ⇅ SORT
+    <button type="button" onclick="openMobileSort()"> 
+        ↕️ SORT
     </button>
 </div>
 
@@ -124,62 +130,45 @@
 <!-- MOBILE FILTER DRAWER -->
 
 <div id="mobileFilterDrawer" class="mobile-filter-drawer">
-
     <div class="mobile-filter-header">
-
         <h3>Filters</h3>
-
         <button type="button" onclick="closeMobileFilters()">
             ✕
         </button>
-
     </div>
-
 
     <!-- SUBCATEGORY -->
 
     <div class="mobile-filter-section">
 
         <h4>SUBCATEGORY</h4>
-
         <a href="/?category={{ category }}"
            class="filter-option">
-
             All
-
         </a>
 
         {% for sub in subcategories %}
 
             <a href="/?category={{ category }}&subcategory={{ sub }}"
                class="filter-option">
-
                 {{ sub }}
-
             </a>
 
         {% endfor %}
 
     </div>
-
-
     <hr>
-
 
     <!-- PRICE -->
 
     <div class="mobile-filter-section">
-
         <h4>PRICE</h4>
-
         <form action="/" method="GET">
-
             <input type="hidden"
                    name="category"
                    value="{{ category }}">
 
             {% if subcategory %}
-
                 <input type="hidden"
                        name="subcategory"
                        value="{{ subcategory }}">
@@ -199,27 +188,19 @@
             <button type="submit">
                 Apply Filter
             </button>
-
         </form>
-
     </div>
-
 </div>
 
 <!-- MOBILE SORT DRAWER -->
 
 <div id="mobileSortDrawer" class="mobile-sort-drawer">
-
     <div class="mobile-filter-header">
-
         <h3>Sort By</h3>
-
         <button type="button" onclick="closeMobileSort()">
             ✕
         </button>
-
     </div>
-
 
     <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=newest">
         Newest
@@ -248,9 +229,7 @@
         <!-- SUBCATEGORY -->
 
         <div class="filter-section">
-
             <h4>SUBCATEGORY</h4>
-
             <a href="/?category={{ category }}"
                class="filter-option">
 
@@ -270,19 +249,12 @@
             {% endfor %}
 
         </div>
-
-
         <hr>
 
-
         <!-- PRICE -->
-
         <div class="filter-section">
-
             <h4>PRICE</h4>
-
             <form action="/" method="GET">
-
                 <input type="hidden"
                        name="category"
                        value="{{ category }}">
@@ -301,24 +273,17 @@
                        placeholder="Min Price"
                        value="{{ min_price or '' }}">
 
-
                 <input type="number"
                        name="max_price"
                        placeholder="Max Price"
                        value="{{ max_price or '' }}">
 
-
                 <button type="submit">
                     Apply
                 </button>
-
             </form>
-
         </div>
-
-
         <hr>
-
 
         <!-- SORT -->
 
@@ -326,14 +291,11 @@
 
             <h4>SORT BY</h4>
 
-
             <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=newest"
                class="filter-option">
 
                 Newest
-
             </a>
-
 
             <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=low"
                class="filter-option">
@@ -342,53 +304,38 @@
 
             </a>
 
-
             <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=high"
                class="filter-option">
 
                 Price: High to Low
 
             </a>
-
         </div>
-
     </aside>
 
 
     <!-- RIGHT SIDE PRODUCTS -->
 
     <main class="category-products">
-
-
         <div class="category-heading">
-
             <h2>
                 {{ category }}
             </h2>
-
-
             {% if subcategory %}
-
                 <p>
                     {{ subcategory }}
                 </p>
-
             {% endif %}
-
 
             <span>
                 {{ products|length }} Products
             </span>
-
         </div>
-
 
         <!-- PRODUCTS -->
 
         <div class="products">
-
             {% for product in products %}
-
                 <div class="card">
                     
                     <a href="/product/{{ product.id }}">
@@ -396,7 +343,6 @@
                         <img src="{{ product.image }}">
 
                     </a>
-
 
                     <h3>
 
@@ -429,20 +375,13 @@
                         </a>
                     
                     </div>
-
                 </div>
-
             {% endfor %}
-
         </div>
-
     </main>
-
 </div>
 
-
 {% else %}
-
 
 <!-- NORMAL HOME PAGE -->
  
@@ -667,6 +606,46 @@ if (heroSlider) {
 
         }
     }, { passive: true });
+}
+
+/* DESKTOP MOUSE DRAG */
+
+let mouseStartX = 0;
+let mouseEndX = 0;
+let isDraggingHero = false;
+
+const desktopHero = document.querySelector(".hero-slider");
+
+if (desktopHero) {
+
+    desktopHero.addEventListener("mousedown", function(e) {
+        isDraggingHero = true;
+        mouseStartX = e.clientX;
+    });
+
+    desktopHero.addEventListener("mouseup", function(e) {
+
+        if (!isDraggingHero) return;
+
+        mouseEndX = e.clientX;
+        isDraggingHero = false;
+
+        let dragDistance = mouseEndX - mouseStartX;
+
+        if (Math.abs(dragDistance) > 50) {
+
+            if (dragDistance < 0) {
+                changeHeroSlide(1);
+            } else {
+                changeHeroSlide(-1);
+            }
+
+        }
+    });
+
+    desktopHero.addEventListener("mouseleave", function() {
+        isDraggingHero = false;
+    });
 }
 </script>
 
