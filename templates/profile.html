@@ -1,46 +1,397 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>My Profile - BESTTIVE</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            font-family: Arial, sans-serif;
+
+            background: #f6f1fb;
+
+            display: flex;
+            justify-content: center;
+
+            padding: 40px 15px;
+        }
+
+        .profile-container {
+            width: 100%;
+            max-width: 600px;
+
+            background: #ffffff;
+
+            padding: 35px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 10px 35px rgba(75, 0, 130, 0.15);
+
+            border: 1px solid #eadff5;
+        }
+
+        .profile-header {
+            text-align: center;
+
+            margin-bottom: 30px;
+        }
+
+        .profile-icon {
+            width: 70px;
+            height: 70px;
+
+            margin: 0 auto 15px;
+
+            border-radius: 50%;
+
+            background: #4b0082;
+
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 32px;
+
+            box-shadow:
+                0 5px 15px rgba(75, 0, 130, 0.25);
+        }
+
+        .profile-header h2 {
+            margin: 0;
+
+            color: #4b0082;
+
+            font-size: 28px;
+        }
+
+        .profile-header p {
+            margin-top: 8px;
+
+            color: #777;
+
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #333;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+
+            padding: 12px 14px;
+
+            border: 1px solid #d3c8df;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            font-family: Arial, sans-serif;
+
+            outline: none;
+
+            background: white;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #4b0082;
+
+            box-shadow:
+                0 0 0 3px rgba(75, 0, 130, 0.10);
+        }
+
+        .form-group input[readonly] {
+            background: #f4f1f7;
+
+            color: #777;
+
+            cursor: not-allowed;
+        }
+
+        .save-btn {
+            width: 100%;
+
+            padding: 13px;
+
+            margin-top: 5px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #4b0082;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .save-btn:hover {
+            background: #310058;
+        }
+
+        .profile-links {
+            text-align: center;
+
+            margin-top: 25px;
+
+            font-size: 14px;
+        }
+
+        .profile-links a {
+            color: #4b0082;
+
+            text-decoration: none;
+
+            font-weight: 600;
+        }
+
+        .profile-links a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            color: #bbb;
+
+            margin: 0 8px;
+        }
+
+
+        /* ================================
+           MOBILE
+           ================================ */
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 20px 12px;
+            }
+
+            .profile-container {
+                padding: 25px 20px;
+
+                border-radius: 15px;
+            }
+
+            .profile-header h2 {
+                font-size: 24px;
+            }
+
+            .profile-icon {
+                width: 60px;
+                height: 60px;
+
+                font-size: 27px;
+            }
+
+            .form-group {
+                margin-bottom: 17px;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                font-size: 16px;
+
+                padding: 12px;
+            }
+
+            .save-btn {
+                padding: 14px;
+
+                font-size: 16px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
+
 <body>
 
-<h2>👤 My Profile</h2>
 
-<form method="POST">
-
-    <label>Full Name</label><br>
-    <input type="text" name="name" value="{{ user.name }}"><br><br>
-
-    <label>Email</label><br>
-    <input type="email" value="{{ user.email }}" readonly><br><br>
-
-    <label>Mobile Number</label><br>
-    <input
-        type="tel"
-        name="phone"
-        value="{{ user.phone or '' }}"
-        placeholder="Enter Mobile Number"
-    ><br><br>
-
-    <label>Address</label><br>
-    <textarea name="address">{{ user.address }}</textarea><br><br>
-
-    <label>Date of Birth</label><br>
-    <input type="date" name="dob" value="{{ user.dob }}"><br><br>
-
-    <button type="submit">💾 Save Changes</button>
-
-</form>
+<div class="profile-container">
 
 
-    <br>
+    <!-- PROFILE HEADER -->
 
-    <a href="/">🏠 Back to Home</a> |
-    <a href="/logout">Logout</a>
+    <div class="profile-header">
+
+        <div class="profile-icon">
+            👤
+        </div>
+
+        <h2>My Profile</h2>
+
+        <p>
+            Manage your BESTTIVE account details
+        </p>
+
+    </div>
+
+
+    <!-- PROFILE FORM -->
+
+    <form method="POST">
+
+
+        <div class="form-group">
+
+            <label>
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                name="name"
+                value="{{ user.name }}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                value="{{ user.email }}"
+                readonly
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Mobile Number
+            </label>
+
+            <input
+                type="tel"
+                name="phone"
+                value="{{ user.phone or '' }}"
+                placeholder="Enter Mobile Number"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Address
+            </label>
+
+            <textarea
+                name="address"
+                placeholder="Enter your address"
+            >{{ user.address }}</textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Date of Birth
+            </label>
+
+            <input
+                type="date"
+                name="dob"
+                value="{{ user.dob }}"
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="save-btn">
+
+            💾 Save Changes
+
+        </button>
+
+
+    </form>
+
+
+    <!-- LINKS -->
+
+    <div class="profile-links">
+
+        <a href="/">
+            🏠 Back to Home
+        </a>
+
+        <span class="divider">|</span>
+
+        <a href="/logout">
+            Logout
+        </a>
+
+    </div>
+
 
 </div>
 
+
 </body>
+
 </html>

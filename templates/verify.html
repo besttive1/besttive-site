@@ -1,30 +1,231 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Verify OTP - BESTTIVE</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Verify OTP | BESTTIVE</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            font-family: Arial, sans-serif;
+
+            background: #f6f1fb;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .otp-card {
+            width: 420px;
+            max-width: 92%;
+
+            background: white;
+
+            padding: 40px 35px;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 10px 35px rgba(75, 0, 130, 0.15);
+
+            text-align: center;
+        }
+
+        .otp-icon {
+            width: 65px;
+            height: 65px;
+
+            margin: 0 auto 18px;
+
+            border-radius: 50%;
+
+            background: #4b0082;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 28px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+
+            color: #4b0082;
+
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #777;
+
+            margin-bottom: 30px;
+
+            font-size: 14px;
+        }
+
+        label {
+            display: block;
+
+            text-align: left;
+
+            margin-bottom: 8px;
+
+            color: #333;
+
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 14px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 8px;
+
+            font-size: 20px;
+
+            text-align: center;
+            
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #4b0082;
+
+            box-shadow:
+                0 0 0 3px rgba(75, 0, 130, 0.10);
+        }
+
+        .verify-btn {
+            width: 100%;
+
+            margin-top: 20px;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #4b0082;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .verify-btn:hover {
+            background: #310058;
+        }
+
+        .resend {
+            margin-top: 20px;
+
+            font-size: 14px;
+
+            color: #777;
+        }
+
+        .resend a {
+            color: #4b0082;
+
+            font-weight: 600;
+
+            text-decoration: none;
+        }
+
+        .security-text {
+            margin-top: 18px;
+
+            font-size: 13px;
+
+            color: #777;
+        }
+
+        @media (max-width: 500px) {
+
+            .otp-card {
+                padding: 32px 22px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 <body>
 
-<h2>Verify OTP</h2>
+<div class="otp-card">
 
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    {% for message in messages %}
-      <p style="color:red;">{{ message }}</p>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+    <div class="otp-icon">
+        🔐
+    </div>
 
-<form method="POST">
-    <input
-        type="text"
-        name="otp"
-        placeholder="Enter OTP"
-        required
-    >
+    <h1>Verify OTP</h1>
 
-    <button type="submit">Verify OTP</button>
-</form>
+    <div class="subtitle">
+        Enter the OTP sent to your email
+    </div>
+
+    <form method="POST">
+
+        <label for="otp">
+            One-Time Password
+        </label>
+
+        <input
+            type="text"
+            id="otp"
+            name="otp"
+            placeholder="ENTER OTP"
+            maxlength="4"
+            inputmode="numeric"
+            required
+        >
+
+        <button
+            type="submit"
+            class="verify-btn">
+            ✓ Verify OTP
+        </button>
+
+    </form>
+
+    <div class="resend">
+        Didn't receive OTP?
+        <a href="/login">Request Again</a>
+    </div>
+
+    <div class="security-text">
+        🔒 BESTTIVE secure verification
+    </div>
+
+</div>
 
 </body>
 </html>
