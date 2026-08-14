@@ -854,86 +854,195 @@
 }
 
 /* =========================================
-   ADMIN CUSTOMERS - MOBILE
+   CUSTOMERS - MOBILE RESPONSIVE
    ========================================= */
 
 @media (max-width: 768px) {
 
-    body {
-        overflow-x: hidden;
-    }
-
-    /* Customers heading */
-    h2 {
-        font-size: 24px !important;
-        margin-bottom: 18px !important;
-    }
-
-    /* Remove Customers button */
-    .remove-customers-btn {
-        width: 100% !important;
-        padding: 11px 14px !important;
-        font-size: 14px !important;
-    }
-
-    .customer-actions {
-        width: 100% !important;
-        margin-bottom: 18px !important;
-    }
-
-    .customer-actions form {
-        width: 100% !important;
-    }
-
-    /* Customers table */
-    table {
-        display: block;
+    .customers-page {
+        margin-top: 20px;
         width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    }
+
+    .customers-page h2 {
+        font-size: 22px;
+        margin-bottom: 18px;
         white-space: nowrap;
     }
 
-    table th,
-    table td {
-        padding: 9px 11px !important;
-        font-size: 13px !important;
-        vertical-align: middle;
+    .customer-actions {
+        margin-bottom: 15px;
     }
 
-    /* Serial number */
-    .serial-number {
-        width: 50px !important;
-        min-width: 50px !important;
+    .remove-customers-btn {
+        padding: 9px 13px !important;
+        font-size: 13px !important;
+    }
+
+    /* TABLE SCROLL */
+
+    .customers-table {
+        display: table !important;
+
+        width: max-content !important;
+        min-width: 650px !important;
+
+        margin-top: 0 !important;
+    }
+
+    /* TABLE CELLS */
+
+    .customers-table th,
+    .customers-table td {
+        font-size: 12px !important;
+        padding: 9px 8px !important;
+        vertical-align: middle !important;
+    }
+
+    /* SERIAL NO */
+
+    .customers-table th:nth-child(2),
+    .customers-table td:nth-child(2) {
+        min-width: 55px;
+        width: 55px;
         text-align: center;
     }
 
-    /* Checkbox */
-    .checkboxColumn {
-        min-width: 55px !important;
+    /* NAME */
+
+    .customers-table th:nth-child(3),
+    .customers-table td:nth-child(3) {
+        min-width: 80px;
+    }
+
+    /* EMAIL */
+
+    .customers-table th:nth-child(4),
+    .customers-table td:nth-child(4) {
+        min-width: 160px;
+    }
+
+    /* MOBILE */
+
+    .customers-table th:nth-child(5),
+    .customers-table td:nth-child(5) {
+        min-width: 110px;
+    }
+
+    /* ADDRESS */
+
+    .customers-table th:nth-child(6),
+    .customers-table td:nth-child(6) {
+        min-width: 190px;
+
+        max-width: 220px;
+
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    /* DOB */
+
+    .customers-table th:nth-child(7),
+    .customers-table td:nth-child(7) {
+        min-width: 90px;
+    }
+
+    /* CHECKBOX COLUMN */
+
+    .customers-table .checkboxColumn {
+        min-width: 50px !important;
+        width: 50px !important;
         text-align: center;
     }
 
 }
 
 
-/* SMALL MOBILE */
+/* =========================================
+   VERY SMALL MOBILE
+   ========================================= */
 
 @media (max-width: 480px) {
 
-    body {
-        padding-left: 10px !important;
-        padding-right: 10px !important;
+    .customers-page {
+        width: 100%;
+        overflow-x: visible;
     }
 
-    h2 {
-        font-size: 22px !important;
+    .customers-page h2 {
+        font-size: 21px;
     }
 
-    table th,
-    table td {
+    /*
+       Table thodi badi rakhi hai,
+       isliye mobile par left-right slide hoga.
+    */
+
+    .customers-table {
+        min-width: 650px !important;
+    }
+
+    .customers-table th,
+    .customers-table td {
         font-size: 12px !important;
-        padding: 8px 10px !important;
+        padding: 8px !important;
+    }
+
+}
+
+.customers-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+
+    .customers-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .customers-table {
+        min-width: 650px !important;
+    }
+
+}
+/* =========================================
+   MOBILE - FULL WIDTH FIX
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden;
+    }
+
+    /* Main website wrapper */
+    .container,
+    .container-fluid {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Header */
+    header,
+    .header {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        border-radius: 0 !important;
     }
 
 }
