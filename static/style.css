@@ -1985,3 +1985,57 @@ background: #310058;
     }
 
 }
+
+/* =========================================
+   LOGIN MENU - SAME STYLE AS MORE MENU
+   ========================================= */
+
+.login-menu {
+    background: #ffffff !important;
+    border-radius: 10px !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18) !important;
+
+    overflow: hidden;
+    z-index: 9999;
+}
+
+/* Remove default UL spacing */
+
+.login-menu ul {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 5px 0 !important;
+}
+
+/* Login links */
+
+.login-menu ul li {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.login-menu ul li a {
+    display: block !important;
+
+    color: #333333 !important;
+
+    text-decoration: none !important;
+
+    padding: 9px 12px !important;
+
+    font-size: 14px !important;
+    font-weight: 400 !important;
+
+    white-space: nowrap;
+
+    border: none !important;
+}
+
+/* Hover */
+
+.login-menu ul li a:hover {
+    background: #f3eaff !important;
+    color: #4b0082 !important;
+
+    text-decoration: none !important;
+}
