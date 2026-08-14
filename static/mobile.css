@@ -1046,3 +1046,129 @@
     }
 
 }
+
+/* =========================================
+   ADMIN DASHBOARD - MOBILE
+   ========================================= */
+
+@media (max-width: 768px) {
+
+    body {
+        overflow-x: hidden;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 0;
+    }
+
+    .sidebar h2 {
+        padding: 15px 10px;
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .sidebar a {
+        display: inline-block;
+        width: 49%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        font-size: 13px;
+        vertical-align: top;
+    }
+
+
+    /* MAIN CONTENT */
+
+    .content {
+        margin-left: 0;
+        padding: 20px 12px;
+    }
+
+    .content > h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+
+    /* DASHBOARD CARDS */
+
+    .content .row {
+        margin-left: -6px;
+        margin-right: -6px;
+    }
+
+    .content .row > div {
+        width: 50%;
+        padding-left: 6px;
+        padding-right: 6px;
+        margin-bottom: 12px;
+    }
+
+    .card {
+        padding: 15px !important;
+        border-radius: 12px;
+        min-height: 105px;
+    }
+
+    .card h5 {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .card h2 {
+        font-size: 22px;
+        margin: 0;
+    }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+   ========================================= */
+
+@media (max-width: 480px) {
+
+    .sidebar h2 {
+        font-size: 22px;
+        padding: 14px 10px;
+    }
+
+    .sidebar a {
+        width: 49%;
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+
+    .content {
+        padding: 18px 10px;
+    }
+
+    .content > h2 {
+        font-size: 22px;
+    }
+
+    .content .row > div {
+        width: 50%;
+        margin-bottom: 10px;
+    }
+
+    .card {
+        padding: 13px !important;
+        min-height: 95px;
+    }
+
+    .card h5 {
+        font-size: 13px;
+    }
+
+    .card h2 {
+        font-size: 20px;
+    }
+
+}
