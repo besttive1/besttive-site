@@ -2,6 +2,10 @@
 
 @media (min-width: 769px) {
 
+    .track-order-form {
+        grid-template-columns: 1fr 1.35fr auto;
+    }
+
     .card {
         text-align: left !important;
     }

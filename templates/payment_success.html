@@ -71,6 +71,17 @@ table{
 <td>{{ product_name }}</td>
 </tr>
 
+{% if tracking_ids %}
+<tr>
+<th>Tracking ID{% if tracking_ids|length > 1 %}s{% endif %}</th>
+<td>
+    {% for tracking_id in tracking_ids %}
+        <strong>{{ tracking_id }}</strong>{% if not loop.last %}<br>{% endif %}
+    {% endfor %}
+</td>
+</tr>
+{% endif %}
+
 <tr>
 <th>Amount</th>
 <td>₹{{ amount }}</td>

@@ -7,6 +7,26 @@
 
 @media (max-width: 768px) {
 
+    .track-order-form {
+        grid-template-columns: 1fr;
+    }
+
+    .order-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .order-result-heading {
+        flex-direction: column;
+    }
+
+    .customer-orders-hero { min-height: 225px; padding: 25px 5% 55px; }
+    .orders-home-link { margin-bottom: 30px; }
+    .customer-orders-container { width: 90%; margin-top: -25px; }
+    .customer-order-card { padding: 18px; }
+    .customer-order-top { flex-direction: column; }
+    .customer-order-details { grid-template-columns: 1fr; gap: 8px; }
+    .customer-order-actions a { box-sizing: border-box; width: 100%; text-align: center; }
+
     .hero-slider {
         width: 94% !important;
         height: 125px !important;

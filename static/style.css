@@ -1293,6 +1293,77 @@ background: #310058;
     color: #f4d06f;
 }
 
+/* TRACK ORDER */
+.track-order-page { background: #f7f4fb; color: #24143d; }
+.track-order-hero { padding: 72px 20px 78px; text-align: center; color: white; background: linear-gradient(135deg, #18002f, #5b168d); }
+.track-order-hero h1 { margin: 0 0 12px; font-size: clamp(30px, 5vw, 46px); }
+.track-order-hero p { margin: 0; color: #eee5f7; }
+.track-order-container { width: min(92%, 760px); margin: -38px auto 60px; }
+.track-order-form, .order-result, .track-message { box-sizing: border-box; border-radius: 16px; box-shadow: 0 10px 30px rgba(39, 13, 73, .10); }
+.track-order-form { display: grid; align-items: end; gap: 13px; padding: 24px; background: white; }
+.track-field { min-width: 0; }
+.track-order-form label { font-size: 13px; font-weight: 700; color: #4b2c6a; }
+.track-order-form input { width: 100%; box-sizing: border-box; margin-top: 7px; padding: 12px; border: 1px solid #d9cce7; border-radius: 8px; font: inherit; }
+.track-order-form button { padding: 13px 20px; color: white; border: 0; border-radius: 8px; background: #4b0082; font: inherit; font-weight: 700; cursor: pointer; }
+.track-order-form button:hover { background: #310058; }
+.track-message { margin-top: 22px; padding: 15px 18px; }
+.track-error { color: #9d1c2f; background: #fff0f2; border: 1px solid #ffc8d0; }
+.order-result { margin-top: 22px; padding: 28px; background: white; }
+.order-result-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding-bottom: 22px; border-bottom: 1px solid #ece5f1; }
+.order-label { margin: 0 0 6px; color: #785b94; font-size: 14px; font-weight: 700; }
+.order-result h2 { margin: 0; font-size: 22px; }
+.order-status { padding: 7px 12px; border-radius: 99px; font-size: 13px; font-weight: 700; white-space: nowrap; color: #4b0082; background: #efe4fb; }
+.status-delivered { color: #10733d; background: #ddf7e8; }
+.status-cancelled { color: #a21d2f; background: #ffe5e8; }
+.status-shipped { color: #055eaa; background: #e0f2ff; }
+.order-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 23px 0; }
+.order-meta div { padding: 12px; border-radius: 10px; background: #faf8fc; }
+.order-meta span, .order-meta strong { display: block; }
+.order-meta span { margin-bottom: 5px; color: #755d89; font-size: 12px; }
+.tracking-steps { display: flex; align-items: flex-start; padding-top: 6px; }
+.tracking-step { width: 92px; text-align: center; color: #9c8bab; font-size: 12px; font-weight: 700; }
+.tracking-step i { display: grid; place-items: center; width: 28px; height: 28px; margin: 0 auto 7px; border-radius: 50%; color: white; background: #cdbed9; font-style: normal; }
+.tracking-step.active { color: #4b0082; }
+.tracking-step.active i, .tracking-line.active { background: #4b0082; }
+.tracking-line { flex: 1; height: 3px; margin-top: 13px; background: #e3d9ea; }
+.track-back { display: inline-block; margin: 28px 0 0 4px; color: #4b0082; font-weight: 700; text-decoration: none; }
+
+/* CUSTOMER MY ORDERS */
+.customer-orders-page { min-height: 100vh; margin: 0; color: #26123e; background: #f8f5fb; font-family: Arial, sans-serif; }
+.customer-orders-hero { box-sizing: border-box; min-height: 250px; padding: 35px 7% 64px; color: white; background: linear-gradient(130deg, #17002e, #4b0082 62%, #6f26a9); }
+.orders-home-link { display: inline-block; margin-bottom: 38px; color: #f4d06f; font-size: 14px; font-weight: 700; text-decoration: none; }
+.customer-orders-hero p { margin: 0 0 8px; color: #e3c9ff; font-size: 12px; font-weight: 700; letter-spacing: 1.3px; }
+.customer-orders-hero h1 { margin: 0 0 10px; font-size: clamp(32px, 5vw, 48px); }
+.customer-orders-hero span { color: #f5edff; font-size: 16px; }
+.customer-orders-container { width: min(92%, 900px); margin: -34px auto 60px; }
+.orders-summary { display: inline-flex; align-items: center; gap: 9px; margin: 0 0 20px; padding: 11px 15px; border-radius: 12px; color: #4b0082; background: #fff; box-shadow: 0 7px 22px rgba(45, 7, 83, .12); }
+.orders-summary strong { display: grid; place-items: center; min-width: 24px; height: 24px; border-radius: 50%; color: white; background: #4b0082; font-size: 13px; }
+.orders-summary span { font-size: 14px; font-weight: 700; }
+.customer-orders-list { display: grid; gap: 18px; }
+.customer-order-card { padding: 25px; border: 1px solid #eee5f3; border-radius: 17px; background: #fff; box-shadow: 0 8px 28px rgba(44, 9, 80, .09); }
+.customer-order-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding-bottom: 20px; border-bottom: 1px solid #eee8f2; }
+.customer-order-id { margin: 0 0 7px; color: #6d468d; font-size: 13px; font-weight: 700; letter-spacing: .2px; }
+.customer-order-top h2 { margin: 0; font-size: 20px; }
+.customer-order-status { flex: none; padding: 7px 12px; border-radius: 99px; color: #4b0082; background: #eee2fa; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.customer-order-status.status-delivered { color: #11733e; background: #def8e9; }
+.customer-order-status.status-cancelled { color: #a01f30; background: #ffe4e8; }
+.customer-order-status.status-shipped { color: #0d62ae; background: #e1f2ff; }
+.customer-order-status.status-payment-verification { color: #895800; background: #fff0bd; }
+.customer-order-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 21px 0; }
+.customer-order-details div { padding: 11px; border-radius: 10px; background: #faf8fc; }
+.customer-order-details span, .customer-order-details strong { display: block; }
+.customer-order-details span { margin-bottom: 5px; color: #7d688d; font-size: 12px; }
+.customer-order-details strong { font-size: 14px; }
+.customer-order-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.customer-order-actions a, .customer-orders-empty a { border-radius: 8px; padding: 10px 14px; font-size: 13px; font-weight: 700; text-decoration: none; }
+.customer-track-button, .customer-orders-empty a { color: white; background: #4b0082; }
+.customer-invoice-button { color: #4b0082; border: 1px solid #d7c4e8; background: white; }
+.customer-orders-empty { padding: 58px 25px; border-radius: 17px; text-align: center; background: white; box-shadow: 0 8px 28px rgba(44, 9, 80, .09); }
+.customer-orders-empty div { margin-bottom: 12px; font-size: 42px; }
+.customer-orders-empty h2 { margin: 0 0 9px; }
+.customer-orders-empty p { margin: 0 0 25px; color: #6e5d7c; }
+.customer-orders-empty a { display: inline-block; }
+
 
 /* =========================================
    RESPONSIVE

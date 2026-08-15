@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - BESTTIVE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='desktop.css') }}">
+</head>
+<body class="track-order-page">
+    <section class="track-order-hero">
+        <h1>Track Your Order</h1>
+        <p>Enter your tracking ID and registered email to see the latest update.</p>
+    </section>
+
+    <main class="track-order-container">
+        <form class="track-order-form" method="POST">
+            <div class="track-field">
+                <label for="tracking_id">Tracking ID</label>
+                <input id="tracking_id" name="tracking_id" type="text" placeholder="For example: BB-2026-000001" required>
+            </div>
+
+            <div class="track-field">
+                <label for="email">Registered email address</label>
+                <input id="email" name="email" type="email" placeholder="you@example.com" required>
+            </div>
+
+            <button type="submit">Track Order</button>
+        </form>
+
+        {% if error %}
+            <div class="track-message track-error">{{ error }}</div>
+        {% endif %}
+
+        {% if order %}
+            {% set status = order.status|lower %}
+            <section class="order-result">
+                <div class="order-result-heading">
+                    <div>
+                        <p class="order-label">Tracking ID: {{ order.tracking_id }}</p>
+                        <h2>{{ order.product.name if order.product else 'Product unavailable' }}</h2>
+                    </div>
+                    <span class="order-status status-{{ status|replace(' ', '-') }}">{{ order.status }}</span>
+                </div>
+
+                <div class="order-meta">
+                    <div><span>Order date</span><strong>{{ order.created_at.strftime('%d %b %Y') }}</strong></div>
+                    <div><span>Amount</span><strong>₹{{ order.total_amount }}</strong></div>
+                    <div><span>Quantity</span><strong>{{ order.quantity }}</strong></div>
+                </div>
+
+                {% if status not in ['cancelled', 'delivered'] %}
+                    <div class="tracking-steps">
+                        <div class="tracking-step active"><i>1</i><span>Order placed</span></div>
+                        <div class="tracking-line {% if status in ['packed', 'shipped'] %}active{% endif %}"></div>
+                        <div class="tracking-step {% if status in ['packed', 'shipped'] %}active{% endif %}"><i>2</i><span>Packed</span></div>
+                        <div class="tracking-line {% if status == 'shipped' %}active{% endif %}"></div>
+                        <div class="tracking-step {% if status == 'shipped' %}active{% endif %}"><i>3</i><span>Shipped</span></div>
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <a class="track-back" href="/">← Continue Shopping</a>
+    </main>
+</body>
+</html>

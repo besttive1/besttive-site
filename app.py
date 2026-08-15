@@ -381,6 +381,9 @@ def qr_payment_success():
         return redirect("/")
 
     new_order = Order(
+        customer_name=user.name or "BESTTIVE Customer",
+        product_name=product.name,
+        amount=int(amount),
         user_id=user.id,
         product_id=product.id,
         quantity=1,
@@ -391,6 +394,7 @@ def qr_payment_success():
     )
 
     db.session.add(new_order)
+    assign_tracking_id(new_order)
     db.session.commit()
 
     return render_template(
@@ -398,7 +402,8 @@ def qr_payment_success():
         customer_name=user.name,
         product_name=product.name,
         amount=amount,
-        status="Payment Verification"
+        status="Payment Verification",
+        tracking_ids=[new_order.tracking_id]
     )
 
 @app.route("/payment-success", methods=["POST"])
@@ -430,6 +435,7 @@ def payment_success():
         ).all()
 
         total_amount = 0
+        tracking_ids = []
 
         for item in cart_items:
 
@@ -440,6 +446,9 @@ def payment_success():
                 item_total = product.price * item.quantity
 
                 new_order = Order(
+                    customer_name=customer_name or "BESTTIVE Customer",
+                    product_name=product.name,
+                    amount=item_total,
                     user_id=user.id,
                     product_id=product.id,
                     quantity=item.quantity,
@@ -450,6 +459,8 @@ def payment_success():
                 )
 
                 db.session.add(new_order)
+                assign_tracking_id(new_order)
+                tracking_ids.append(new_order.tracking_id)
 
                 total_amount += item_total
 
@@ -462,7 +473,8 @@ def payment_success():
             customer_name=customer_name,
             product_name="BESTTIVE Shopping Cart",
             amount=total_amount,
-            status="Pending"
+            status="Pending",
+            tracking_ids=tracking_ids
         )
 
     # SINGLE PRODUCT ORDER
@@ -476,6 +488,9 @@ def payment_success():
         return redirect("/")
 
     new_order = Order(
+        customer_name=customer_name or "BESTTIVE Customer",
+        product_name=product.name,
+        amount=int(amount),
         user_id=user.id,
         product_id=product.id,
         quantity=1,
@@ -486,6 +501,7 @@ def payment_success():
     )
 
     db.session.add(new_order)
+    assign_tracking_id(new_order)
 
     db.session.commit()
 
@@ -494,7 +510,8 @@ def payment_success():
         customer_name=customer_name,
         product_name=product.name,
         amount=amount,
-        status="Pending"
+        status="Pending",
+        tracking_ids=[new_order.tracking_id]
     )
 
 @app.route("/payment-failure", methods=["POST"])
@@ -569,6 +586,34 @@ def contact():
         )
 
     return render_template("contact.html")
+
+@app.route("/track-order", methods=["GET", "POST"])
+def track_order():
+    order = None
+    error = None
+
+    if request.method == "POST":
+        tracking_id = request.form.get("tracking_id", "").strip().upper()
+        email = request.form.get("email", "").strip()
+
+        if not tracking_id or not email:
+            error = "Please enter a valid tracking ID and the email used for the order."
+        else:
+            # An order is shown only when its registered customer email matches.
+            order = (
+                Order.query
+                .join(User, Order.user_id == User.id)
+                .filter(
+                    Order.tracking_id == tracking_id,
+                    User.email.ilike(email)
+                )
+                .first()
+            )
+
+            if not order:
+                error = "We couldn't find an order with those details."
+
+    return render_template("track_order.html", order=order, error=error)
 
 @app.route("/admin/complaints")
 def admin_complaints():
@@ -688,6 +733,18 @@ class Order(db.Model):
         primary_key=True
     )
 
+    tracking_id = db.Column(
+        db.String(30),
+        unique=True,
+        index=True,
+        nullable=True
+    )
+
+    # Legacy database columns retained for existing order records and invoices.
+    customer_name = db.Column(db.String(100), nullable=False)
+    product_name = db.Column(db.String(200), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("user.id"),
@@ -748,6 +805,13 @@ class Cart(db.Model):
     )
     
 # --------- HELPERS ---------
+
+def assign_tracking_id(order):
+    """Create the customer-facing tracking ID after an order receives its DB ID."""
+    db.session.flush()
+    order.tracking_id = (
+        f"BB-{datetime.datetime.utcnow():%Y}-{order.id:06d}"
+    )
 
 def send_otp(email, otp):
 
@@ -862,6 +926,23 @@ def admin_dashboard():
     return render_template(
         "admin_dashboard.html",
         total_products=total_products
+    )
+
+@app.route("/admin/payment")
+def admin_payment():
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    verification_orders = (
+        Order.query
+        .filter_by(status="Payment Verification")
+        .order_by(Order.created_at.desc())
+        .all()
+    )
+
+    return render_template(
+        "admin_payment.html",
+        orders=verification_orders
     )
 
 # =========================
@@ -1190,7 +1271,7 @@ def update_order_status(id):
 
     flash("Order Status Updated Successfully!")
 
-    return redirect("/admin/orders")
+    return redirect("/admin/dashboard")
 
 @app.route("/admin/delete-orders", methods=["POST"])
 def delete_orders():

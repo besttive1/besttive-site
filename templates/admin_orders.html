@@ -108,7 +108,7 @@
                 Select
             </th>
 
-            <th>Serial No.</th>
+            <th>Tracking ID</th>
             <th>Customer</th>
             <th>Email</th>
             <th>Mobile</th>
@@ -143,10 +143,10 @@
             </td>
 
 
-            <!-- SERIAL NUMBER -->
+            <!-- REAL ORDER ID: use this value on the Track Order page -->
 
             <td>
-                {{ loop.index }}
+                {{ order.tracking_id or "Not available" }}
             </td>
 
 
@@ -203,6 +203,11 @@
                         name="status"
                         class="form-select"
                     >
+
+                        <option value="Payment Verification"
+                            {% if order.status == "Payment Verification" %}selected{% endif %}>
+                            Payment Verification
+                        </option>
 
                         <option value="Pending"
                             {% if order.status == "Pending" %}selected{% endif %}>
