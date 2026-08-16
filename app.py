@@ -26,27 +26,14 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_RIGHT, TA_CENTER
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
+
 from flask import send_file
 import io
 from flask import send_file
 import resend
 app = Flask(__name__)
 
-# ReportLab fonts with ₹ support
-pdfmetrics.registerFont(
-    TTFont(
-        "Arial",
-        "C:/Windows/Fonts/arial.ttf"
-    )
-)
 
-pdfmetrics.registerFont(
-    TTFont(
-        "Arial-Bold",
-        "C:/Windows/Fonts/arialbd.ttf"
-    )
-)
 
 app.secret_key = "secret123"
 PAYU_KEY = "BGGPVO"
@@ -1952,7 +1939,7 @@ def invoice(id):
     brand_style = ParagraphStyle(
         "Brand",
         parent=styles["Normal"],
-        fontName="Arial-Bold",
+        fontName="Helvetica-Bold",
         fontSize=25,
         leading=28,
         alignment=TA_CENTER,
@@ -1962,7 +1949,7 @@ def invoice(id):
     tagline_style = ParagraphStyle(
         "Tagline",
         parent=styles["Normal"],
-        fontName="Arial-Bold",
+        fontName="Helvetica-Bold",
         fontSize=8,
         leading=11,
         alignment=TA_CENTER,
@@ -1972,7 +1959,7 @@ def invoice(id):
     invoice_style = ParagraphStyle(
         "InvoiceTitle",
         parent=styles["Normal"],
-        fontName="Arial-Bold",
+        fontName="Helvetica-Bold",
         fontSize=23,
         leading=27,
         alignment=TA_RIGHT,
@@ -1982,7 +1969,7 @@ def invoice(id):
     order_no_style = ParagraphStyle(
         "OrderNo",
         parent=styles["Normal"],
-        fontName="Arial-Bold",
+        fontName="Helvetica-Bold",
         fontSize=9,
         leading=12,
         alignment=TA_RIGHT,
@@ -1992,7 +1979,7 @@ def invoice(id):
     section_style = ParagraphStyle(
         "Section",
         parent=styles["Normal"],
-        fontName="Arial-Bold",
+        fontName="Helvetica-Bold",
         fontSize=8.5,
         leading=11,
         textColor=PURPLE
@@ -2001,7 +1988,7 @@ def invoice(id):
     normal_style = ParagraphStyle(
         "NormalCustom",
         parent=styles["Normal"],
-        fontName="Arial",
+        fontName="Helvetica",
         fontSize=9,
         leading=13,
         textColor=TEXT
@@ -2010,7 +1997,7 @@ def invoice(id):
     small_style = ParagraphStyle(
         "Small",
         parent=styles["Normal"],
-        fontName="Arial",
+        fontName="Helvetica",
         fontSize=8,
         leading=11,
         textColor=GREY
@@ -2019,21 +2006,21 @@ def invoice(id):
     right_style = ParagraphStyle(
         "Right",
         parent=normal_style,
-        fontName="Arial",
+        fontName="Helvetica",
         alignment=TA_RIGHT
     )
 
     center_style = ParagraphStyle(
         "Center",
         parent=normal_style,
-        fontName="Arial",
+        fontName="Helvetica",
         alignment=TA_CENTER
     )
 
     white_center_style = ParagraphStyle(
         "WhiteCenter",
         parent=normal_style,
-        fontName="Arial-Bold",
+        fontName="Helvetica-Bold",
         fontSize=8.5,
         leading=11,
         alignment=TA_CENTER,
@@ -2043,7 +2030,7 @@ def invoice(id):
     footer_brand_style = ParagraphStyle(
         "FooterBrand",
         parent=styles["Normal"],
-        fontName="Arial-Bold",
+        fontName="Helvetica-Bold",
         fontSize=17,
         leading=20,
         alignment=TA_CENTER,
@@ -2053,7 +2040,7 @@ def invoice(id):
     footer_features_style = ParagraphStyle(
         "FooterFeatures",
         parent=styles["Normal"],
-        fontName="Arial-Bold",
+        fontName="Helvetica-Bold",
         fontSize=8,
         leading=11,
         alignment=TA_CENTER,
