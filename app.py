@@ -627,74 +627,74 @@ def payment_success():
         )
 
     # =========================
-# SINGLE PRODUCT ORDER
-# =========================
+    # SINGLE PRODUCT ORDER
+    # =========================
 
-product_id = session.get("product_id")
+    product_id = session.get("product_id")
 
-product = Product.query.get(product_id)
+    product = Product.query.get(product_id)
 
-if not product:
-    flash("Product not found.")
-    return redirect("/")
+    if not product:
+        flash("Product not found.")
+        return redirect("/")
 
-# Automatic GST calculation
-tax = calculate_tax(product, 1)
+    # Automatic GST calculation
+    tax = calculate_tax(product, 1)
 
-taxable_amount = tax["taxable_amount"]
-gst_rate = tax["gst_rate"]
-gst_amount = tax["gst_amount"]
-final_amount = tax["total_amount"]
+    taxable_amount = tax["taxable_amount"]
+    gst_rate = tax["gst_rate"]
+    gst_amount = tax["gst_amount"]
+    final_amount = tax["total_amount"]
 
-# =========================
-# CREATE ORDER
-# =========================
+    # =========================
+    # CREATE ORDER
+    # =========================
 
-new_order = Order(
-    customer_name=customer_name or "BESTTIVE Customer",
-    product_name=product.name,
+    new_order = Order(
+        customer_name=customer_name or "BESTTIVE Customer",
+        product_name=product.name,
 
-    # Final amount including GST
-    amount=int(final_amount),
+        # Final amount including GST
+        amount=int(final_amount),
 
-    user_id=user.id,
-    product_id=product.id,
+        user_id=user.id,
+        product_id=product.id,
 
-    quantity=1,
-    price=product.price,
+        quantity=1,
+        price=product.price,
 
-    # Tax details
-    taxable_amount=taxable_amount,
-    gst_rate=gst_rate,
-    gst_amount=gst_amount,
-    hsn_code=product.hsn_code or "",
+        # Tax details
+        taxable_amount=taxable_amount,
+        gst_rate=gst_rate,
+        gst_amount=gst_amount,
+        hsn_code=product.hsn_code or "",
 
-    # Final total
-    total_amount=final_amount,
+        # Final total
+        total_amount=final_amount,
 
-    address=user.address or "",
+        address=user.address or "",
 
-    # Payment Status
-    payment_status="Paid",
+        # Payment Status
+        payment_status="Paid",
 
-    # Order / Delivery Status
-    status="Pending"
-)
+        # Order / Delivery Status
+        status="Pending"
+    )
 
-db.session.add(new_order)
+    db.session.add(new_order)
 
-assign_tracking_id(new_order)
+    assign_tracking_id(new_order)
 
-db.session.commit()
+    db.session.commit()
 
-return render_template(
-    "payment_success.html",
-    customer_name=customer_name,
-    product_name=product.name,
-    amount=final_amount,
-    status="Pending",
-    tracking_ids=[new_order.tracking_id]
-)
+    return render_template(
+        "payment_success.html",
+        customer_name=customer_name,
+        product_name=product.name,
+        amount=final_amount,
+        status="Pending",
+        tracking_ids=[new_order.tracking_id]
+    )
 
 
 @app.route("/payment-failure", methods=["POST"])
