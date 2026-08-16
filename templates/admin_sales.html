@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Sales Overview | BESTTIVE Admin</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+
+    <style>
+
+        body {
+            margin: 0;
+            background: #f4f6f9;
+            font-family: Arial, sans-serif;
+            color: #25113d;
+        }
+
+
+        /* =========================
+           SIDEBAR
+           ========================= */
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #212529;
+            position: fixed;
+            left: 0;
+            top: 0;
+            color: white;
+            overflow-y: auto;
+        }
+
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 14px 25px;
+            font-size: 14px;
+        }
+
+
+        .sidebar a:hover {
+            background: #4b0082;
+        }
+
+
+        /* =========================
+           CONTENT
+           ========================= */
+
+        .content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+
+        /* =========================
+           SALES CARDS
+           ========================= */
+
+        .sales-card {
+            background: white;
+            border: none;
+            border-radius: 15px;
+            padding: 22px;
+            height: 100%;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
+        }
+
+
+        .sales-icon {
+            font-size: 27px;
+            margin-bottom: 10px;
+        }
+
+
+        .sales-title {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+
+        .sales-amount {
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+
+        /* =========================
+           GRAPH
+           ========================= */
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
+        }
+
+
+        .chart-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+
+        .chart-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+
+        .sales-chart {
+            width: 100%;
+            min-width: 650px;
+            height: 280px;
+        }
+
+
+        /* =========================
+           ORDERS TABLE
+           ========================= */
+
+        .orders-card {
+            background: white;
+            border-radius: 15px;
+            padding: 22px;
+            margin-top: 30px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
+        }
+
+
+        .orders-card h4 {
+            margin-bottom: 20px;
+        }
+
+
+        .orders-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+
+        .sales-table {
+            width: 100%;
+            min-width: 750px;
+        }
+
+
+        .sales-table th,
+        .sales-table td {
+            padding: 12px;
+            vertical-align: middle;
+        }
+
+
+        .tracking-id {
+            color: #4b0082;
+            font-weight: 700;
+        }
+
+
+        .paid-badge {
+            background: #198754;
+            color: white;
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+
+            .sidebar h2 {
+                font-size: 21px;
+            }
+
+
+            .sidebar a {
+                padding: 12px 18px;
+                font-size: 12px;
+            }
+
+
+            .content {
+                margin-left: 210px;
+                padding: 18px;
+            }
+
+
+            .page-title {
+                font-size: 22px;
+            }
+
+
+            .sales-amount {
+                font-size: 21px;
+            }
+
+
+            .chart-card,
+            .orders-card {
+                padding: 15px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .sidebar {
+                width: 180px;
+            }
+
+
+            .sidebar h2 {
+                font-size: 19px;
+                padding: 16px 5px;
+            }
+
+
+            .sidebar a {
+                padding: 11px 12px;
+                font-size: 11px;
+            }
+
+
+            .content {
+                margin-left: 180px;
+                padding: 12px;
+            }
+
+
+            .page-title {
+                font-size: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     SIDEBAR
+     ========================= -->
+
+<div class="sidebar">
+
+    <h2>BESTTIVE</h2>
+
+
+    <a href="/admin/dashboard">
+        🏠 Dashboard
+    </a>
+
+
+    <a href="/admin/products">
+        📦 Products
+    </a>
+
+
+    <a href="/admin/add-product">
+        ➕ Add Product
+    </a>
+
+
+    <a href="{{ url_for('admin_orders') }}">
+        🛒 Orders
+    </a>
+
+
+    <a href="/admin/banners">
+        🖼️ Manage Banners
+    </a>
+
+
+    <a href="{{ url_for('admin_customers') }}">
+        👥 Customers
+    </a>
+
+
+    <a href="/admin/payment">
+        💳 Payment
+    </a>
+
+
+    <a href="/admin/complaints">
+        📝 Complaints
+    </a>
+
+
+    <a href="/">
+        🌐 Website
+    </a>
+
+
+    <a href="/logout">
+        🚪 Logout
+    </a>
+
+</div>
+
+
+<!-- =========================
+     MAIN CONTENT
+     ========================= -->
+
+<div class="content">
+
+
+    <h2 class="page-title">
+        📊 Sales Overview
+    </h2>
+
+
+    <!-- =========================
+         SALES SUMMARY
+         ========================= -->
+
+    <div class="row g-3">
+
+
+        <!-- TODAY -->
+
+        <div class="col-6 col-lg-3">
+
+            <div class="sales-card">
+
+                <div class="sales-icon">
+                    📅
+                </div>
+
+                <div class="sales-title">
+                    Today
+                </div>
+
+                <div class="sales-amount">
+                    ₹{{ "%.2f"|format(today_sales) }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- YESTERDAY -->
+
+        <div class="col-6 col-lg-3">
+
+            <div class="sales-card">
+
+                <div class="sales-icon">
+                    🗓️
+                </div>
+
+                <div class="sales-title">
+                    Yesterday
+                </div>
+
+                <div class="sales-amount">
+                    ₹{{ "%.2f"|format(yesterday_sales) }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- THIS WEEK -->
+
+        <div class="col-6 col-lg-3">
+
+            <div class="sales-card">
+
+                <div class="sales-icon">
+                    📈
+                </div>
+
+                <div class="sales-title">
+                    This Week
+                </div>
+
+                <div class="sales-amount">
+                    ₹{{ "%.2f"|format(week_sales) }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- THIS MONTH -->
+
+        <div class="col-6 col-lg-3">
+
+            <div class="sales-card">
+
+                <div class="sales-icon">
+                    📊
+                </div>
+
+                <div class="sales-title">
+                    This Month
+                </div>
+
+                <div class="sales-amount">
+                    ₹{{ "%.2f"|format(month_sales) }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL PAID -->
+
+        <div class="col-12 col-lg-3">
+
+            <div class="sales-card">
+
+                <div class="sales-icon">
+                    💰
+                </div>
+
+                <div class="sales-title">
+                    Total Paid Sales
+                </div>
+
+                <div class="sales-amount">
+                    ₹{{ "%.2f"|format(total_paid_sales) }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SALES GRAPH
+         ========================= -->
+
+    <div class="chart-card">
+
+        <div class="chart-title">
+            📈 Sales Overview
+        </div>
+
+
+        <div class="chart-wrapper">
+
+            <canvas id="salesChart"
+                    class="sales-chart">
+            </canvas>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         PAID ORDERS
+         ========================= -->
+
+    <div class="orders-card">
+
+        <h4>
+            💳 Paid Orders
+        </h4>
+
+
+        {% if paid_orders %}
+
+        <div class="orders-wrapper">
+
+            <table class="table table-bordered table-striped sales-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Tracking ID</th>
+
+                        <th>Customer</th>
+
+                        <th>Product</th>
+
+                        <th>Amount</th>
+
+                        <th>Date</th>
+
+                        <th>Order Status</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for order in paid_orders %}
+
+                    <tr>
+
+                        <td class="tracking-id">
+
+                            {{ order.tracking_id or "Not available" }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ order.user.name }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ order.product.name }}
+
+                        </td>
+
+
+                        <td>
+
+                            ₹{{ order.total_amount }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="paid-badge">
+                                Paid
+                            </span>
+
+                            <br>
+
+                            <small>
+                                {{ order.status }}
+                            </small>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <p class="text-secondary mb-0">
+            No paid orders yet.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================
+     CHART.JS
+     ========================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+const salesData = {
+
+    labels: [
+        "Yesterday",
+        "Today",
+        "This Week",
+        "This Month"
+    ],
+
+    datasets: [
+
+        {
+
+            label: "Paid Sales",
+
+            data: [
+
+                {{ yesterday_sales }},
+                {{ today_sales }},
+                {{ week_sales }},
+                {{ month_sales }}
+
+            ],
+
+            borderWidth: 3,
+
+            tension: 0.4,
+
+            fill: false
+
+        }
+
+    ]
+
+};
+
+
+const config = {
+
+    type: "line",
+
+    data: salesData,
+
+    options: {
+
+        responsive: true,
+
+        maintainAspectRatio: false,
+
+        plugins: {
+
+            legend: {
+
+                display: true
+
+            }
+
+        },
+
+        scales: {
+
+            y: {
+
+                beginAtZero: true
+
+            }
+
+        }
+
+    }
+
+};
+
+
+new Chart(
+    document.getElementById("salesChart"),
+    config
+);
+
+</script>
+
+
+</body>
+
+</html>

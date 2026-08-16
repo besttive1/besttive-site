@@ -1421,11 +1421,124 @@ def admin_dashboard():
     if not session.get("admin"):
         return redirect("/admin")
 
+    # =========================
+    # DASHBOARD STATISTICS
+    # =========================
+
     total_products = Product.query.count()
+
+    total_customers = User.query.count()
+
+    total_orders = Order.query.count()
+
+    # Only Paid orders
+    paid_orders = Order.query.filter_by(
+        payment_status="Paid"
+    ).all()
+
+    paid_revenue = sum(
+        float(order.total_amount or 0)
+        for order in paid_orders
+    )
+
+    # Pending payments
+    pending_payments = Order.query.filter_by(
+        payment_status="Pending"
+    ).count()
+
+    # Pending delivery orders
+    pending_orders = Order.query.filter_by(
+        status="Pending"
+    ).count()
+
+    # Recent 5 orders
+    recent_orders = (
+        Order.query
+        .order_by(Order.created_at.desc())
+        .limit(5)
+        .all()
+    )
 
     return render_template(
         "admin_dashboard.html",
-        total_products=total_products
+
+        total_products=total_products,
+
+        total_customers=total_customers,
+
+        total_orders=total_orders,
+
+        paid_revenue=paid_revenue,
+
+        pending_payments=pending_payments,
+
+        pending_orders=pending_orders,
+
+        recent_orders=recent_orders
+    )
+
+@app.route("/admin/sales")
+def admin_sales():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    import datetime
+
+    # Current date
+    today = datetime.datetime.utcnow().date()
+
+    # Yesterday
+    yesterday = today - datetime.timedelta(days=1)
+
+    # Start of current week
+    week_start = today - datetime.timedelta(days=today.weekday())
+
+    # Start of current month
+    month_start = today.replace(day=1)
+
+    # Get all paid orders
+    paid_orders = (
+        Order.query
+        .filter_by(payment_status="Paid")
+        .order_by(Order.created_at.desc())
+        .all()
+    )
+
+    today_sales = 0
+    yesterday_sales = 0
+    week_sales = 0
+    month_sales = 0
+    total_paid_sales = 0
+
+    for order in paid_orders:
+
+        amount = float(order.total_amount or 0)
+
+        order_date = order.created_at.date()
+
+        total_paid_sales += amount
+
+        if order_date == today:
+            today_sales += amount
+
+        if order_date == yesterday:
+            yesterday_sales += amount
+
+        if order_date >= week_start:
+            week_sales += amount
+
+        if order_date >= month_start:
+            month_sales += amount
+
+    return render_template(
+        "admin_sales.html",
+        today_sales=today_sales,
+        yesterday_sales=yesterday_sales,
+        week_sales=week_sales,
+        month_sales=month_sales,
+        total_paid_sales=total_paid_sales,
+        paid_orders=paid_orders
     )
 
 @app.route("/admin/payment")
@@ -1434,7 +1547,47 @@ def admin_payment():
     if not session.get("admin"):
         return redirect("/admin")
 
-    verification_orders = (
+    # All orders with payment information
+    payments = (
+        Order.query
+        .order_by(Order.created_at.desc())
+        .all()
+    )
+
+    # Payment counts
+    total_payments = len(payments)
+
+    paid_payments = sum(
+        1 for order in payments
+        if order.payment_status == "Paid"
+    )
+
+    pending_payments = sum(
+        1 for order in payments
+        if order.payment_status == "Pending"
+    )
+
+    not_received_payments = sum(
+        1 for order in payments
+        if order.payment_status == "Not Received"
+    )
+
+    return render_template(
+        "admin_payment.html",
+        payments=payments,
+        total_payments=total_payments,
+        paid_payments=paid_payments,
+        pending_payments=pending_payments,
+        not_received_payments=not_received_payments
+    )
+
+@app.route("/admin/pending-payments")
+def admin_pending_payments():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    pending_orders = (
         Order.query
         .filter_by(payment_status="Pending")
         .order_by(Order.created_at.desc())
@@ -1442,8 +1595,8 @@ def admin_payment():
     )
 
     return render_template(
-        "admin_payment.html",
-        orders=verification_orders
+        "admin_pending_payments.html",
+        orders=pending_orders
     )
 
 # =========================
@@ -1895,17 +2048,37 @@ def update_payment_status(id):
 
     payment_status = request.form.get("payment_status")
 
-    if payment_status not in ["Paid", "Pending", "Cancelled"]:
-        flash("Invalid payment status!")
-        return redirect("/admin/payment")
+    if payment_status == "Paid":
 
-    order.payment_status = payment_status
+        order.payment_status = "Paid"
+
+        # Payment paid hai,
+        # lekin delivery/order abhi pending rahega
+        if order.status == "Payment Verification":
+            order.status = "Pending"
+
+        flash("Payment marked as Paid successfully!")
+
+    elif payment_status == "Not Received":
+
+        order.payment_status = "Not Received"
+
+        # Order ko cancel nahi karna.
+        # Customer baad mein payment kar sakta hai.
+        if order.status == "Payment Verification":
+            order.status = "Pending"
+
+        flash("Payment marked as Not Received.")
+
+    elif payment_status == "Pending":
+
+        order.payment_status = "Pending"
+
+        flash("Payment marked as Pending.")
 
     db.session.commit()
 
-    flash("Payment Status Updated Successfully!")
-
-    return redirect("/admin/payment")
+    return redirect(request.referrer or "/admin/payment")
     
 @app.route("/admin/delete-orders", methods=["POST"])
 def delete_orders():
