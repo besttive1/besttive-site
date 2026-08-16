@@ -1847,9 +1847,37 @@ def admin_customers():
 
     customers = User.query.all()
 
+    customer_stats = {}
+
+    for customer in customers:
+
+        orders = Order.query.filter_by(
+            user_id=customer.id
+        ).all()
+
+        # Cancelled orders ko exclude karo
+        valid_orders = [
+            order
+            for order in orders
+            if order.status != "Cancelled"
+        ]
+
+        total_orders = len(valid_orders)
+
+        total_spent = sum(
+            float(order.total_amount or 0)
+            for order in valid_orders
+        )
+
+        customer_stats[customer.id] = {
+            "total_orders": total_orders,
+            "total_spent": total_spent
+        }
+
     return render_template(
         "admin_customers.html",
-        customers=customers
+        customers=customers,
+        customer_stats=customer_stats
     )
 
 @app.route("/admin/delete-customers", methods=["POST"])

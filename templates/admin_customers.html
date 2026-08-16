@@ -62,122 +62,263 @@
 
 
     /* ================================
-       TABLE
-       ================================ */
+   TABLE WRAPPER
+   ================================ */
 
-    .customers-table {
-        margin-top: 0;
-        width: 100%;
-    }
+.customers-table-wrapper {
+    width: 100%;
+    max-width: 100%;
 
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+
+    padding-bottom: 5px;
+}
+
+
+/* TABLE */
+
+.customers-table {
+    width: 100%;
+    min-width: 950px;
+
+    margin-top: 0;
+    margin-bottom: 0;
+
+    white-space: normal;
+}
+
+
+/* CELLS */
+
+.customers-table th,
+.customers-table td {
+    vertical-align: middle;
+    padding: 10px;
+}
+
+
+/* ADDRESS */
+
+.customers-table td:nth-child(6) {
+    min-width: 220px;
+    max-width: 300px;
+
+    white-space: normal;
+    word-break: break-word;
+}
+
+
+/* TOTAL ORDERS */
+
+.customers-table th:nth-child(7),
+.customers-table td:nth-child(7) {
+    min-width: 110px;
+    text-align: center;
+}
+
+
+/* TOTAL SPENT */
+
+.customers-table th:nth-child(8),
+.customers-table td:nth-child(8) {
+    min-width: 120px;
+    white-space: nowrap;
+}
+
+
+/* DOB */
+
+.customers-table th:nth-child(9),
+.customers-table td:nth-child(9) {
+    min-width: 100px;
+    white-space: nowrap;
+}
 
     /* ================================
-       MOBILE
-       ================================ */
+   MOBILE
+   ================================ */
 
-    @media (max-width: 768px) {
+@media (max-width: 768px) {
 
-        body.container {
-            width: 100% !important;
-            max-width: 100% !important;
+    body.container {
+        width: 100% !important;
+        max-width: 100% !important;
 
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-        }
+        padding-left: 10px !important;
+        padding-right: 10px !important;
 
-        .customers-page {
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .customers-page h2 {
-            font-size: 22px;
-            margin-bottom: 18px;
-        }
-
-        .customer-actions {
-            margin-bottom: 15px;
-        }
-
-        .remove-customers-btn {
-            padding: 9px 13px;
-            font-size: 13px;
-        }
-
-
-        /* TABLE SCROLL AREA */
-
-        .customers-table {
-            width: 100% !important;
-            min-width: 650px !important;
-
-            margin-bottom: 0;
-        }
-
-        .customers-table th,
-        .customers-table td {
-            font-size: 12px !important;
-            padding: 9px 8px !important;
-
-            vertical-align: middle !important;
-        }
-
-
-        /* SERIAL NUMBER */
-
-        .customers-table th:nth-child(2),
-        .customers-table td:nth-child(2) {
-            min-width: 55px;
-            width: 55px;
-            text-align: center;
-        }
-
-
-        /* NAME */
-
-        .customers-table th:nth-child(3),
-        .customers-table td:nth-child(3) {
-            min-width: 85px;
-        }
-
-
-        /* EMAIL */
-
-        .customers-table th:nth-child(4),
-        .customers-table td:nth-child(4) {
-            min-width: 160px;
-        }
-
-
-        /* MOBILE */
-
-        .customers-table th:nth-child(5),
-        .customers-table td:nth-child(5) {
-            min-width: 110px;
-        }
-
-
-        /* ADDRESS */
-
-        .customers-table th:nth-child(6),
-        .customers-table td:nth-child(6) {
-            min-width: 190px;
-            max-width: 220px;
-
-            white-space: normal;
-            word-break: break-word;
-        }
-
-
-        /* DOB */
-
-        .customers-table th:nth-child(7),
-        .customers-table td:nth-child(7) {
-            min-width: 90px;
-        }
-
+        overflow-x: hidden;
     }
 
+
+    .customers-page {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+
+    .customers-page h2 {
+        font-size: 22px;
+        margin-bottom: 18px;
+    }
+
+
+    .customer-actions {
+        margin-bottom: 15px;
+    }
+
+
+    .remove-customers-btn {
+        padding: 9px 13px;
+        font-size: 13px;
+    }
+
+
+    /* =========================
+       TABLE SCROLL AREA
+       ========================= */
+
+    .customers-table-wrapper {
+        width: 100%;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        -webkit-overflow-scrolling: touch;
+
+        padding-bottom: 6px;
+    }
+
+
+    .customers-table {
+        width: auto !important;
+
+        min-width: 950px !important;
+
+        margin-bottom: 0;
+    }
+
+
+    .customers-table th,
+    .customers-table td {
+
+        font-size: 12px !important;
+
+        padding: 9px 8px !important;
+
+        vertical-align: middle !important;
+    }
+
+
+    /* =========================
+       S.NO.
+       ========================= */
+
+    .customers-table th:nth-child(2),
+    .customers-table td:nth-child(2) {
+
+        min-width: 60px;
+        width: 60px;
+
+        text-align: center;
+    }
+
+
+    /* =========================
+       NAME
+       ========================= */
+
+    .customers-table th:nth-child(3),
+    .customers-table td:nth-child(3) {
+
+        min-width: 150px;
+    }
+
+
+    /* =========================
+       EMAIL
+       ========================= */
+
+    .customers-table th:nth-child(4),
+    .customers-table td:nth-child(4) {
+
+        min-width: 180px;
+    }
+
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    .customers-table th:nth-child(5),
+    .customers-table td:nth-child(5) {
+
+        min-width: 115px;
+
+        white-space: nowrap;
+    }
+
+
+    /* =========================
+       ADDRESS
+       ========================= */
+
+    .customers-table th:nth-child(6),
+    .customers-table td:nth-child(6) {
+
+        min-width: 220px;
+        max-width: 260px;
+
+        white-space: normal;
+
+        word-break: break-word;
+    }
+
+
+    /* =========================
+       TOTAL ORDERS
+       ========================= */
+
+    .customers-table th:nth-child(7),
+    .customers-table td:nth-child(7) {
+
+        min-width: 110px;
+
+        text-align: center;
+    }
+
+
+    /* =========================
+       TOTAL SPENT
+       ========================= */
+
+    .customers-table th:nth-child(8),
+    .customers-table td:nth-child(8) {
+
+        min-width: 120px;
+
+        white-space: nowrap;
+
+        text-align: center;
+    }
+
+
+    /* =========================
+       DOB
+       ========================= */
+
+    .customers-table th:nth-child(9),
+    .customers-table td:nth-child(9) {
+
+        min-width: 100px;
+
+        white-space: nowrap;
+    }
+
+}
 
     /* ================================
        SMALL MOBILE
@@ -237,7 +378,9 @@
 
 
     <!-- CUSTOMERS TABLE -->
-<div class="customers-table-wrapper"></div>
+
+<div class="customers-table-wrapper">
+
     <table class="table table-bordered table-striped customers-table">
 
         <thead>
@@ -257,6 +400,10 @@
             <th>Mobile</th>
 
             <th>Address</th>
+
+            <th>Total Orders</th>
+
+            <th>Total Spent</th>
 
             <th>DOB</th>
 
@@ -319,6 +466,20 @@
             </td>
 
 
+            <!-- TOTAL ORDERS -->
+
+            <td>
+                {{ customer_stats[customer.id]["total_orders"] }}
+            </td>
+
+
+            <!-- TOTAL SPENT -->
+
+            <td>
+                ₹{{ "%.2f"|format(customer_stats[customer.id]["total_spent"]) }}
+            </td>
+
+
             <!-- DOB -->
 
             <td>
@@ -334,7 +495,6 @@
     </table>
 
 </div>
-
 
 <!-- JAVASCRIPT -->
 
