@@ -17,87 +17,62 @@
             box-sizing: border-box;
         }
 
-
-        /* PAGE */
-
         body {
             margin: 0;
             padding: 0 15px;
             overflow-x: hidden;
         }
 
-
         .orders-page {
-
             width: 100%;
             margin-top: 40px;
         }
 
-
         .orders-page h2 {
-
             margin-bottom: 25px;
         }
 
 
         /* =========================
-           DELETE BUTTON AREA
+           DELETE BUTTON
         ========================= */
 
         .order-actions {
-
             width: 100%;
-
             display: flex;
-
             justify-content: flex-end;
-
             align-items: center;
-
             margin-bottom: 20px;
         }
-
 
         .delete-orders-btn,
         .update-order-btn {
 
             background: #4b0082 !important;
-
             color: white !important;
 
             border: none;
-
             border-radius: 7px;
 
             font-size: 14px;
-
             font-weight: 600;
 
             cursor: pointer;
-
             white-space: nowrap;
         }
 
-
         .delete-orders-btn {
-
             padding: 9px 16px;
-
             margin-left: auto;
         }
 
-
         .update-order-btn {
-
             padding: 7px 14px;
-
             margin-top: 2px;
         }
 
-
         .delete-orders-btn:hover,
         .update-order-btn:hover {
-
             background: #310058 !important;
         }
 
@@ -109,11 +84,9 @@
         .orders-table-wrapper {
 
             width: 100%;
-
             max-width: 100%;
 
             overflow-x: auto;
-
             overflow-y: hidden;
 
             -webkit-overflow-scrolling: touch;
@@ -122,19 +95,20 @@
         }
 
 
-        /* TABLE */
+        /* =========================
+           TABLE
+        ========================= */
 
         .orders-table {
 
             width: 100%;
 
-            min-width: 1250px;
+            min-width: 1450px;
 
             margin-bottom: 0;
 
             white-space: normal;
         }
-
 
         .orders-table th,
         .orders-table td {
@@ -144,24 +118,21 @@
             padding: 10px;
         }
 
-
         .orders-table th {
-
             white-space: nowrap;
         }
 
 
         /* PRODUCT */
 
-        .orders-table td:nth-child(6) {
-
+        .orders-table td:nth-child(7) {
             min-width: 150px;
         }
 
 
         /* ADDRESS */
 
-        .orders-table td:nth-child(10) {
+        .orders-table td:nth-child(15) {
 
             min-width: 260px;
 
@@ -174,13 +145,10 @@
         /* STATUS */
 
         .orders-table td:last-child {
-
             min-width: 180px;
         }
 
-
         .orders-table .form-select {
-
             min-width: 155px;
         }
 
@@ -190,7 +158,6 @@
         ========================= */
 
         .order-checkbox-column {
-
             display: none;
         }
 
@@ -202,23 +169,16 @@
         @media (max-width: 600px) {
 
             body {
-
                 padding: 0 10px;
-
                 overflow-x: hidden;
             }
 
-
             .orders-page {
-
                 margin-top: 20px;
             }
 
-
             .orders-page h2 {
-
                 font-size: 24px;
-
                 margin-bottom: 20px;
             }
 
@@ -233,7 +193,6 @@
 
                 margin-bottom: 15px;
             }
-
 
             .delete-orders-btn {
 
@@ -258,14 +217,12 @@
                 padding-bottom: 5px;
             }
 
-
             .orders-table {
 
-                min-width: 1250px;
+                min-width: 1450px;
 
                 font-size: 14px;
             }
-
 
             .orders-table th,
             .orders-table td {
@@ -283,7 +240,6 @@
                 font-size: 14px;
             }
 
-
             .update-order-btn {
 
                 font-size: 13px;
@@ -300,9 +256,7 @@
 
 <body>
 
-
 <div class="orders-page">
-
 
     <h2>📦 Orders</h2>
 
@@ -329,7 +283,7 @@
 
 
     <!-- =========================
-         ORDERS TABLE WRAPPER
+         ORDERS TABLE
     ========================= -->
 
     <div class="orders-table-wrapper">
@@ -340,19 +294,85 @@
 
             <tr>
 
+                <!-- CHECKBOX -->
+
                 <th class="order-checkbox-column">
                     Select
                 </th>
 
+
+                <!-- SERIAL NUMBER -->
+
+                <th>S.No.</th>
+
+
+                <!-- TRACKING -->
+
                 <th>Tracking ID</th>
+
+
+                <!-- CUSTOMER -->
+
                 <th>Customer</th>
+
+
+                <!-- EMAIL -->
+
                 <th>Email</th>
+
+
+                <!-- MOBILE -->
+
                 <th>Mobile</th>
+
+
+                <!-- PRODUCT -->
+
                 <th>Product</th>
+
+
+                <!-- HSN -->
+
+                <th>HSN</th>
+
+
+                <!-- QUANTITY -->
+
                 <th>Qty</th>
+
+
+                <!-- PRICE -->
+
                 <th>Price</th>
+
+
+                <!-- TAXABLE -->
+
+                <th>Taxable</th>
+
+
+                <!-- GST RATE -->
+
+                <th>GST %</th>
+
+
+                <!-- GST AMOUNT -->
+
+                <th>GST Amount</th>
+
+
+                <!-- TOTAL -->
+
                 <th>Total</th>
+
+
+                <!-- ADDRESS -->
+
                 <th>Address</th>
+
+
+                <!-- STATUS -->
+
                 <th>Status</th>
 
             </tr>
@@ -376,6 +396,13 @@
                            class="order-checkbox"
                            form="orderDeleteForm">
 
+                </td>
+
+
+                <!-- SERIAL NUMBER -->
+
+                <td>
+                    {{ loop.index }}
                 </td>
 
 
@@ -414,7 +441,14 @@
                 </td>
 
 
-                <!-- QTY -->
+                <!-- HSN -->
+
+                <td>
+                    {{ order.hsn_code or "—" }}
+                </td>
+
+
+                <!-- QUANTITY -->
 
                 <td>
                     {{ order.quantity }}
@@ -424,14 +458,35 @@
                 <!-- PRICE -->
 
                 <td>
-                    ₹{{ order.price }}
+                    ₹{{ "%.2f"|format(order.price or 0) }}
+                </td>
+
+
+                <!-- TAXABLE AMOUNT -->
+
+                <td>
+                    ₹{{ "%.2f"|format(order.taxable_amount or 0) }}
+                </td>
+
+
+                <!-- GST RATE -->
+
+                <td>
+                    {{ "%.2f"|format(order.gst_rate or 0) }}%
+                </td>
+
+
+                <!-- GST AMOUNT -->
+
+                <td>
+                    ₹{{ "%.2f"|format(order.gst_amount or 0) }}
                 </td>
 
 
                 <!-- TOTAL -->
 
                 <td>
-                    ₹{{ order.total_amount }}
+                    ₹{{ "%.2f"|format(order.total_amount or 0) }}
                 </td>
 
 
@@ -496,9 +551,7 @@
                             class="update-order-btn"
                             type="submit"
                         >
-
                             Update
-
                         </button>
 
                     </form>
@@ -551,11 +604,9 @@ function handleOrderDelete() {
 
         });
 
-
         orderDeleteMode = true;
 
         return;
-
     }
 
 
@@ -591,9 +642,7 @@ function handleOrderDelete() {
 document.addEventListener("click", function(event) {
 
     if (!orderDeleteMode) {
-
         return;
-
     }
 
 
@@ -608,9 +657,7 @@ document.addEventListener("click", function(event) {
         event.target.closest(".delete-orders-btn") ||
         event.target.closest(".order-checkbox-column")
     ) {
-
         return;
-
     }
 
 
