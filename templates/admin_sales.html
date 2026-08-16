@@ -196,50 +196,58 @@
         }
 
 
-        /* =========================
-           MOBILE
-           ========================= */
+       /* =========================
+   MOBILE
+   ========================= */
 
-        @media (max-width: 768px) {
+@media (max-width: 768px) {
 
-            .sidebar {
-                width: 210px;
-            }
+    .sidebar {
+        width: 70px;
+    }
 
+    .sidebar h2 {
+        font-size: 16px;
+        text-align: center;
+    }
 
-            .sidebar h2 {
-                font-size: 21px;
-            }
+    .sidebar a {
+        padding: 12px 5px;
+        font-size: 10px;
+        text-align: center;
+    }
 
+    .content {
+        margin-left: 70px;
+        padding: 12px;
+        width: calc(100% - 70px);
+        box-sizing: border-box;
+    }
 
-            .sidebar a {
-                padding: 12px 18px;
-                font-size: 12px;
-            }
+    .page-title {
+        font-size: 22px;
+    }
 
+    .sales-amount {
+        font-size: 21px;
+    }
 
-            .content {
-                margin-left: 210px;
-                padding: 18px;
-            }
+    .chart-card,
+    .orders-card {
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
 
+    /* Sales Overview chart */
+    .chart-card canvas {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+    }
 
-            .page-title {
-                font-size: 22px;
-            }
-
-
-            .sales-amount {
-                font-size: 21px;
-            }
-
-
-            .chart-card,
-            .orders-card {
-                padding: 15px;
-            }
-
-        }
+}
 
 
         @media (max-width: 480px) {
