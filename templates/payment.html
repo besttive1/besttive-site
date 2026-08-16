@@ -13,7 +13,21 @@
     <h2>Choose Payment Method</h2>
 
     <p><b>Product:</b> {{ name }}</p>
-    <p><b>Amount:</b> ₹{{ price }}</p>
+
+    <p>
+        <b>Product Price:</b>
+        ₹{{ price }}
+    </p>
+
+    <p>
+        <b>GST ({{ gst_rate }}%):</b>
+        ₹{{ gst_amount }}
+    </p>
+
+    <p>
+        <b>Total Payable:</b>
+        <strong>₹{{ final_amount }}</strong>
+    </p>
 
     <hr>
 
@@ -24,8 +38,8 @@
         <input type="hidden" name="amount" value="{{ price }}">
 
         <button type="submit"
-        style="padding:12px 25px;background:#0d6efd;color:white;border:none;border-radius:8px;font-size:18px;">
-            Pay ₹{{ price }} with PayU
+         style="padding:12px 25px;background:#0d6efd;color:white;border:none;border-radius:8px;font-size:18px;">
+             Pay ₹{{ final_amount }} with PayU
         </button>
     </form>
 
@@ -38,12 +52,24 @@
     <img src="{{ url_for('static', filename='images/qr.jpeg') }}"
          width="180">
 
-    <p><b>UPI ID:</b>besttive.business@slc</p>
+    <p>
+    <b>UPI ID:</b> besttive.business@slc
+</p>
 
-    <form action="/qr-payment-success" method="POST">
+<p>
+    <b>Amount to Pay:</b>
+    <strong>₹{{ final_amount }}</strong>
+</p>
 
-    <input type="hidden" name="product_name" value="{{ name }}">
-    <input type="hidden" name="amount" value="{{ price }}">
+<form action="/qr-payment-success" method="POST">
+
+    <input type="hidden"
+           name="product_name"
+           value="{{ name }}">
+
+    <input type="hidden"
+           name="amount"
+           value="{{ final_amount }}">
 
     <button
         type="submit"
@@ -52,7 +78,7 @@
                color:white;
                border:none;
                border-radius:8px;">
-        I Have Paid
+        I Have Paid ₹{{ final_amount }}
     </button>
 
 </form>

@@ -12,12 +12,41 @@ import cloudinary.uploader
 import cloudinary.api
 from dotenv import load_dotenv
 load_dotenv()
-from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle
+)
+
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_LEFT, TA_RIGHT, TA_CENTER
+from reportlab.lib.units import mm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from flask import send_file
 import io
+from flask import send_file
 import resend
 app = Flask(__name__)
+
+# ReportLab fonts with ₹ support
+pdfmetrics.registerFont(
+    TTFont(
+        "Arial",
+        "C:/Windows/Fonts/arial.ttf"
+    )
+)
+
+pdfmetrics.registerFont(
+    TTFont(
+        "Arial-Bold",
+        "C:/Windows/Fonts/arialbd.ttf"
+    )
+)
 
 app.secret_key = "secret123"
 PAYU_KEY = "BGGPVO"
@@ -288,7 +317,22 @@ def checkout_cart():
 # 🔥 PAYMENT PAGE
 @app.route("/payment/<string:name>/<int:price>")
 def payment(name, price):
-    return render_template("payment.html", name=name, price=price)
+
+    product = Product.query.filter_by(
+        name=name
+    ).first_or_404()
+
+    tax = calculate_tax(product, 1)
+
+    return render_template(
+        "payment.html",
+        name=product.name,
+        price=product.price,
+        taxable_amount=tax["taxable_amount"],
+        gst_rate=tax["gst_rate"],
+        gst_amount=tax["gst_amount"],
+        final_amount=tax["total_amount"]
+    )
 
 @app.route("/payu-payment", methods=["POST"])
 def payu_payment():
@@ -304,7 +348,6 @@ def payu_payment():
         return redirect("/login")
 
     product_name = request.form["product_name"]
-    amount = request.form["amount"]
 
     # Find product
     product = Product.query.filter_by(
@@ -315,10 +358,28 @@ def payu_payment():
         flash("Product not found!")
         return redirect("/")
 
-    # Save order information temporarily
+    # Automatic GST calculation
+    tax = calculate_tax(product, 1)
+
+    taxable_amount = tax["taxable_amount"]
+    gst_rate = tax["gst_rate"]
+    gst_amount = tax["gst_amount"]
+    final_amount = tax["total_amount"]
+
+    # Final amount including GST
+    amount = str(final_amount)
+
+    # Save order/payment information temporarily
     session["product_name"] = product.name
     session["product_id"] = product.id
     session["amount"] = amount
+
+    # Save tax information for payment success
+    session["taxable_amount"] = taxable_amount
+    session["gst_rate"] = gst_rate
+    session["gst_amount"] = gst_amount
+    session["hsn_code"] = product.hsn_code or ""
+
     session["customer_name"] = user.name
     session["customer_email"] = user.email
     session["customer_phone"] = user.phone
@@ -356,6 +417,7 @@ def payu_payment():
         furl=failure_url,
         hash=hashh
     )
+
 @app.route("/qr-payment-success", methods=["POST"])
 def qr_payment_success():
 
@@ -370,8 +432,7 @@ def qr_payment_success():
         return redirect("/login")
 
     product_name = request.form.get("product_name")
-    amount = request.form.get("amount")
-
+   
     product = Product.query.filter_by(
         name=product_name
     ).first()
@@ -380,15 +441,37 @@ def qr_payment_success():
         flash("Product not found.")
         return redirect("/")
 
+    # =========================
+    # AUTOMATIC GST CALCULATION
+    # =========================
+
+    tax = calculate_tax(product, 1)
+
+    taxable_amount = tax["taxable_amount"]
+    gst_rate = tax["gst_rate"]
+    gst_amount = tax["gst_amount"]
+    final_amount = tax["total_amount"]
+
+    # =========================
+    # CREATE ORDER
+    # =========================
+
     new_order = Order(
         customer_name=user.name or "BESTTIVE Customer",
         product_name=product.name,
-        amount=int(amount),
+        # Final amount including GST
+        amount=int(final_amount),
         user_id=user.id,
         product_id=product.id,
         quantity=1,
         price=product.price,
-        total_amount=int(amount),
+        # Tax details
+        taxable_amount=taxable_amount,
+        gst_rate=gst_rate,
+        gst_amount=gst_amount,
+        hsn_code=product.hsn_code or "",
+        # Final order total
+        total_amount=final_amount,
         address=user.address or "",
         status="Payment Verification"
     )
@@ -397,11 +480,14 @@ def qr_payment_success():
     assign_tracking_id(new_order)
     db.session.commit()
 
+    # =========================
+    # PAYMENT SUCCESS PAGE
+    # =========================
     return render_template(
         "payment_success.html",
         customer_name=user.name,
         product_name=product.name,
-        amount=amount,
+        amount=final_amount,
         status="Payment Verification",
         tracking_ids=[new_order.tracking_id]
     )
@@ -427,7 +513,10 @@ def payment_success():
         flash("Order information not found.")
         return redirect("/")
 
+    # =========================
     # CART ORDER
+    # =========================
+
     if product_name == "BESTTIVE Shopping Cart":
 
         cart_items = Cart.query.filter_by(
@@ -443,26 +532,51 @@ def payment_success():
 
             if product:
 
-                item_total = product.price * item.quantity
+                quantity = item.quantity or 1
+
+                # Automatic GST calculation
+                tax = calculate_tax(product, quantity)
+
+                taxable_amount = tax["taxable_amount"]
+                gst_rate = tax["gst_rate"]
+                gst_amount = tax["gst_amount"]
+                final_amount = tax["total_amount"]
 
                 new_order = Order(
                     customer_name=customer_name or "BESTTIVE Customer",
                     product_name=product.name,
-                    amount=item_total,
+
+                    # Final amount including GST
+                    amount=int(final_amount),
+
                     user_id=user.id,
                     product_id=product.id,
-                    quantity=item.quantity,
+
+                    quantity=quantity,
                     price=product.price,
-                    total_amount=item_total,
+
+                    # Tax details
+                    taxable_amount=taxable_amount,
+                    gst_rate=gst_rate,
+                    gst_amount=gst_amount,
+                    hsn_code=product.hsn_code or "",
+
+                    # Final total
+                    total_amount=final_amount,
+
                     address=user.address or "",
                     status="Pending"
                 )
 
                 db.session.add(new_order)
-                assign_tracking_id(new_order)
-                tracking_ids.append(new_order.tracking_id)
 
-                total_amount += item_total
+                assign_tracking_id(new_order)
+
+                tracking_ids.append(
+                    new_order.tracking_id
+                )
+
+                total_amount += final_amount
 
                 db.session.delete(item)
 
@@ -477,30 +591,58 @@ def payment_success():
             tracking_ids=tracking_ids
         )
 
+    # =========================
     # SINGLE PRODUCT ORDER
+    # =========================
 
     product_id = session.get("product_id")
+
     product = Product.query.get(product_id)
 
     if not product:
-
         flash("Product not found.")
         return redirect("/")
+
+    # Automatic GST calculation
+    tax = calculate_tax(product, 1)
+
+    taxable_amount = tax["taxable_amount"]
+    gst_rate = tax["gst_rate"]
+    gst_amount = tax["gst_amount"]
+    final_amount = tax["total_amount"]
+
+    # =========================
+    # CREATE ORDER
+    # =========================
 
     new_order = Order(
         customer_name=customer_name or "BESTTIVE Customer",
         product_name=product.name,
-        amount=int(amount),
+
+        # Final amount including GST
+        amount=int(final_amount),
+
         user_id=user.id,
         product_id=product.id,
+
         quantity=1,
         price=product.price,
-        total_amount=int(amount),
+
+        # Tax details
+        taxable_amount=taxable_amount,
+        gst_rate=gst_rate,
+        gst_amount=gst_amount,
+        hsn_code=product.hsn_code or "",
+
+        # Final total
+        total_amount=final_amount,
+
         address=user.address or "",
         status="Pending"
     )
 
     db.session.add(new_order)
+
     assign_tracking_id(new_order)
 
     db.session.commit()
@@ -509,7 +651,7 @@ def payment_success():
         "payment_success.html",
         customer_name=customer_name,
         product_name=product.name,
-        amount=amount,
+        amount=final_amount,
         status="Pending",
         tracking_ids=[new_order.tracking_id]
     )
@@ -669,6 +811,250 @@ class Product(db.Model):
     stock = db.Column(db.Integer, default=0)
     category = db.Column(db.String(100), default="")
     subcategory = db.Column(db.String(100), default="")
+    gst_rate = db.Column(
+    db.Float,
+    default=0
+    )
+    hsn_code = db.Column(
+    db.String(20),
+    default=""
+    )
+    # ==========================================
+# BESTTIVE - HSN & GST AUTO MAPPING
+# ==========================================
+
+TAX_MAPPING = {
+
+    # =========================
+    # CLOTHES
+    # =========================
+
+    "Clothes": {
+
+        "T-Shirts": {
+            "hsn": "6109",
+            "gst": 5
+        },
+
+        "Shirts": {
+            "hsn": "6205",
+            "gst": 5
+        },
+
+        "Jeans": {
+            "hsn": "6203",
+            "gst": 5
+        },
+
+        "Dresses": {
+            "hsn": "6204",
+            "gst": 5
+        },
+
+        "Sarees": {
+            "hsn": "5208",
+            "gst": 5
+        }
+    },
+
+
+    # =========================
+    # JEWELLERY
+    # =========================
+
+    "Jewellery": {
+
+        "Bangles": {
+            "hsn": "7117",
+            "gst": 3
+        },
+
+        "Earrings": {
+            "hsn": "7117",
+            "gst": 3
+        },
+
+        "Necklace": {
+            "hsn": "7117",
+            "gst": 3
+        },
+
+        "Rings": {
+            "hsn": "7117",
+            "gst": 3
+        }
+    },
+
+
+    # =========================
+    # TOYS
+    # =========================
+
+    "Toys": {
+
+        "Cars": {
+            "hsn": "9503",
+            "gst": 12
+        },
+
+        "Dolls": {
+            "hsn": "9503",
+            "gst": 12
+        },
+
+        "Educational Toys": {
+            "hsn": "9503",
+            "gst": 12
+        },
+
+        "Remote Control": {
+            "hsn": "9503",
+            "gst": 12
+        }
+    },
+
+
+    # =========================
+    # SHOES
+    # =========================
+
+    "Shoes": {
+
+        "Men Shoes": {
+            "hsn": "6403",
+            "gst": 5
+        },
+
+        "Women Shoes": {
+            "hsn": "6403",
+            "gst": 5
+        },
+
+        "Kids Shoes": {
+            "hsn": "6403",
+            "gst": 5
+        },
+
+        "Sports Shoes": {
+            "hsn": "6404",
+            "gst": 5
+        }
+    },
+
+
+    # =========================
+    # WATCHES
+    # =========================
+
+    "Watches": {
+
+        "Men Watches": {
+            "hsn": "9102",
+            "gst": 18
+        },
+
+        "Women Watches": {
+            "hsn": "9102",
+            "gst": 18
+        },
+
+        "Kids Watches": {
+            "hsn": "9102",
+            "gst": 18
+        }
+    },
+
+
+    # =========================
+    # ELECTRONICS
+    # =========================
+
+    "Electronics": {
+
+        "Mobile": {
+            "hsn": "8517",
+            "gst": 18
+        },
+
+        "Earbuds": {
+            "hsn": "8518",
+            "gst": 18
+        },
+
+        "Speakers": {
+            "hsn": "8518",
+            "gst": 18
+        },
+
+        "Accessories": {
+            "hsn": "8517",
+            "gst": 18
+        }
+    },
+
+
+    # =========================
+    # BEAUTY
+    # =========================
+
+    "Beauty": {
+
+        "Makeup": {
+            "hsn": "3304",
+            "gst": 18
+        },
+
+        "Skincare": {
+            "hsn": "3304",
+            "gst": 18
+        },
+
+        "Hair Care": {
+            "hsn": "3305",
+            "gst": 18
+        }
+    },
+
+
+    # =========================
+    # HOME
+    # =========================
+
+    "Home": {
+
+        "Decor": {
+            "hsn": "3926",
+            "gst": 18
+        },
+
+        "Kitchen": {
+            "hsn": "3924",
+            "gst": 18
+        },
+
+        "Storage": {
+            "hsn": "3924",
+            "gst": 18
+        }
+    }
+}
+
+def get_tax_details(category, subcategory):
+
+    category_data = TAX_MAPPING.get(category, {})
+
+    tax_data = category_data.get(subcategory)
+
+    if not tax_data:
+        return {
+            "hsn": "",
+            "gst": 0
+        }
+
+    return {
+        "hsn": tax_data["hsn"],
+        "gst": tax_data["gst"]
+    }
 
 class ContactMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -772,6 +1158,29 @@ class Order(db.Model):
         nullable=False
     )
 
+    taxable_amount = db.Column(
+        db.Float,
+        nullable=False,
+        default=0
+    )
+
+    gst_rate = db.Column(
+        db.Float,
+        nullable=False,
+        default=0
+    )
+
+    gst_amount = db.Column(
+        db.Float,
+        nullable=False,
+        default=0
+    )
+
+    hsn_code = db.Column(
+        db.String(20),
+        default=""
+    )
+
     address = db.Column(
         db.String(255),
         default=""
@@ -789,6 +1198,31 @@ class Order(db.Model):
 
     user = db.relationship("User")
     product = db.relationship("Product")
+
+def calculate_tax(product, quantity=1):
+    quantity = int(quantity or 1)
+
+    taxable_amount = product.price * quantity
+
+    gst_rate = float(product.gst_rate or 0)
+
+    gst_amount = round(
+        taxable_amount * gst_rate / 100,
+        2
+    )
+
+    total_amount = round(
+        taxable_amount + gst_amount,
+        2
+    )
+
+    return {
+        "taxable_amount": taxable_amount,
+        "gst_rate": gst_rate,
+        "gst_amount": gst_amount,
+        "total_amount": total_amount,
+        "hsn_code": product.hsn_code or ""
+    }
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -1135,26 +1569,53 @@ def admin_add_product():
         category = request.form.get("category")
         subcategory = request.form.get("subcategory")
 
-        # Main Image
+        # ==========================================
+        # AUTO HSN + GST
+        # ==========================================
+
+        tax_details = get_tax_details(
+            category,
+            subcategory
+        )
+
+        hsn_code = tax_details["hsn"]
+        gst_rate = tax_details["gst"]
+
+        # ==========================================
+        # MAIN IMAGE
+        # ==========================================
+
         image = request.files["image"]
 
         upload_result = cloudinary.uploader.upload(image)
         image_url = upload_result["secure_url"]
+
+        # ==========================================
+        # CREATE PRODUCT
+        # ==========================================
 
         new_product = Product(
             name=name,
             price=int(price),
             image=image_url,
             description=description,
-            stock=int(stock),
+            stock=int(stock or 0),
+
             category=category,
-            subcategory=subcategory
-       )
+            subcategory=subcategory,
+
+            # Automatically assigned
+            hsn_code=hsn_code,
+            gst_rate=float(gst_rate)
+        )
 
         db.session.add(new_product)
         db.session.commit()
 
-        # Extra Images
+        # ==========================================
+        # EXTRA IMAGES
+        # ==========================================
+
         extra_images = [
             request.files.get("image2"),
             request.files.get("image3"),
@@ -1177,10 +1638,17 @@ def admin_add_product():
 
         db.session.commit()
 
-        flash("Product Added Successfully!")
+        flash(
+            f"Product Added Successfully! "
+            f"HSN: {hsn_code or 'Not assigned'} | "
+            f"GST: {gst_rate}%"
+        )
+
         return redirect("/admin/dashboard")
 
-    return render_template("add_product.html")
+    return render_template(
+        "add_product.html"
+    )
 
 @app.route("/admin/products")
 def manage_products():
@@ -1218,6 +1686,7 @@ def delete_product(id):
 @app.route("/admin/edit-product/<int:id>", methods=["GET", "POST"])
 def edit_product(id):
 
+    # Admin login check
     if not session.get("admin"):
         return redirect("/admin")
 
@@ -1225,24 +1694,100 @@ def edit_product(id):
 
     if request.method == "POST":
 
-        product.name = request.form["name"]
-        product.price = int(request.form["price"])
-        product.description = request.form["description"]
-        product.stock = int(request.form["stock"])
+        # ==========================================
+        # BASIC PRODUCT DETAILS
+        # ==========================================
+
+        product.name = request.form.get("name", "").strip()
+
+        product.price = int(
+            request.form.get("price") or 0
+        )
+
+        product.description = request.form.get(
+            "description",
+            ""
+        )
+
+        product.stock = int(
+            request.form.get("stock") or 0
+        )
+
+
+        # ==========================================
+        # CATEGORY + SUBCATEGORY
+        # ==========================================
+
+        category = request.form.get(
+            "category",
+            ""
+        )
+
+        subcategory = request.form.get(
+            "subcategory",
+            ""
+        )
+
+        product.category = category
+        product.subcategory = subcategory
+
+
+        # ==========================================
+        # AUTO HSN + GST
+        # ==========================================
+
+        tax_details = get_tax_details(
+            category,
+            subcategory
+        )
+
+        product.hsn_code = tax_details["hsn"]
+
+        product.gst_rate = float(
+            tax_details["gst"]
+        )
+
+
+        # ==========================================
+        # IMAGE UPDATE
+        # ==========================================
 
         image = request.files.get("image")
 
         if image and image.filename != "":
 
-            upload_result = cloudinary.uploader.upload(image)
+            upload_result = cloudinary.uploader.upload(
+                image
+            )
 
-            product.image = upload_result["secure_url"]
+            product.image = upload_result[
+                "secure_url"
+            ]
+
+
+        # ==========================================
+        # SAVE EVERYTHING
+        # ==========================================
 
         db.session.commit()
-        flash("Product Updated Successfully")
-        return redirect("/admin/products")
 
-    return render_template("edit_product.html", product=product)
+
+        flash(
+            f"Product Updated Successfully! "
+            f"HSN: {product.hsn_code or 'Not assigned'} | "
+            f"GST: {product.gst_rate:g}%"
+        )
+
+
+        return redirect(
+            "/admin/products"
+        )
+
+
+    return render_template(
+        "edit_product.html",
+        product=product
+    )
 
 @app.route("/admin/orders")
 def admin_orders():
@@ -1371,25 +1916,687 @@ def invoice(id):
 
     buffer = io.BytesIO()
 
-    doc = SimpleDocTemplate(buffer)
+    # =========================
+    # COLORS
+    # =========================
+
+    PURPLE = colors.HexColor("#54206F")
+    DARK_PURPLE = colors.HexColor("#3D1259")
+    LIGHT_PURPLE = colors.HexColor("#F7F1FA")
+    GOLD = colors.HexColor("#C99A35")
+    LIGHT_GOLD = colors.HexColor("#FFF7E5")
+    TEXT = colors.HexColor("#29232D")
+    GREY = colors.HexColor("#777777")
+    BORDER = colors.HexColor("#E2D8E7")
+    WHITE = colors.white
+
+    # =========================
+    # PDF DOCUMENT
+    # =========================
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=18 * mm,
+        leftMargin=18 * mm,
+        topMargin=14 * mm,
+        bottomMargin=16 * mm
+    )
 
     styles = getSampleStyleSheet()
 
+    # =========================
+    # STYLES
+    # =========================
+
+    brand_style = ParagraphStyle(
+        "Brand",
+        parent=styles["Normal"],
+        fontName="Arial-Bold",
+        fontSize=25,
+        leading=28,
+        alignment=TA_CENTER,
+        textColor=PURPLE
+    )
+
+    tagline_style = ParagraphStyle(
+        "Tagline",
+        parent=styles["Normal"],
+        fontName="Arial-Bold",
+        fontSize=8,
+        leading=11,
+        alignment=TA_CENTER,
+        textColor=GOLD
+    )
+
+    invoice_style = ParagraphStyle(
+        "InvoiceTitle",
+        parent=styles["Normal"],
+        fontName="Arial-Bold",
+        fontSize=23,
+        leading=27,
+        alignment=TA_RIGHT,
+        textColor=PURPLE
+    )
+
+    order_no_style = ParagraphStyle(
+        "OrderNo",
+        parent=styles["Normal"],
+        fontName="Arial-Bold",
+        fontSize=9,
+        leading=12,
+        alignment=TA_RIGHT,
+        textColor=GOLD
+    )
+
+    section_style = ParagraphStyle(
+        "Section",
+        parent=styles["Normal"],
+        fontName="Arial-Bold",
+        fontSize=8.5,
+        leading=11,
+        textColor=PURPLE
+    )
+
+    normal_style = ParagraphStyle(
+        "NormalCustom",
+        parent=styles["Normal"],
+        fontName="Arial",
+        fontSize=9,
+        leading=13,
+        textColor=TEXT
+    )
+
+    small_style = ParagraphStyle(
+        "Small",
+        parent=styles["Normal"],
+        fontName="Arial",
+        fontSize=8,
+        leading=11,
+        textColor=GREY
+    )
+
+    right_style = ParagraphStyle(
+        "Right",
+        parent=normal_style,
+        fontName="Arial",
+        alignment=TA_RIGHT
+    )
+
+    center_style = ParagraphStyle(
+        "Center",
+        parent=normal_style,
+        fontName="Arial",
+        alignment=TA_CENTER
+    )
+
+    white_center_style = ParagraphStyle(
+        "WhiteCenter",
+        parent=normal_style,
+        fontName="Arial-Bold",
+        fontSize=8.5,
+        leading=11,
+        alignment=TA_CENTER,
+        textColor=WHITE
+    )
+
+    footer_brand_style = ParagraphStyle(
+        "FooterBrand",
+        parent=styles["Normal"],
+        fontName="Arial-Bold",
+        fontSize=17,
+        leading=20,
+        alignment=TA_CENTER,
+        textColor=GOLD
+    )
+
+    footer_features_style = ParagraphStyle(
+        "FooterFeatures",
+        parent=styles["Normal"],
+        fontName="Arial-Bold",
+        fontSize=8,
+        leading=11,
+        alignment=TA_CENTER,
+        textColor=WHITE
+    )
+
     story = []
 
-    story.append(Paragraph("<b>BESTTIVE</b>", styles["Title"]))
-    story.append(Paragraph("Invoice", styles["Heading2"]))
-    story.append(Paragraph("<hr/>", styles["Normal"]))
-    story.append(Paragraph("<br/>", styles["Normal"]))
+    # =========================
+    # TAX / ORDER VALUES
+    # =========================
 
-    story.append(Paragraph(f"Customer : {order.customer_name}", styles["Normal"]))
-    story.append(Paragraph(f"Product : {order.product_name}", styles["Normal"]))
-    story.append(Paragraph(f"Amount : ₹{order.amount}", styles["Normal"]))
-    story.append(Paragraph(f"Status : {order.status}", styles["Normal"]))
-    story.append(Paragraph(f"Date : {order.created_at.strftime('%d-%m-%Y %H:%M')}", styles["Normal"]))
+    quantity = order.quantity or 1
 
-    story.append(Paragraph("<br/><br/>", styles["Normal"]))
-    story.append(Paragraph("Thank you for shopping with BESTTIVE ❤️", styles["Heading3"]))
+    unit_price = (
+        order.price
+        if order.price is not None
+        else order.amount
+    )
+
+    taxable_amount = (
+        order.taxable_amount
+        if order.taxable_amount is not None
+        else unit_price * quantity
+    )
+
+    gst_rate = (
+        order.gst_rate
+        if order.gst_rate is not None
+        else 0
+    )
+
+    gst_amount = (
+        order.gst_amount
+        if order.gst_amount is not None
+        else 0
+    )
+
+    grand_total = (
+        order.total_amount
+        if order.total_amount is not None
+        else order.amount
+    )
+
+    hsn_code = order.hsn_code or "—"
+
+    # =========================
+    # HEADER
+    # =========================
+
+    header_table = Table(
+        [[
+            "",
+            [
+                Paragraph(
+                    "BESTTIVE",
+                    brand_style
+                ),
+                Spacer(1, 1.5 * mm),
+                Paragraph(
+                    "STYLE THAT SHINES",
+                    tagline_style
+                )
+            ],
+            [
+                Paragraph(
+                    "INVOICE",
+                    invoice_style
+                ),
+                Spacer(1, 1.5 * mm),
+                Paragraph(
+                    f"ORDER NO. &nbsp; #{order.id}",
+                    order_no_style
+                )
+            ]
+        ]],
+        colWidths=[
+            25 * mm,
+            85 * mm,
+            60 * mm
+        ]
+    )
+
+    header_table.setStyle(
+        TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+
+            ("LEFTPADDING", (0, 0), (-1, -1), 0),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+            ("TOPPADDING", (0, 0), (-1, -1), 0),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 0)
+        ])
+    )
+
+    story.append(header_table)
+
+    story.append(
+        Spacer(1, 6 * mm)
+    )
+
+    # =========================
+    # PURPLE / GOLD LINE
+    # =========================
+
+    top_line = Table(
+        [[""]],
+        colWidths=[170 * mm],
+        rowHeights=[2.5 * mm]
+    )
+
+    top_line.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), PURPLE),
+            ("LINEBELOW", (0, 0), (-1, -1), 1, GOLD)
+        ])
+    )
+
+    story.append(top_line)
+
+    story.append(
+        Spacer(1, 6 * mm)
+    )
+
+    # =========================
+    # BILL TO / ORDER DETAILS
+    # =========================
+
+    customer_block = [
+        Paragraph(
+            "BILL TO",
+            section_style
+        ),
+
+        Spacer(1, 2 * mm),
+
+        Paragraph(
+            f"<b>{order.customer_name}</b>",
+            normal_style
+        ),
+
+        Spacer(1, 1.5 * mm),
+
+        Paragraph(
+            order.address or "Address not available",
+            small_style
+        )
+    ]
+
+    order_block = [
+        Paragraph(
+            "ORDER DETAILS",
+            section_style
+        ),
+
+        Spacer(1, 2 * mm),
+
+        Paragraph(
+            f"<b>Order ID:</b> #{order.id}",
+            normal_style
+        ),
+
+        Paragraph(
+            f"<b>Date:</b> "
+            f"{order.created_at.strftime('%d %b %Y, %I:%M %p')}",
+            normal_style
+        ),
+
+        Paragraph(
+            f"<b>Status:</b> {order.status}",
+            normal_style
+        )
+    ]
+
+    info_table = Table(
+        [[
+            customer_block,
+            order_block
+        ]],
+        colWidths=[
+            85 * mm,
+            85 * mm
+        ]
+    )
+
+    info_table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), LIGHT_PURPLE),
+
+            ("BOX", (0, 0), (-1, -1), 0.7, BORDER),
+
+            ("INNERGRID", (0, 0), (-1, -1), 0.5, BORDER),
+
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
+
+            ("LEFTPADDING", (0, 0), (-1, -1), 11),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 11),
+
+            ("TOPPADDING", (0, 0), (-1, -1), 10),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 10)
+        ])
+    )
+
+    story.append(info_table)
+
+    story.append(
+        Spacer(1, 7 * mm)
+    )
+
+    # =========================
+    # PRODUCT TABLE
+    # =========================
+
+    product_data = [
+        [
+            Paragraph(
+                "PRODUCT",
+                white_center_style
+            ),
+
+            Paragraph(
+                "HSN",
+                white_center_style
+            ),
+
+            Paragraph(
+                "QTY",
+                white_center_style
+            ),
+
+            Paragraph(
+                "RATE",
+                white_center_style
+            ),
+
+            Paragraph(
+                "TAXABLE",
+                white_center_style
+            )
+        ],
+
+        [
+            Paragraph(
+                f"<b>{order.product_name}</b><br/>"
+                f"<font size='7' color='#777777'>"
+                f"BESTTIVE Product"
+                f"</font>",
+                normal_style
+            ),
+
+            Paragraph(
+                hsn_code,
+                center_style
+            ),
+
+            Paragraph(
+                str(quantity),
+                center_style
+            ),
+
+            Paragraph(
+                f"₹{unit_price:.2f}",
+                right_style
+            ),
+
+            Paragraph(
+                f"₹{taxable_amount:.2f}",
+                right_style
+            )
+        ]
+    ]
+
+    product_table = Table(
+        product_data,
+        colWidths=[
+            60 * mm,
+            22 * mm,
+            18 * mm,
+            32 * mm,
+            38 * mm
+        ],
+        repeatRows=1
+    )
+
+    product_table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), PURPLE),
+
+            ("BACKGROUND", (0, 1), (-1, -1), WHITE),
+
+            ("BOX", (0, 0), (-1, -1), 0.8, BORDER),
+
+            ("INNERGRID", (0, 0), (-1, -1), 0.5, BORDER),
+
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+
+            ("LEFTPADDING", (0, 0), (-1, -1), 6),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+
+            ("TOPPADDING", (0, 0), (-1, -1), 9),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 9)
+        ])
+    )
+
+    story.append(product_table)
+
+    story.append(
+        Spacer(1, 6 * mm)
+    )
+
+    # =========================
+    # GST SUMMARY
+    # =========================
+
+    gst_summary = [
+        [
+            Paragraph(
+                "Taxable Amount",
+                normal_style
+            ),
+
+            Paragraph(
+                f"₹{taxable_amount:.2f}",
+                right_style
+            )
+        ],
+
+        [
+            Paragraph(
+                f"GST ({gst_rate:g}%)",
+                normal_style
+            ),
+
+            Paragraph(
+                f"₹{gst_amount:.2f}",
+                right_style
+            )
+        ]
+    ]
+
+    gst_table = Table(
+        gst_summary,
+        colWidths=[
+            115 * mm,
+            55 * mm
+        ]
+    )
+
+    gst_table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), LIGHT_GOLD),
+
+            ("BOX", (0, 0), (-1, -1), 0.7, GOLD),
+
+            ("LEFTPADDING", (0, 0), (-1, -1), 9),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 9),
+
+            ("TOPPADDING", (0, 0), (-1, -1), 6),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6)
+        ])
+    )
+
+    story.append(gst_table)
+
+    story.append(
+        Spacer(1, 5 * mm)
+    )
+
+    # =========================
+    # GRAND TOTAL
+    # =========================
+
+    total_table = Table(
+        [[
+            Paragraph(
+                "<b>GRAND TOTAL</b>",
+                normal_style
+            ),
+
+            Paragraph(
+                f"<b>₹{grand_total:.2f}</b>",
+                right_style
+            )
+        ]],
+        colWidths=[
+            115 * mm,
+            55 * mm
+        ]
+    )
+
+    total_table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), LIGHT_PURPLE),
+
+            ("BOX", (0, 0), (-1, -1), 1, PURPLE),
+
+            ("TEXTCOLOR", (0, 0), (-1, -1), PURPLE),
+
+            ("LEFTPADDING", (0, 0), (-1, -1), 10),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+
+            ("TOPPADDING", (0, 0), (-1, -1), 10),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 10)
+        ])
+    )
+
+    story.append(total_table)
+
+    story.append(
+        Spacer(1, 6 * mm)
+    )
+
+    # =========================
+    # TRACKING ID
+    # =========================
+
+    if order.tracking_id:
+
+        tracking_table = Table(
+            [[
+                Paragraph(
+                    "<b>TRACKING ID</b>",
+                    section_style
+                ),
+
+                Paragraph(
+                    f"<b>{order.tracking_id}</b>",
+                    right_style
+                )
+            ]],
+            colWidths=[
+                65 * mm,
+                105 * mm
+            ]
+        )
+
+        tracking_table.setStyle(
+            TableStyle([
+                ("BACKGROUND", (0, 0), (-1, -1), LIGHT_GOLD),
+
+                ("BOX", (0, 0), (-1, -1), 0.7, GOLD),
+
+                ("LEFTPADDING", (0, 0), (-1, -1), 9),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 9),
+
+                ("TOPPADDING", (0, 0), (-1, -1), 7),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 7)
+            ])
+        )
+
+        story.append(tracking_table)
+
+        story.append(
+            Spacer(1, 6 * mm)
+        )
+
+    # =========================
+    # THANK YOU
+    # =========================
+
+    thank_you = Table(
+        [[
+            Paragraph(
+                "<b>Thank You for Shopping with BESTTIVE!</b><br/>"
+                "<font size='8' color='#777777'>"
+                "We truly appreciate your trust and support."
+                "</font>",
+                center_style
+            )
+        ]],
+        colWidths=[170 * mm]
+    )
+
+    thank_you.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), LIGHT_PURPLE),
+
+            ("BOX", (0, 0), (-1, -1), 0.7, BORDER),
+
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+
+            ("TOPPADDING", (0, 0), (-1, -1), 11),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 11)
+        ])
+    )
+
+    story.append(thank_you)
+
+    story.append(
+        Spacer(1, 5 * mm)
+    )
+
+    # =========================
+    # FOOTER
+    # =========================
+
+    footer_table = Table(
+        [
+            [
+                Paragraph(
+                    "BESTTIVE",
+                    footer_brand_style
+                )
+            ],
+
+            [
+                Paragraph(
+                    "Premium Quality"
+                    " &nbsp;&nbsp; | &nbsp;&nbsp; "
+                    "Secure Payment"
+                    " &nbsp;&nbsp; | &nbsp;&nbsp; "
+                    "Fast Delivery",
+                    footer_features_style
+                )
+            ]
+        ],
+        colWidths=[170 * mm],
+        rowHeights=[
+            14 * mm,
+            10 * mm
+        ]
+    )
+
+    footer_table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), DARK_PURPLE),
+
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+
+            ("TOPPADDING", (0, 0), (-1, -1), 3),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+
+            ("LEFTPADDING", (0, 0), (-1, -1), 5),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 5)
+        ])
+    )
+
+    story.append(footer_table)
+
+    # =========================
+    # BUILD PDF
+    # =========================
 
     doc.build(story)
 

@@ -32,8 +32,6 @@
         }
 
 
-        /* MAIN CONTAINER */
-
         .container {
 
             width: 100%;
@@ -53,8 +51,6 @@
         }
 
 
-        /* HEADING */
-
         h2 {
 
             margin: 0 0 28px;
@@ -66,8 +62,6 @@
             text-align: center;
         }
 
-
-        /* LABEL */
 
         label {
 
@@ -85,11 +79,10 @@
         }
 
 
-        /* INPUTS */
-
         input[type="text"],
         input[type="number"],
-        textarea {
+        textarea,
+        select {
 
             width: 100%;
 
@@ -111,8 +104,6 @@
         }
 
 
-        /* TEXTAREA */
-
         textarea {
 
             min-height: 130px;
@@ -121,11 +112,10 @@
         }
 
 
-        /* FOCUS */
-
         input[type="text"]:focus,
         input[type="number"]:focus,
-        textarea:focus {
+        textarea:focus,
+        select:focus {
 
             border-color: #4b0082;
 
@@ -134,7 +124,80 @@
         }
 
 
-        /* CURRENT IMAGE */
+        /* =========================
+           TAX BOX
+           ========================= */
+
+        .tax-box {
+
+            margin-top: 20px;
+
+            padding: 18px;
+
+            background: #faf7fd;
+
+            border: 1px solid #e1d5eb;
+
+            border-radius: 12px;
+        }
+
+
+        .tax-title {
+
+            margin-bottom: 15px;
+
+            color: #4b0082;
+
+            font-size: 15px;
+
+            font-weight: 700;
+        }
+
+
+        .tax-grid {
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 15px;
+        }
+
+
+        .tax-field label {
+
+            margin-top: 0;
+
+            margin-bottom: 7px;
+
+            font-size: 13px;
+        }
+
+
+        .tax-field input {
+
+            background: #f1edf5;
+
+            color: #4b0082;
+
+            font-weight: 700;
+
+        }
+
+
+        .tax-note {
+
+            margin-top: 10px;
+
+            color: #777;
+
+            font-size: 12px;
+        }
+
+
+        /* =========================
+           CURRENT IMAGE
+           ========================= */
 
         .current-image-box {
 
@@ -264,9 +327,7 @@
         }
 
 
-        /* =========================
-           MOBILE
-           ========================= */
+        /* MOBILE */
 
         @media (max-width: 600px) {
 
@@ -302,7 +363,8 @@
 
             input[type="text"],
             input[type="number"],
-            textarea {
+            textarea,
+            select {
 
                 padding: 11px 12px;
 
@@ -339,6 +401,12 @@
                 font-size: 15px;
             }
 
+
+            .tax-grid {
+
+                grid-template-columns: 1fr;
+            }
+
         }
 
     </style>
@@ -359,6 +427,8 @@
           enctype="multipart/form-data">
 
 
+        <!-- PRODUCT NAME -->
+
         <label>
             Product Name
         </label>
@@ -371,6 +441,8 @@
         >
 
 
+        <!-- PRICE -->
+
         <label>
             Price
         </label>
@@ -379,9 +451,12 @@
             type="number"
             name="price"
             value="{{ product.price }}"
+            min="0"
             required
         >
 
+
+        <!-- DESCRIPTION -->
 
         <label>
             Description
@@ -392,6 +467,151 @@
         >{{ product.description }}</textarea>
 
 
+        <!-- CATEGORY -->
+
+        <label>
+            Category
+        </label>
+
+        <select
+            name="category"
+            id="category"
+            required
+            onchange="updateSubcategories()"
+        >
+
+            <option value="">
+                Select Category
+            </option>
+
+            <option value="Clothes"
+                {% if product.category == "Clothes" %}selected{% endif %}>
+                Clothes
+            </option>
+
+            <option value="Toys"
+                {% if product.category == "Toys" %}selected{% endif %}>
+                Toys
+            </option>
+
+            <option value="Jewellery"
+                {% if product.category == "Jewellery" %}selected{% endif %}>
+                Jewellery
+            </option>
+
+            <option value="Beauty"
+                {% if product.category == "Beauty" %}selected{% endif %}>
+                Beauty
+            </option>
+
+            <option value="Shoes"
+                {% if product.category == "Shoes" %}selected{% endif %}>
+                Shoes
+            </option>
+
+            <option value="Watches"
+                {% if product.category == "Watches" %}selected{% endif %}>
+                Watches
+            </option>
+
+            <option value="Electronics"
+                {% if product.category == "Electronics" %}selected{% endif %}>
+                Electronics
+            </option>
+
+            <option value="Home"
+                {% if product.category == "Home" %}selected{% endif %}>
+                Home
+            </option>
+
+        </select>
+
+
+        <!-- SUBCATEGORY -->
+
+        <label>
+            Subcategory
+        </label>
+
+        <select
+            name="subcategory"
+            id="subcategory"
+            required
+            onchange="updateTaxDetails()"
+        >
+
+            <option value="">
+                Select Subcategory
+            </option>
+
+        </select>
+
+
+        <!-- HSN + GST -->
+
+        <div class="tax-box">
+
+            <div class="tax-title">
+                🧾 Automatic Tax Details
+            </div>
+
+
+            <div class="tax-grid">
+
+
+                <div class="tax-field">
+
+                    <label>
+                        HSN Code
+                    </label>
+
+                    <input
+                        type="text"
+                        name="hsn_code"
+                        id="hsn_code"
+                        value="{{ product.hsn_code or '' }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                <div class="tax-field">
+
+                    <label>
+                        GST Rate
+                    </label>
+
+                    <input
+                        type="text"
+                        id="gst_display"
+                        value="{% if product.gst_rate is not none %}{{ product.gst_rate }}%{% endif %}"
+                        readonly
+                    >
+
+                    <input
+                        type="hidden"
+                        name="gst_rate"
+                        id="gst_rate"
+                        value="{{ product.gst_rate or 0 }}"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <div class="tax-note">
+                HSN code and GST rate are automatically assigned
+                according to the selected product classification.
+            </div>
+
+        </div>
+
+
+        <!-- STOCK -->
+
         <label>
             Stock
         </label>
@@ -400,8 +620,11 @@
             type="number"
             name="stock"
             value="{{ product.stock }}"
+            min="0"
         >
 
+
+        <!-- CURRENT IMAGE -->
 
         <label>
             Current Image
@@ -418,6 +641,8 @@
         </div>
 
 
+        <!-- CHANGE IMAGE -->
+
         <label>
             Change Image
         </label>
@@ -428,6 +653,8 @@
             accept="image/*"
         >
 
+
+        <!-- UPDATE -->
 
         <button type="submit">
             💾 Update Product
@@ -445,6 +672,371 @@
     </form>
 
 </div>
+
+
+<script>
+
+/* ==========================================
+   SUBCATEGORY OPTIONS
+   ========================================== */
+
+const subcategoryOptions = {
+
+    "Clothes": [
+        "Jeans",
+        "Shirts",
+        "T-Shirts",
+        "Dresses",
+        "Sarees"
+    ],
+
+    "Toys": [
+        "Cars",
+        "Dolls",
+        "Educational Toys",
+        "Remote Control"
+    ],
+
+    "Jewellery": [
+        "Bangles",
+        "Earrings",
+        "Necklace",
+        "Rings"
+    ],
+
+    "Beauty": [
+        "Makeup",
+        "Skincare",
+        "Hair Care"
+    ],
+
+    "Shoes": [
+        "Men Shoes",
+        "Women Shoes",
+        "Kids Shoes",
+        "Sports Shoes"
+    ],
+
+    "Watches": [
+        "Men Watches",
+        "Women Watches",
+        "Kids Watches"
+    ],
+
+    "Electronics": [
+        "Mobile",
+        "Earbuds",
+        "Speakers",
+        "Accessories"
+    ],
+
+    "Home": [
+        "Decor",
+        "Kitchen",
+        "Storage"
+    ]
+
+};
+
+
+/* ==========================================
+   TAX MAPPING
+   ========================================== */
+
+const taxMapping = {
+
+    "Clothes": {
+
+        "Jeans": {
+            hsn: "6203",
+            gst: "5%"
+        },
+
+        "Shirts": {
+            hsn: "6205",
+            gst: "5%"
+        },
+
+        "T-Shirts": {
+            hsn: "6109",
+            gst: "5%"
+        },
+
+        "Dresses": {
+            hsn: "6204",
+            gst: "5%"
+        },
+
+        "Sarees": {
+            hsn: "5208",
+            gst: "5%"
+        }
+
+    },
+
+    "Toys": {
+
+        "Cars": {
+            hsn: "9503",
+            gst: "12%"
+        },
+
+        "Dolls": {
+            hsn: "9503",
+            gst: "12%"
+        },
+
+        "Educational Toys": {
+            hsn: "9503",
+            gst: "12%"
+        },
+
+        "Remote Control": {
+            hsn: "9503",
+            gst: "12%"
+        }
+
+    },
+
+    "Jewellery": {
+
+        "Bangles": {
+            hsn: "7117",
+            gst: "3%"
+        },
+
+        "Earrings": {
+            hsn: "7117",
+            gst: "3%"
+        },
+
+        "Necklace": {
+            hsn: "7117",
+            gst: "3%"
+        },
+
+        "Rings": {
+            hsn: "7117",
+            gst: "3%"
+        }
+
+    },
+
+    "Beauty": {
+
+        "Makeup": {
+            hsn: "3304",
+            gst: "18%"
+        },
+
+        "Skincare": {
+            hsn: "3304",
+            gst: "18%"
+        },
+
+        "Hair Care": {
+            hsn: "3305",
+            gst: "18%"
+        }
+
+    },
+
+    "Shoes": {
+
+        "Men Shoes": {
+            hsn: "6403",
+            gst: "5%"
+        },
+
+        "Women Shoes": {
+            hsn: "6403",
+            gst: "5%"
+        },
+
+        "Kids Shoes": {
+            hsn: "6403",
+            gst: "5%"
+        },
+
+        "Sports Shoes": {
+            hsn: "6404",
+            gst: "5%"
+        }
+
+    },
+
+    "Watches": {
+
+        "Men Watches": {
+            hsn: "9102",
+            gst: "18%"
+        },
+
+        "Women Watches": {
+            hsn: "9102",
+            gst: "18%"
+        },
+
+        "Kids Watches": {
+            hsn: "9102",
+            gst: "18%"
+        }
+
+    },
+
+    "Electronics": {
+
+        "Mobile": {
+            hsn: "8517",
+            gst: "18%"
+        },
+
+        "Earbuds": {
+            hsn: "8518",
+            gst: "18%"
+        },
+
+        "Speakers": {
+            hsn: "8518",
+            gst: "18%"
+        },
+
+        "Accessories": {
+            hsn: "8517",
+            gst: "18%"
+        }
+
+    },
+
+    "Home": {
+
+        "Decor": {
+            hsn: "3926",
+            gst: "18%"
+        },
+
+        "Kitchen": {
+            hsn: "3924",
+            gst: "18%"
+        },
+
+        "Storage": {
+            hsn: "3924",
+            gst: "18%"
+        }
+
+    }
+
+};
+
+
+/* ==========================================
+   LOAD SUBCATEGORY
+   ========================================== */
+
+function updateSubcategories() {
+
+    const category =
+        document.getElementById("category").value;
+
+    const subcategory =
+        document.getElementById("subcategory");
+
+
+    const currentSubcategory =
+        "{{ product.subcategory }}";
+
+
+    subcategory.innerHTML =
+        '<option value="">Select Subcategory</option>';
+
+
+    if (subcategoryOptions[category]) {
+
+        subcategoryOptions[category].forEach(function(item) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = item;
+
+            option.textContent = item;
+
+
+            if (item === currentSubcategory) {
+                option.selected = true;
+            }
+
+
+            subcategory.appendChild(option);
+
+        });
+
+    }
+
+
+    updateTaxDetails();
+
+}
+
+
+/* ==========================================
+   UPDATE HSN + GST
+   ========================================== */
+
+function updateTaxDetails() {
+
+    const category =
+        document.getElementById("category").value;
+
+    const subcategory =
+        document.getElementById("subcategory").value;
+
+
+    const tax =
+        taxMapping[category]?.[subcategory];
+
+
+    const hsnInput =
+        document.getElementById("hsn_code");
+
+    const gstInput =
+        document.getElementById("gst_rate");
+
+    const gstDisplay =
+        document.getElementById("gst_display");
+
+
+    if (tax) {
+
+        hsnInput.value =
+            tax.hsn;
+
+        gstInput.value =
+            tax.gst.replace("%", "");
+
+        gstDisplay.value =
+            tax.gst;
+
+    }
+
+}
+
+
+/* ==========================================
+   INITIAL LOAD
+   ========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        updateSubcategories();
+
+    }
+);
+
+</script>
 
 
 </body>
