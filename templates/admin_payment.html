@@ -29,52 +29,190 @@
     </style>
 </head>
 <body>
+
     <main class="payment-page">
+
         <div class="payment-header">
+
             <div>
+
                 <h1>💳 Payment Verification</h1>
-                <p class="mb-0 text-secondary">Confirm QR/WhatsApp payments before processing orders.</p>
+
+                <p class="mb-0 text-secondary">
+                    Confirm QR/WhatsApp payments before processing orders.
+                </p>
+
             </div>
-            <a class="btn btn-outline-secondary" href="/admin/dashboard">← Dashboard</a>
+
+            <a class="btn btn-outline-secondary"
+               href="/admin/dashboard">
+                ← Dashboard
+            </a>
+
         </div>
 
+
         <div class="card payment-card">
+
             {% if orders %}
+
                 <table class="table payment-table mb-0">
+
                     <thead class="table-light">
+
                         <tr>
+
                             <th>Tracking ID</th>
+
                             <th>Customer</th>
+
                             <th>Product</th>
+
                             <th>Amount</th>
+
                             <th>Date</th>
-                            <th>Status</th>
+
+                            <th>Payment Status</th>
+
                             <th>Action</th>
+
                         </tr>
+
                     </thead>
+
+
                     <tbody>
+
                         {% for order in orders %}
+
                             <tr>
-                                <td class="tracking-id">{{ order.tracking_id or 'Not available' }}</td>
-                                <td>{{ order.user.name }}<br><small class="text-secondary">{{ order.user.email }}</small></td>
-                                <td>{{ order.product.name }}</td>
-                                <td class="amount">₹{{ order.total_amount }}</td>
-                                <td>{{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</td>
-                                <td><span class="badge status-badge">Payment Verification</span></td>
-                                <td>
-                                    <form class="verify-actions" method="POST" action="/admin/update-order-status/{{ order.id }}">
-                                        <button class="approve" name="status" value="Pending" type="submit">Payment Received</button>
-                                        <button class="reject" name="status" value="Cancelled" type="submit">Not Received</button>
-                                    </form>
+
+                                <!-- TRACKING ID -->
+
+                                <td class="tracking-id">
+                                    {{ order.tracking_id or 'Not available' }}
                                 </td>
+
+
+                                <!-- CUSTOMER -->
+
+                                <td>
+                                    {{ order.user.name }}
+
+                                    <br>
+
+                                    <small class="text-secondary">
+                                        {{ order.user.email }}
+                                    </small>
+                                </td>
+
+
+                                <!-- PRODUCT -->
+
+                                <td>
+                                    {{ order.product.name }}
+                                </td>
+
+
+                                <!-- AMOUNT -->
+
+                                <td class="amount">
+                                    ₹{{ order.total_amount }}
+                                </td>
+
+
+                                <!-- DATE -->
+
+                                <td>
+                                    {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                                </td>
+
+
+                                <!-- PAYMENT STATUS -->
+
+                                <td>
+
+                                    {% if order.payment_status == "Paid" %}
+
+                                        <span class="badge bg-success">
+                                            Paid
+                                        </span>
+
+                                    {% elif order.payment_status == "Cancelled" %}
+
+                                        <span class="badge bg-danger">
+                                            Cancelled
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge status-badge">
+                                            Pending
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- ACTION -->
+
+                                <td>
+
+                                    <form
+                                        class="verify-actions"
+                                        method="POST"
+                                        action="/admin/update-payment-status/{{ order.id }}"
+                                    >
+
+                                        <!-- PAYMENT RECEIVED -->
+
+                                        <button
+                                            class="approve"
+                                            name="payment_status"
+                                            value="Paid"
+                                            type="submit"
+                                        >
+                                            Payment Received
+                                        </button>
+
+
+                                        <!-- NOT RECEIVED -->
+
+                                        <button
+                                            class="reject"
+                                            name="payment_status"
+                                            value="Pending"
+                                            type="submit"
+                                        >
+                                            Not Received
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
                             </tr>
+
                         {% endfor %}
+
                     </tbody>
+
                 </table>
+
             {% else %}
-                <div class="p-5 text-center text-secondary">No payments are waiting for verification.</div>
+
+                <div class="p-5 text-center text-secondary">
+
+                    No payments are waiting for verification.
+
+                </div>
+
             {% endif %}
+
         </div>
+
     </main>
+
 </body>
 </html>

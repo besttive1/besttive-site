@@ -437,7 +437,7 @@ def qr_payment_success():
         return redirect("/login")
 
     product_name = request.form.get("product_name")
-   
+
     product = Product.query.filter_by(
         name=product_name
     ).first()
@@ -463,37 +463,62 @@ def qr_payment_success():
 
     new_order = Order(
         customer_name=user.name or "BESTTIVE Customer",
+
         product_name=product.name,
+
         # Final amount including GST
         amount=int(final_amount),
+
         user_id=user.id,
+
         product_id=product.id,
+
         quantity=1,
+
         price=product.price,
+
         # Tax details
         taxable_amount=taxable_amount,
+
         gst_rate=gst_rate,
+
         gst_amount=gst_amount,
+
         hsn_code=product.hsn_code or "",
+
         # Final order total
         total_amount=final_amount,
+
         address=user.address or "",
-        status="Payment Verification"
+
+        # Delivery / Order Status
+        status="Pending",
+
+        # Payment Status
+        payment_status="Pending"
     )
 
     db.session.add(new_order)
+
     assign_tracking_id(new_order)
+
     db.session.commit()
 
     # =========================
     # PAYMENT SUCCESS PAGE
     # =========================
+
     return render_template(
         "payment_success.html",
+
         customer_name=user.name,
+
         product_name=product.name,
+
         amount=final_amount,
-        status="Payment Verification",
+
+        status="Pending",
+
         tracking_ids=[new_order.tracking_id]
     )
 
@@ -570,6 +595,11 @@ def payment_success():
                     total_amount=final_amount,
 
                     address=user.address or "",
+
+                    # Payment Status
+                    payment_status="Paid",
+
+                    # Order / Delivery Status
                     status="Pending"
                 )
 
@@ -597,69 +627,75 @@ def payment_success():
         )
 
     # =========================
-    # SINGLE PRODUCT ORDER
-    # =========================
+# SINGLE PRODUCT ORDER
+# =========================
 
-    product_id = session.get("product_id")
+product_id = session.get("product_id")
 
-    product = Product.query.get(product_id)
+product = Product.query.get(product_id)
 
-    if not product:
-        flash("Product not found.")
-        return redirect("/")
+if not product:
+    flash("Product not found.")
+    return redirect("/")
 
-    # Automatic GST calculation
-    tax = calculate_tax(product, 1)
+# Automatic GST calculation
+tax = calculate_tax(product, 1)
 
-    taxable_amount = tax["taxable_amount"]
-    gst_rate = tax["gst_rate"]
-    gst_amount = tax["gst_amount"]
-    final_amount = tax["total_amount"]
+taxable_amount = tax["taxable_amount"]
+gst_rate = tax["gst_rate"]
+gst_amount = tax["gst_amount"]
+final_amount = tax["total_amount"]
 
-    # =========================
-    # CREATE ORDER
-    # =========================
+# =========================
+# CREATE ORDER
+# =========================
 
-    new_order = Order(
-        customer_name=customer_name or "BESTTIVE Customer",
-        product_name=product.name,
+new_order = Order(
+    customer_name=customer_name or "BESTTIVE Customer",
+    product_name=product.name,
 
-        # Final amount including GST
-        amount=int(final_amount),
+    # Final amount including GST
+    amount=int(final_amount),
 
-        user_id=user.id,
-        product_id=product.id,
+    user_id=user.id,
+    product_id=product.id,
 
-        quantity=1,
-        price=product.price,
+    quantity=1,
+    price=product.price,
 
-        # Tax details
-        taxable_amount=taxable_amount,
-        gst_rate=gst_rate,
-        gst_amount=gst_amount,
-        hsn_code=product.hsn_code or "",
+    # Tax details
+    taxable_amount=taxable_amount,
+    gst_rate=gst_rate,
+    gst_amount=gst_amount,
+    hsn_code=product.hsn_code or "",
 
-        # Final total
-        total_amount=final_amount,
+    # Final total
+    total_amount=final_amount,
 
-        address=user.address or "",
-        status="Pending"
-    )
+    address=user.address or "",
 
-    db.session.add(new_order)
+    # Payment Status
+    payment_status="Paid",
 
-    assign_tracking_id(new_order)
+    # Order / Delivery Status
+    status="Pending"
+)
 
-    db.session.commit()
+db.session.add(new_order)
 
-    return render_template(
-        "payment_success.html",
-        customer_name=customer_name,
-        product_name=product.name,
-        amount=final_amount,
-        status="Pending",
-        tracking_ids=[new_order.tracking_id]
-    )
+assign_tracking_id(new_order)
+
+db.session.commit()
+
+return render_template(
+    "payment_success.html",
+    customer_name=customer_name,
+    product_name=product.name,
+    amount=final_amount,
+    status="Pending",
+    tracking_ids=[new_order.tracking_id]
+)
+
 
 @app.route("/payment-failure", methods=["POST"])
 def payment_failure():
@@ -668,19 +704,27 @@ def payment_failure():
 
     return redirect("/")
 
+
 # 🔥 ADD TO CART
 
 @app.route("/payment", methods=["GET", "POST"])
 def payment_form():
+
     if request.method == "POST":
+
         name = request.form["name"]
         amount = request.form["amount"]
+
         return f"Payment Successful! {name} paid ₹{amount}"
+
     return render_template("payment.html")
+
 
 from flask_mail import Mail, Message
 
+
 app.config['SECRET_KEY'] = "CHANGE_THIS_SECRET_KEY"
+
 
 @app.route("/product/<int:id>")
 def product_details(id):
@@ -697,9 +741,12 @@ def product_details(id):
         images=images
     )
 
+
 @app.route("/about")
 def about():
+
     return render_template("about.html")
+
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
@@ -712,6 +759,7 @@ def contact():
         message = request.form.get("message", "").strip()
 
         if not name or not email or not message:
+
             return render_template(
                 "contact.html",
                 error="Please fill all required fields."
@@ -725,6 +773,7 @@ def contact():
         )
 
         db.session.add(new_message)
+
         db.session.commit()
 
         return render_template(
@@ -1133,7 +1182,9 @@ class Order(db.Model):
 
     # Legacy database columns retained for existing order records and invoices.
     customer_name = db.Column(db.String(100), nullable=False)
+
     product_name = db.Column(db.String(200), nullable=False)
+
     amount = db.Column(db.Integer, nullable=False)
 
     user_id = db.Column(
@@ -1191,8 +1242,15 @@ class Order(db.Model):
         default=""
     )
 
+    # Delivery / Order Status
     status = db.Column(
         db.String(50),
+        default="Pending"
+    )
+
+    # Payment Status
+    payment_status = db.Column(
+        db.String(30),
         default="Pending"
     )
 
@@ -1202,9 +1260,12 @@ class Order(db.Model):
     )
 
     user = db.relationship("User")
+
     product = db.relationship("Product")
 
+
 def calculate_tax(product, quantity=1):
+
     quantity = int(quantity or 1)
 
     taxable_amount = product.price * quantity
@@ -1369,12 +1430,13 @@ def admin_dashboard():
 
 @app.route("/admin/payment")
 def admin_payment():
+
     if not session.get("admin"):
         return redirect("/admin")
 
     verification_orders = (
         Order.query
-        .filter_by(status="Payment Verification")
+        .filter_by(payment_status="Pending")
         .order_by(Order.created_at.desc())
         .all()
     )
@@ -1823,6 +1885,28 @@ def update_order_status(id):
 
     return redirect("/admin/dashboard")
 
+@app.route("/admin/update-payment-status/<int:id>", methods=["POST"])
+def update_payment_status(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    order = Order.query.get_or_404(id)
+
+    payment_status = request.form.get("payment_status")
+
+    if payment_status not in ["Paid", "Pending", "Cancelled"]:
+        flash("Invalid payment status!")
+        return redirect("/admin/payment")
+
+    order.payment_status = payment_status
+
+    db.session.commit()
+
+    flash("Payment Status Updated Successfully!")
+
+    return redirect("/admin/payment")
+    
 @app.route("/admin/delete-orders", methods=["POST"])
 def delete_orders():
 
