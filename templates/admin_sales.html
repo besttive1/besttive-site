@@ -13,8 +13,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
-
     <style>
+
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
@@ -41,13 +44,11 @@
             z-index: 1000;
         }
 
-
         .sidebar h2 {
             text-align: center;
             padding: 20px;
             margin: 0;
         }
-
 
         .sidebar a {
             display: block;
@@ -58,14 +59,13 @@
             white-space: nowrap;
         }
 
-
         .sidebar a:hover {
             background: #4b0082;
         }
 
 
         /* =========================
-           CONTENT
+           MAIN CONTENT
            ========================= */
 
         .content {
@@ -73,7 +73,6 @@
             padding: 30px;
             min-height: 100vh;
         }
-
 
         .page-title {
             font-size: 28px;
@@ -84,33 +83,40 @@
 
         /* =========================
            SALES CARDS
+           SAME SIZE AS DASHBOARD
            ========================= */
 
         .sales-card {
             background: white;
             border: none;
-            border-radius: 15px;
-            padding: 22px;
-            height: 100%;
+            border-radius: 20px;
+
+            width: 100%;
+            height: 173px;
+            min-height: 173px;
+
+            padding: 28px 22px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
             box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
         }
 
-
         .sales-icon {
-            font-size: 27px;
-            margin-bottom: 10px;
+            font-size: 30px;
+            margin-bottom: 13px;
         }
-
 
         .sales-title {
             color: #666;
-            font-size: 14px;
-            margin-bottom: 7px;
+            font-size: 16px;
+            margin-bottom: 10px;
         }
 
-
         .sales-amount {
-            font-size: 25px;
+            font-size: 28px;
             font-weight: 700;
         }
 
@@ -127,19 +133,16 @@
             box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
         }
 
-
         .chart-title {
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 20px;
         }
 
-
         .chart-wrapper {
             width: 100%;
             overflow-x: auto;
         }
-
 
         .sales-chart {
             width: 100%;
@@ -160,23 +163,19 @@
             box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
         }
 
-
         .orders-card h4 {
             margin-bottom: 20px;
         }
-
 
         .orders-wrapper {
             width: 100%;
             overflow-x: auto;
         }
 
-
         .sales-table {
             width: 100%;
             min-width: 750px;
         }
-
 
         .sales-table th,
         .sales-table td {
@@ -184,12 +183,10 @@
             vertical-align: middle;
         }
 
-
         .tracking-id {
             color: #4b0082;
             font-weight: 700;
         }
-
 
         .paid-badge {
             background: #198754;
@@ -201,7 +198,7 @@
 
 
         /* =========================
-           MOBILE FIX
+           MOBILE
            ========================= */
 
         @media (max-width: 768px) {
@@ -212,9 +209,6 @@
                 height: 100%;
                 overflow: hidden;
             }
-
-
-            /* BLACK SIDEBAR FIXED */
 
             .sidebar {
                 width: 210px;
@@ -228,11 +222,9 @@
                 overflow-x: hidden;
             }
 
-
             .sidebar h2 {
                 font-size: 21px;
             }
-
 
             .sidebar a {
                 display: block;
@@ -242,7 +234,7 @@
             }
 
 
-            /* ONLY RIGHT SIDE CONTENT SCROLLS */
+            /* RIGHT SIDE SCROLL */
 
             .content {
                 position: fixed;
@@ -250,8 +242,10 @@
                 right: 0;
                 top: 0;
                 bottom: 0;
+
                 width: auto;
                 height: 100vh;
+
                 margin-left: 0;
                 padding: 18px;
 
@@ -262,24 +256,44 @@
             }
 
 
-            /* KEEP SALES OVERVIEW WIDE */
+            /*
+             * SALES AREA WIDE ENOUGH
+             * FOR DASHBOARD-SIZE CARDS
+             */
 
             .content > .row,
             .content > .chart-card,
             .content > .orders-card {
-                min-width: 700px;
+                min-width: 760px;
             }
-
 
             .page-title {
                 font-size: 22px;
             }
 
 
-            .sales-amount {
-                font-size: 21px;
+            /* DASHBOARD SIZE */
+
+            .sales-card {
+                height: 173px;
+                min-height: 173px;
+                padding: 25px 22px;
+                border-radius: 20px;
             }
 
+            .sales-icon {
+                font-size: 30px;
+                margin-bottom: 13px;
+            }
+
+            .sales-title {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+
+            .sales-amount {
+                font-size: 28px;
+            }
 
             .chart-card,
             .orders-card {
@@ -289,40 +303,58 @@
         }
 
 
+        /* =========================
+           SMALL MOBILE
+           ========================= */
+
         @media (max-width: 480px) {
 
             .sidebar {
                 width: 180px;
             }
 
-
             .sidebar h2 {
                 font-size: 19px;
                 padding: 16px 5px;
             }
-
 
             .sidebar a {
                 padding: 11px 12px;
                 font-size: 11px;
             }
 
-
             .content {
                 left: 180px;
                 padding: 12px;
             }
 
-
             .content > .row,
             .content > .chart-card,
             .content > .orders-card {
-                min-width: 650px;
+                min-width: 720px;
             }
-
 
             .page-title {
                 font-size: 20px;
+            }
+
+            .sales-card {
+                height: 173px;
+                min-height: 173px;
+                padding: 22px 18px;
+            }
+
+            .sales-icon {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+
+            .sales-title {
+                font-size: 15px;
+            }
+
+            .sales-amount {
+                font-size: 26px;
             }
 
         }
@@ -343,51 +375,41 @@
 
     <h2>BESTTIVE</h2>
 
-
     <a href="/admin/dashboard">
         🏠 Dashboard
     </a>
-
 
     <a href="/admin/products">
         📦 Products
     </a>
 
-
     <a href="/admin/add-product">
         ➕ Add Product
     </a>
-
 
     <a href="{{ url_for('admin_orders') }}">
         🛒 Orders
     </a>
 
-
     <a href="/admin/banners">
         🖼️ Manage Banners
     </a>
-
 
     <a href="{{ url_for('admin_customers') }}">
         👥 Customers
     </a>
 
-
     <a href="/admin/payment">
         💳 Payment
     </a>
-
 
     <a href="/admin/complaints">
         📝 Complaints
     </a>
 
-
     <a href="/">
         🌐 Website
     </a>
-
 
     <a href="/logout">
         🚪 Logout
@@ -402,7 +424,6 @@
 
 <div class="content">
 
-
     <h2 class="page-title">
         📊 Sales Overview
     </h2>
@@ -410,6 +431,7 @@
 
     <!-- =========================
          SALES SUMMARY
+         6-COLUMN DASHBOARD STYLE
          ========================= -->
 
     <div class="row g-3">
@@ -417,7 +439,7 @@
 
         <!-- TODAY -->
 
-        <div class="col-6 col-lg-3">
+        <div class="col-6 col-lg-2">
 
             <div class="sales-card">
 
@@ -440,7 +462,7 @@
 
         <!-- YESTERDAY -->
 
-        <div class="col-6 col-lg-3">
+        <div class="col-6 col-lg-2">
 
             <div class="sales-card">
 
@@ -463,7 +485,7 @@
 
         <!-- THIS WEEK -->
 
-        <div class="col-6 col-lg-3">
+        <div class="col-6 col-lg-2">
 
             <div class="sales-card">
 
@@ -486,7 +508,7 @@
 
         <!-- THIS MONTH -->
 
-        <div class="col-6 col-lg-3">
+        <div class="col-6 col-lg-2">
 
             <div class="sales-card">
 
@@ -507,9 +529,9 @@
         </div>
 
 
-        <!-- TOTAL PAID -->
+        <!-- TOTAL PAID SALES -->
 
-        <div class="col-12 col-lg-3">
+        <div class="col-6 col-lg-2">
 
             <div class="sales-card">
 
@@ -542,7 +564,6 @@
             📈 Sales Overview
         </div>
 
-
         <div class="chart-wrapper">
 
             <canvas id="salesChart"
@@ -564,7 +585,6 @@
             💳 Paid Orders
         </h4>
 
-
         {% if paid_orders %}
 
         <div class="orders-wrapper">
@@ -576,21 +596,15 @@
                     <tr>
 
                         <th>Tracking ID</th>
-
                         <th>Customer</th>
-
                         <th>Product</th>
-
                         <th>Amount</th>
-
                         <th>Date</th>
-
                         <th>Order Status</th>
 
                     </tr>
 
                 </thead>
-
 
                 <tbody>
 
@@ -599,39 +613,24 @@
                     <tr>
 
                         <td class="tracking-id">
-
                             {{ order.tracking_id or "Not available" }}
-
                         </td>
 
-
                         <td>
-
                             {{ order.user.name }}
-
                         </td>
 
-
                         <td>
-
                             {{ order.product.name }}
-
                         </td>
 
-
                         <td>
-
                             ₹{{ order.total_amount }}
-
                         </td>
-
 
                         <td>
-
                             {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}
-
                         </td>
-
 
                         <td>
 
@@ -657,7 +656,6 @@
 
         </div>
 
-
         {% else %}
 
         <p class="text-secondary mb-0">
@@ -668,7 +666,6 @@
 
     </div>
 
-
 </div>
 
 
@@ -677,7 +674,6 @@
      ========================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 
 <script>
 
