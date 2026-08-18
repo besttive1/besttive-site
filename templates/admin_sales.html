@@ -5,13 +5,14 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Sales Overview | BESTTIVE Admin</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
     <style>
 
@@ -22,6 +23,7 @@
         html,
         body {
             margin: 0;
+            padding: 0;
             min-height: 100%;
         }
 
@@ -29,6 +31,7 @@
             background: #f4f6f9;
             font-family: Arial, sans-serif;
             color: #25113d;
+            overflow-x: hidden;
         }
 
 
@@ -41,18 +44,19 @@
             height: 100vh;
             background: #212529;
             position: fixed;
-            left: 0;
             top: 0;
+            left: 0;
             color: white;
             overflow-y: auto;
             overflow-x: hidden;
-            z-index: 1000;
+            z-index: 1100;
         }
 
         .sidebar h2 {
             text-align: center;
-            padding: 20px;
+            padding: 25px 15px;
             margin: 0;
+            font-size: 28px;
         }
 
         .sidebar a {
@@ -60,12 +64,29 @@
             color: white;
             text-decoration: none;
             padding: 14px 25px;
-            font-size: 14px;
+            font-size: 15px;
             white-space: nowrap;
         }
 
         .sidebar a:hover {
-            background: #4b0082;
+            background: #343a40;
+        }
+
+
+        /* =========================
+           OVERLAY
+           ========================= */
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1050;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
         }
 
 
@@ -75,31 +96,70 @@
 
         .content {
             margin-left: 250px;
-            padding: 30px;
+            padding: 25px 30px 40px;
             min-height: 100vh;
+        }
+
+
+        /* =========================
+           PAGE HEADER
+           ========================= */
+
+        .mobile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 25px;
         }
 
         .page-title {
             font-size: 28px;
             font-weight: 600;
-            margin-bottom: 25px;
+            margin: 0;
+            color: #25113d;
+        }
+
+
+        /* =========================
+           MENU BUTTON
+           ========================= */
+
+        .menu-btn {
+            display: none;
+            width: 55px;
+            height: 55px;
+            border: none;
+            border-radius: 15px;
+            background: #212529;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.20);
         }
 
 
         /* =========================
            SALES CARDS
-           DASHBOARD SAME SIZE
            ========================= */
+
+        .sales-row {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 18px;
+            width: 100%;
+        }
 
         .sales-card {
             background: white;
-            border: none;
             border-radius: 20px;
             padding: 25px 22px;
             height: 170px;
-            min-height: 170px;
             width: 100%;
-            box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
         }
 
         .sales-icon {
@@ -116,11 +176,12 @@
         .sales-amount {
             font-size: 28px;
             font-weight: 700;
+            color: #25113d;
         }
 
 
         /* =========================
-           GRAPH
+           CHART
            ========================= */
 
         .chart-card {
@@ -128,41 +189,43 @@
             border-radius: 15px;
             padding: 25px;
             margin-top: 30px;
-            box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
         }
 
         .chart-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
             margin-bottom: 20px;
         }
 
         .chart-wrapper {
             width: 100%;
+            height: 320px;
+            position: relative;
             overflow-x: auto;
         }
 
-        .sales-chart {
-            width: 100%;
-            min-width: 650px;
-            height: 280px;
+        #salesChart {
+            width: 100% !important;
+            height: 300px !important;
         }
 
 
         /* =========================
-           ORDERS TABLE
+           PAID ORDERS
            ========================= */
 
         .orders-card {
             background: white;
             border-radius: 15px;
-            padding: 22px;
+            padding: 25px;
             margin-top: 30px;
-            box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
         }
 
         .orders-card h4 {
             margin-bottom: 20px;
+            color: #25113d;
         }
 
         .orders-wrapper {
@@ -171,8 +234,8 @@
         }
 
         .sales-table {
-            width: 100%;
             min-width: 750px;
+            width: 100%;
         }
 
         .sales-table th,
@@ -196,136 +259,149 @@
 
 
         /* =========================
+           TABLET / SMALL DESKTOP
+           ========================= */
+
+        @media (max-width: 1200px) {
+
+            .sales-row {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+        }
+
+
+        /* =========================
            MOBILE
            ========================= */
 
         @media (max-width: 768px) {
 
-            html,
             body {
-                width: 100%;
-                height: 100%;
-                overflow: hidden;
+                overflow-x: hidden;
             }
 
 
-            /* FIXED BLACK SIDEBAR */
+            /* SIDEBAR HIDDEN */
 
             .sidebar {
-                width: 180px;
+                width: 230px;
                 height: 100vh;
-                position: fixed;
-                left: 0;
+                left: -230px;
                 top: 0;
-                bottom: 0;
-                overflow-y: auto;
-                overflow-x: hidden;
-                z-index: 1000;
+                transition: left 0.3s ease;
+                z-index: 1100;
+            }
+
+            .sidebar.active {
+                left: 0;
             }
 
             .sidebar h2 {
-                font-size: 19px;
-                padding: 18px 5px;
+                font-size: 24px;
+                padding: 25px 15px;
             }
 
             .sidebar a {
-                display: block;
-                white-space: nowrap;
-                padding: 12px 12px;
-                font-size: 11px;
+                padding: 14px 20px;
+                font-size: 14px;
             }
 
 
-            /* RIGHT SIDE ONLY SCROLL */
+            /* FULL PAGE CONTENT */
 
             .content {
-                position: fixed;
-                left: 180px;
-                right: 0;
-                top: 0;
-                bottom: 0;
-
-                width: auto;
-                height: 100vh;
-
                 margin-left: 0;
+                width: 100%;
+                min-height: 100vh;
                 padding: 15px;
-
-                overflow-x: auto;
-                overflow-y: auto;
-
-                -webkit-overflow-scrolling: touch;
             }
 
 
+            /* HEADER:
+               SALES OVERVIEW LEFT
+               MENU RIGHT */
+
+            .mobile-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
             .page-title {
-                font-size: 22px;
+                font-size: 24px;
+                margin: 0;
                 white-space: nowrap;
             }
 
-
-            /* =========================
-               MOBILE SALES CARD ROW
-               EXACT COMPACT WIDTH
-               ========================= */
-
-            .content > .row.g-3 {
-                width: 550px;
-                min-width: 550px;
-                margin-left: 0;
-                margin-right: 0;
-                flex-wrap: wrap;
+            .menu-btn {
+                display: flex;
             }
 
 
-            /* EACH CARD = 250px */
+            /* 2 CARDS PER ROW */
 
-            .content > .row.g-3 > div {
-                flex: 0 0 250px !important;
-                width: 250px !important;
-                max-width: 250px !important;
+            .sales-row {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+                width: 100%;
             }
-
 
             .sales-card {
-                width: 100%;
                 height: 170px;
                 min-height: 170px;
-                padding: 22px;
+                padding: 20px 15px;
                 border-radius: 20px;
             }
 
             .sales-icon {
                 font-size: 28px;
-                margin-bottom: 10px;
+                margin-bottom: 12px;
             }
 
             .sales-title {
-                font-size: 16px;
+                font-size: 15px;
                 margin-bottom: 10px;
             }
 
             .sales-amount {
-                font-size: 27px;
+                font-size: 26px;
             }
 
 
-            /* GRAPH AND TABLE HORIZONTAL SCROLL */
-
-            .chart-card,
-            .orders-card {
-                min-width: 550px;
-                width: 550px;
-                padding: 18px;
-            }
+            /* CHART */
 
             .chart-card {
-                margin-top: 30px;
+                width: 100%;
+                padding: 18px;
+                margin-top: 25px;
+                overflow: hidden;
             }
 
-            .sales-chart {
+            .chart-title {
+                font-size: 20px;
+            }
+
+            .chart-wrapper {
+                height: 300px;
+                overflow-x: auto;
+            }
+
+            #salesChart {
                 min-width: 500px;
-                height: 280px;
+                height: 280px !important;
+            }
+
+
+            /* ORDERS */
+
+            .orders-card {
+                width: 100%;
+                padding: 18px;
+                margin-top: 25px;
+                overflow: hidden;
             }
 
         }
@@ -337,47 +413,29 @@
 
         @media (max-width: 480px) {
 
-            .sidebar {
-                width: 170px;
-            }
-
-            .sidebar h2 {
-                font-size: 18px;
-                padding: 16px 3px;
-            }
-
-            .sidebar a {
-                padding: 11px 10px;
-                font-size: 10px;
-            }
-
             .content {
-                left: 170px;
                 padding: 12px;
             }
 
             .page-title {
-                font-size: 20px;
+                font-size: 22px;
             }
 
-
-            /* COMPACT SALES CARDS */
-
-            .content > .row.g-3 {
-                width: 540px;
-                min-width: 540px;
+            .menu-btn {
+                width: 52px;
+                height: 52px;
+                font-size: 28px;
+                border-radius: 14px;
             }
 
-            .content > .row.g-3 > div {
-                flex: 0 0 245px !important;
-                width: 245px !important;
-                max-width: 245px !important;
+            .sales-row {
+                gap: 12px;
             }
 
             .sales-card {
-                height: 170px;
-                min-height: 170px;
-                padding: 20px;
+                height: 165px;
+                min-height: 165px;
+                padding: 18px 14px;
             }
 
             .sales-icon {
@@ -385,17 +443,11 @@
             }
 
             .sales-title {
-                font-size: 15px;
+                font-size: 14px;
             }
 
             .sales-amount {
-                font-size: 26px;
-            }
-
-            .chart-card,
-            .orders-card {
-                min-width: 540px;
-                width: 540px;
+                font-size: 25px;
             }
 
         }
@@ -409,10 +461,23 @@
 
 
 <!-- =========================
+     SIDEBAR OVERLAY
+     ========================= -->
+
+<div
+    class="sidebar-overlay"
+    onclick="closeSidebar()"
+></div>
+
+
+<!-- =========================
      SIDEBAR
      ========================= -->
 
-<div class="sidebar">
+<div
+    class="sidebar"
+    id="sidebar"
+>
 
     <h2>BESTTIVE</h2>
 
@@ -465,34 +530,47 @@
 
 <div class="content">
 
-    <h2 class="page-title">
-        📊 Sales Overview
-    </h2>
+
+    <!-- HEADER -->
+
+    <div class="mobile-header">
+
+        <h2 class="page-title">
+            📊 Sales Overview
+        </h2>
+
+        <button
+            class="menu-btn"
+            onclick="toggleSidebar()"
+            aria-label="Open Menu"
+        >
+            ☰
+        </button>
+
+    </div>
 
 
-    <!-- SALES SUMMARY -->
+    <!-- =========================
+         SALES CARDS
+         ========================= -->
 
-    <div class="row g-3">
+    <div class="sales-row">
 
 
         <!-- TODAY -->
 
-        <div class="col-6 col-lg-2">
+        <div class="sales-card">
 
-            <div class="sales-card">
+            <div class="sales-icon">
+                📅
+            </div>
 
-                <div class="sales-icon">
-                    📅
-                </div>
+            <div class="sales-title">
+                Today
+            </div>
 
-                <div class="sales-title">
-                    Today
-                </div>
-
-                <div class="sales-amount">
-                    ₹{{ "%.2f"|format(today_sales) }}
-                </div>
-
+            <div class="sales-amount">
+                ₹{{ "%.2f"|format(today_sales) }}
             </div>
 
         </div>
@@ -500,22 +578,18 @@
 
         <!-- YESTERDAY -->
 
-        <div class="col-6 col-lg-2">
+        <div class="sales-card">
 
-            <div class="sales-card">
+            <div class="sales-icon">
+                🗓️
+            </div>
 
-                <div class="sales-icon">
-                    🗓️
-                </div>
+            <div class="sales-title">
+                Yesterday
+            </div>
 
-                <div class="sales-title">
-                    Yesterday
-                </div>
-
-                <div class="sales-amount">
-                    ₹{{ "%.2f"|format(yesterday_sales) }}
-                </div>
-
+            <div class="sales-amount">
+                ₹{{ "%.2f"|format(yesterday_sales) }}
             </div>
 
         </div>
@@ -523,22 +597,18 @@
 
         <!-- THIS WEEK -->
 
-        <div class="col-6 col-lg-2">
+        <div class="sales-card">
 
-            <div class="sales-card">
+            <div class="sales-icon">
+                📈
+            </div>
 
-                <div class="sales-icon">
-                    📈
-                </div>
+            <div class="sales-title">
+                This Week
+            </div>
 
-                <div class="sales-title">
-                    This Week
-                </div>
-
-                <div class="sales-amount">
-                    ₹{{ "%.2f"|format(week_sales) }}
-                </div>
-
+            <div class="sales-amount">
+                ₹{{ "%.2f"|format(week_sales) }}
             </div>
 
         </div>
@@ -546,22 +616,18 @@
 
         <!-- THIS MONTH -->
 
-        <div class="col-6 col-lg-2">
+        <div class="sales-card">
 
-            <div class="sales-card">
+            <div class="sales-icon">
+                📊
+            </div>
 
-                <div class="sales-icon">
-                    📊
-                </div>
+            <div class="sales-title">
+                This Month
+            </div>
 
-                <div class="sales-title">
-                    This Month
-                </div>
-
-                <div class="sales-amount">
-                    ₹{{ "%.2f"|format(month_sales) }}
-                </div>
-
+            <div class="sales-amount">
+                ₹{{ "%.2f"|format(month_sales) }}
             </div>
 
         </div>
@@ -569,31 +635,28 @@
 
         <!-- TOTAL PAID SALES -->
 
-        <div class="col-6 col-lg-2">
+        <div class="sales-card">
 
-            <div class="sales-card">
+            <div class="sales-icon">
+                💰
+            </div>
 
-                <div class="sales-icon">
-                    💰
-                </div>
+            <div class="sales-title">
+                Total Paid Sales
+            </div>
 
-                <div class="sales-title">
-                    Total Paid Sales
-                </div>
-
-                <div class="sales-amount">
-                    ₹{{ "%.2f"|format(total_paid_sales) }}
-                </div>
-
+            <div class="sales-amount">
+                ₹{{ "%.2f"|format(total_paid_sales) }}
             </div>
 
         </div>
+
 
     </div>
 
 
     <!-- =========================
-         SALES GRAPH
+         SALES CHART
          ========================= -->
 
     <div class="chart-card">
@@ -604,9 +667,7 @@
 
         <div class="chart-wrapper">
 
-            <canvas id="salesChart"
-                    class="sales-chart">
-            </canvas>
+            <canvas id="salesChart"></canvas>
 
         </div>
 
@@ -623,6 +684,7 @@
             💳 Paid Orders
         </h4>
 
+
         {% if paid_orders %}
 
         <div class="orders-wrapper">
@@ -633,16 +695,34 @@
 
                     <tr>
 
-                        <th>Tracking ID</th>
-                        <th>Customer</th>
-                        <th>Product</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Order Status</th>
+                        <th>
+                            Tracking ID
+                        </th>
+
+                        <th>
+                            Customer
+                        </th>
+
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Amount
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Order Status
+                        </th>
 
                     </tr>
 
                 </thead>
+
 
                 <tbody>
 
@@ -651,35 +731,54 @@
                     <tr>
 
                         <td class="tracking-id">
+
                             {{ order.tracking_id or "Not available" }}
+
                         </td>
 
+
                         <td>
+
                             {{ order.user.name }}
+
                         </td>
 
+
                         <td>
+
                             {{ order.product.name }}
+
                         </td>
 
+
                         <td>
+
                             ₹{{ order.total_amount }}
+
                         </td>
 
+
                         <td>
+
                             {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}
+
                         </td>
+
 
                         <td>
 
                             <span class="paid-badge">
+
                                 Paid
+
                             </span>
 
                             <br>
 
                             <small>
+
                                 {{ order.status }}
+
                             </small>
 
                         </td>
@@ -694,107 +793,184 @@
 
         </div>
 
+
         {% else %}
 
         <p class="text-secondary mb-0">
+
             No paid orders yet.
+
         </p>
 
         {% endif %}
 
     </div>
 
+
 </div>
 
 
 <!-- =========================
-     CHART.JS
+     CHART JS
      ========================= -->
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
 <script>
 
-const salesData = {
+    /* =========================
+       SIDEBAR TOGGLE
+       ========================= */
 
-    labels: [
-        "Yesterday",
-        "Today",
-        "This Week",
-        "This Month"
-    ],
+    function toggleSidebar() {
 
-    datasets: [
-
-        {
-
-            label: "Paid Sales",
-
-            data: [
-
-                {{ yesterday_sales }},
-                {{ today_sales }},
-                {{ week_sales }},
-                {{ month_sales }}
-
-            ],
-
-            borderWidth: 3,
-
-            tension: 0.4,
-
-            fill: false
-
-        }
-
-    ]
-
-};
+        document
+            .getElementById("sidebar")
+            .classList
+            .toggle("active");
 
 
-const config = {
-
-    type: "line",
-
-    data: salesData,
-
-    options: {
-
-        responsive: true,
-
-        maintainAspectRatio: false,
-
-        plugins: {
-
-            legend: {
-
-                display: true
-
-            }
-
-        },
-
-        scales: {
-
-            y: {
-
-                beginAtZero: true
-
-            }
-
-        }
+        document
+            .querySelector(".sidebar-overlay")
+            .classList
+            .toggle("active");
 
     }
 
-};
+
+    function closeSidebar() {
+
+        document
+            .getElementById("sidebar")
+            .classList
+            .remove("active");
 
 
-new Chart(
-    document.getElementById("salesChart"),
-    config
-);
+        document
+            .querySelector(".sidebar-overlay")
+            .classList
+            .remove("active");
+
+    }
+
+
+    /* =========================
+       CLOSE SIDEBAR AFTER
+       CLICKING MENU LINK
+       ON MOBILE
+       ========================= */
+
+    document
+        .querySelectorAll(".sidebar a")
+        .forEach(function(link) {
+
+            link.addEventListener(
+                "click",
+                function() {
+
+                    if (window.innerWidth <= 768) {
+
+                        closeSidebar();
+
+                    }
+
+                }
+            );
+
+        });
+
+
+    /* =========================
+       SALES CHART
+       ========================= */
+
+    const salesData = {
+
+        labels: [
+
+            "Yesterday",
+            "Today",
+            "This Week",
+            "This Month"
+
+        ],
+
+        datasets: [
+
+            {
+
+                label: "Paid Sales",
+
+                data: [
+
+                    {{ yesterday_sales }},
+                    {{ today_sales }},
+                    {{ week_sales }},
+                    {{ month_sales }}
+
+                ],
+
+                borderWidth: 3,
+
+                tension: 0.4,
+
+                fill: false
+
+            }
+
+        ]
+
+    };
+
+
+    const config = {
+
+        type: "line",
+
+        data: salesData,
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    display: true
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    };
+
+
+    new Chart(
+
+        document.getElementById("salesChart"),
+
+        config
+
+    );
 
 </script>
+
 
 </body>
 
