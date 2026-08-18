@@ -19,8 +19,13 @@
             box-sizing: border-box;
         }
 
+        html,
         body {
             margin: 0;
+            min-height: 100%;
+        }
+
+        body {
             background: #f4f6f9;
             font-family: Arial, sans-serif;
             color: #25113d;
@@ -83,30 +88,23 @@
 
         /* =========================
            SALES CARDS
-           SAME SIZE AS DASHBOARD
+           DASHBOARD SAME SIZE
            ========================= */
 
         .sales-card {
             background: white;
             border: none;
             border-radius: 20px;
-
+            padding: 25px 22px;
+            height: 170px;
+            min-height: 170px;
             width: 100%;
-            height: 173px;
-            min-height: 173px;
-
-            padding: 28px 22px;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-
             box-shadow: 0 5px 18px rgba(0, 0, 0, .08);
         }
 
         .sales-icon {
             font-size: 30px;
-            margin-bottom: 13px;
+            margin-bottom: 12px;
         }
 
         .sales-title {
@@ -210,35 +208,39 @@
                 overflow: hidden;
             }
 
+
+            /* FIXED BLACK SIDEBAR */
+
             .sidebar {
-                width: 210px;
+                width: 180px;
                 height: 100vh;
                 position: fixed;
                 left: 0;
                 top: 0;
                 bottom: 0;
-                z-index: 1000;
                 overflow-y: auto;
                 overflow-x: hidden;
+                z-index: 1000;
             }
 
             .sidebar h2 {
-                font-size: 21px;
+                font-size: 19px;
+                padding: 18px 5px;
             }
 
             .sidebar a {
                 display: block;
                 white-space: nowrap;
-                padding: 12px 18px;
-                font-size: 12px;
+                padding: 12px 12px;
+                font-size: 11px;
             }
 
 
-            /* RIGHT SIDE SCROLL */
+            /* RIGHT SIDE ONLY SCROLL */
 
             .content {
                 position: fixed;
-                left: 210px;
+                left: 180px;
                 right: 0;
                 top: 0;
                 bottom: 0;
@@ -247,7 +249,7 @@
                 height: 100vh;
 
                 margin-left: 0;
-                padding: 18px;
+                padding: 15px;
 
                 overflow-x: auto;
                 overflow-y: auto;
@@ -256,34 +258,46 @@
             }
 
 
-            /*
-             * SALES AREA WIDE ENOUGH
-             * FOR DASHBOARD-SIZE CARDS
-             */
-
-            .content > .row,
-            .content > .chart-card,
-            .content > .orders-card {
-                min-width: 760px;
-            }
-
             .page-title {
                 font-size: 22px;
+                white-space: nowrap;
             }
 
 
-            /* DASHBOARD SIZE */
+            /* =========================
+               MOBILE SALES CARD ROW
+               EXACT COMPACT WIDTH
+               ========================= */
+
+            .content > .row.g-3 {
+                width: 550px;
+                min-width: 550px;
+                margin-left: 0;
+                margin-right: 0;
+                flex-wrap: wrap;
+            }
+
+
+            /* EACH CARD = 250px */
+
+            .content > .row.g-3 > div {
+                flex: 0 0 250px !important;
+                width: 250px !important;
+                max-width: 250px !important;
+            }
+
 
             .sales-card {
-                height: 173px;
-                min-height: 173px;
-                padding: 25px 22px;
+                width: 100%;
+                height: 170px;
+                min-height: 170px;
+                padding: 22px;
                 border-radius: 20px;
             }
 
             .sales-icon {
-                font-size: 30px;
-                margin-bottom: 13px;
+                font-size: 28px;
+                margin-bottom: 10px;
             }
 
             .sales-title {
@@ -292,12 +306,26 @@
             }
 
             .sales-amount {
-                font-size: 28px;
+                font-size: 27px;
             }
+
+
+            /* GRAPH AND TABLE HORIZONTAL SCROLL */
 
             .chart-card,
             .orders-card {
-                padding: 15px;
+                min-width: 550px;
+                width: 550px;
+                padding: 18px;
+            }
+
+            .chart-card {
+                margin-top: 30px;
+            }
+
+            .sales-chart {
+                min-width: 500px;
+                height: 280px;
             }
 
         }
@@ -310,43 +338,50 @@
         @media (max-width: 480px) {
 
             .sidebar {
-                width: 180px;
+                width: 170px;
             }
 
             .sidebar h2 {
-                font-size: 19px;
-                padding: 16px 5px;
+                font-size: 18px;
+                padding: 16px 3px;
             }
 
             .sidebar a {
-                padding: 11px 12px;
-                font-size: 11px;
+                padding: 11px 10px;
+                font-size: 10px;
             }
 
             .content {
-                left: 180px;
+                left: 170px;
                 padding: 12px;
-            }
-
-            .content > .row,
-            .content > .chart-card,
-            .content > .orders-card {
-                min-width: 720px;
             }
 
             .page-title {
                 font-size: 20px;
             }
 
+
+            /* COMPACT SALES CARDS */
+
+            .content > .row.g-3 {
+                width: 540px;
+                min-width: 540px;
+            }
+
+            .content > .row.g-3 > div {
+                flex: 0 0 245px !important;
+                width: 245px !important;
+                max-width: 245px !important;
+            }
+
             .sales-card {
-                height: 173px;
-                min-height: 173px;
-                padding: 22px 18px;
+                height: 170px;
+                min-height: 170px;
+                padding: 20px;
             }
 
             .sales-icon {
-                font-size: 28px;
-                margin-bottom: 10px;
+                font-size: 27px;
             }
 
             .sales-title {
@@ -355,6 +390,12 @@
 
             .sales-amount {
                 font-size: 26px;
+            }
+
+            .chart-card,
+            .orders-card {
+                min-width: 540px;
+                width: 540px;
             }
 
         }
@@ -429,10 +470,7 @@
     </h2>
 
 
-    <!-- =========================
-         SALES SUMMARY
-         6-COLUMN DASHBOARD STYLE
-         ========================= -->
+    <!-- SALES SUMMARY -->
 
     <div class="row g-3">
 
@@ -757,7 +795,6 @@ new Chart(
 );
 
 </script>
-
 
 </body>
 
