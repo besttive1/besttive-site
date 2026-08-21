@@ -292,90 +292,95 @@
 
             <thead>
 
-            <tr>
+                <tr>
 
-                <!-- CHECKBOX -->
+                    <!-- CHECKBOX -->
 
-                <th class="order-checkbox-column">
-                    Select
-                </th>
-
-
-                <!-- SERIAL NUMBER -->
-
-                <th>S.No.</th>
+                    <th class="order-checkbox-column">
+                        Select
+                    </th>
 
 
-                <!-- TRACKING -->
+                    <!-- SERIAL NUMBER -->
 
-                <th>Tracking ID</th>
-
-
-                <!-- CUSTOMER -->
-
-                <th>Customer</th>
+                    <th>S.No.</th>
 
 
-                <!-- EMAIL -->
+                    <!-- TRACKING -->
 
-                <th>Email</th>
-
-
-                <!-- MOBILE -->
-
-                <th>Mobile</th>
+                    <th>Tracking ID</th>
 
 
-                <!-- PRODUCT -->
+                    <!-- CUSTOMER -->
 
-                <th>Product</th>
-
-
-                <!-- HSN -->
-
-                <th>HSN</th>
+                    <th>Customer</th>
 
 
-                <!-- QUANTITY -->
+                    <!-- EMAIL -->
 
-                <th>Qty</th>
-
-
-                <!-- PRICE -->
-
-                <th>Price</th>
+                    <th>Email</th>
 
 
-                <!-- TAXABLE -->
+                    <!-- MOBILE -->
 
-                <th>Taxable</th>
-
-
-                <!-- GST RATE -->
-
-                <th>GST %</th>
+                    <th>Mobile</th>
 
 
-                <!-- GST AMOUNT -->
+                    <!-- PRODUCT -->
 
-                <th>GST Amount</th>
-
-
-                <!-- TOTAL -->
-
-                <th>Total</th>
+                    <th>Product</th>
 
 
-                <!-- ADDRESS -->
+                    <!-- HSN -->
 
-                <th>Address</th>
+                    <th>HSN</th>
 
 
-                <!-- STATUS -->
+                    <!-- QUANTITY -->
 
-                <th>Status</th>
+                    <th>Qty</th>
 
-            </tr>
+
+                    <!-- PRICE -->
+
+                    <th>Price</th>
+
+
+                    <!-- TAXABLE -->
+
+                    <th>Taxable</th>
+
+
+                    <!-- GST RATE -->
+
+                    <th>GST %</th>
+
+
+                    <!-- GST AMOUNT -->
+
+                    <th>GST Amount</th>
+
+
+                    <!-- TOTAL -->
+
+                    <th>Total</th>
+
+
+                    <!-- ADDRESS -->
+
+                    <th>Address</th>
+
+
+                    <!-- STATUS -->
+
+                    <th>Status</th>
+
+
+                    <!-- SHIPROCKET -->
+
+                    <th>Shiprocket</th>
+
+                </tr>
 
             </thead>
 
@@ -543,9 +548,7 @@
 
                         </select>
 
-
                         <br>
-
 
                         <button
                             class="update-order-btn"
@@ -556,6 +559,29 @@
 
                     </form>
 
+                </td>
+
+
+                <!-- =========================
+                     SHIPROCKET BUTTON
+                ========================= -->
+
+                <td>
+
+                    <a
+                        href="/admin/shiprocket/{{ order.id }}"
+                        class="update-order-btn"
+                        style="
+                            display: inline-block;
+                            text-decoration: none;
+                            text-align: center;
+                        "
+                    >
+                        ship with Shiprocket
+
+                    </a>
+                     
+                   
                 </td>
 
             </tr>
@@ -688,7 +714,6 @@ document.addEventListener("click", function(event) {
 });
 
 </script>
-
 
 </body>
 

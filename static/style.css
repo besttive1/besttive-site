@@ -2111,3 +2111,39 @@ background: #310058;
     text-decoration: none !important;
 }
 
+/* =========================
+   CHOOSE COURIER BUTTON
+========================= */
+
+.choose-courier-btn {
+
+    display: inline-block;
+
+    background: #4b0082;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 8px 12px;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    transition: .2s;
+}
+
+
+.choose-courier-btn:hover {
+
+    background: #4b0082;
+
+    color: white;
+
+    transform: translateY(-1px);
+}

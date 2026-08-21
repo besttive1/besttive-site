@@ -19,7 +19,6 @@ from reportlab.platypus import (
     Table,
     TableStyle
 )
-
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -82,6 +81,40 @@ pdfmetrics.registerFont(
         os.path.join(BASE_DIR, "static", "fonts", "DejaVuSans-Bold.ttf")
     )
 )
+
+# ================= SHIPROCKET API =================
+
+def get_shiprocket_token():
+    try:
+        url = "https://apiv2.shiprocket.in/v1/external/auth/login"
+
+        payload = {
+            "email": os.getenv("SHIPROCKET_EMAIL"),
+            "password": os.getenv("SHIPROCKET_PASSWORD")
+        }
+
+        response = requests.post(url, json=payload)
+        data = response.json()
+
+        if response.status_code == 200 and "token" in data:
+            return data["token"]
+
+        print("Shiprocket Login Error:", data)
+        return None
+
+    except Exception as e:
+        print("Shiprocket Error:", e)
+        return None
+
+@app.route("/test-shiprocket")
+def test_shiprocket():
+    token = get_shiprocket_token()
+
+    if token:
+        return "Shiprocket Connected Successfully!"
+    else:
+        return "Shiprocket Connection Failed. Check terminal."
+
 
 # 🔥 HOME PAGE (ONLY ONCE)
 @app.route("/")
@@ -854,6 +887,9 @@ class User(db.Model):
     name = db.Column(db.String(120), default="New User")
     phone = db.Column(db.String(20), default="")
     address = db.Column(db.String(255), default="")
+    city = db.Column(db.String(100), default="")
+    state = db.Column(db.String(100), default="")
+    pincode = db.Column(db.String(20), default="")
     dob = db.Column(db.String(50), default="")
     
 class Product(db.Model):
@@ -1177,6 +1213,34 @@ class Order(db.Model):
         db.String(30),
         unique=True,
         index=True,
+        nullable=True
+    )
+    # =========================
+    # SHIPROCKET DETAILS
+    # =========================
+
+    shiprocket_order_id = db.Column(
+        db.String(50),
+        nullable=True
+    )
+
+    shiprocket_shipment_id = db.Column(
+        db.String(50),
+        nullable=True
+    )
+
+    awb_code = db.Column(
+        db.String(100),
+        nullable=True
+    )
+
+    courier_name = db.Column(
+        db.String(150),
+        nullable=True
+    )
+
+    shiprocket_status = db.Column(
+        db.String(50),
         nullable=True
     )
 
@@ -2020,6 +2084,32 @@ def admin_orders():
     return render_template(
         "admin_orders.html",
         orders=orders
+    )
+
+# ==================================================
+# SHIPROCKET SHIPPING DASHBOARD
+# ==================================================
+
+@app.route("/admin/shipping")
+def admin_shipping():
+
+    # Admin login check
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    # Only orders that have a Shiprocket shipment
+    shipments = (
+        Order.query
+        .filter(
+            Order.shiprocket_shipment_id.isnot(None)
+        )
+        .order_by(Order.id.desc())
+        .all()
+    )
+
+    return render_template(
+        "admin_shipping.html",
+        shipments=shipments
     )
 
 @app.route("/admin/update-order-status/<int:id>", methods=["POST"])
@@ -3043,11 +3133,850 @@ def profile():
     if request.method == "POST":
         user.name = request.form.get("name")
         user.address = request.form.get("address")
+        user.city = request.form.get("city")
+        user.state = request.form.get("state")
+        user.pincode = request.form.get("pincode")
         user.phone = request.form.get("phone")
         user.dob = request.form.get("dob")
         db.session.commit()
         return redirect("/profile")
 
     return render_template("profile.html", user=user)
+
+# ==================================================
+# SHIPROCKET PARCEL DETAILS PAGE
+# ==================================================
+
+@app.route("/admin/shiprocket/<int:order_id>")
+def shiprocket_parcel_details(order_id):
+
+    # Admin login check
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    # Get order
+    order = Order.query.get_or_404(order_id)
+
+    return render_template(
+        "shiprocket_parcel.html",
+        order=order
+    )
+
+
+# ==================================================
+# CREATE SHIPROCKET ORDER
+# ==================================================
+
+@app.route(
+    "/admin/shiprocket/create/<int:order_id>",
+    methods=["POST"]
+)
+def create_shiprocket_order(order_id):
+
+    # Admin login check
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    # Get order
+    order = Order.query.get_or_404(order_id)
+
+    # Customer
+    user = order.user
+
+    # Product
+    product = order.product
+
+    # ==============================================
+    # GET ACTUAL PARCEL DETAILS
+    # ==============================================
+
+    weight = request.form.get("weight", type=float)
+
+    length = request.form.get("length", type=float)
+
+    breadth = request.form.get("breadth", type=float)
+
+    height = request.form.get("height", type=float)
+
+
+    # ==============================================
+    # VALIDATION
+    # ==============================================
+
+    if not weight or weight <= 0:
+
+        flash("Please enter a valid parcel weight.")
+
+        return redirect(
+            f"/admin/shiprocket/{order.id}"
+        )
+
+
+    if not length or length <= 0.5:
+
+        flash(
+            "Length must be greater than 0.5 cm."
+        )
+
+        return redirect(
+            f"/admin/shiprocket/{order.id}"
+        )
+
+
+    if not breadth or breadth <= 0.5:
+
+        flash(
+            "Breadth must be greater than 0.5 cm."
+        )
+
+        return redirect(
+            f"/admin/shiprocket/{order.id}"
+        )
+
+
+    if not height or height <= 0.5:
+
+        flash(
+            "Height must be greater than 0.5 cm."
+        )
+
+        return redirect(
+            f"/admin/shiprocket/{order.id}"
+        )
+
+
+    # ==============================================
+    # CUSTOMER ADDRESS VALIDATION
+    # ==============================================
+
+    if not user.address:
+
+        flash(
+            "Customer address is missing."
+        )
+
+        return redirect(
+            "/admin/orders"
+        )
+
+
+    if not user.city:
+
+        flash(
+            "Customer city is missing."
+        )
+
+        return redirect(
+            "/admin/orders"
+        )
+
+
+    if not user.state:
+
+        flash(
+            "Customer state is missing."
+        )
+
+        return redirect(
+            "/admin/orders"
+        )
+
+
+    if not user.pincode:
+
+        flash(
+            "Customer pincode is missing."
+        )
+
+        return redirect(
+            "/admin/orders"
+        )
+
+
+    if not user.phone:
+
+        flash(
+            "Customer phone number is missing."
+        )
+
+        return redirect(
+            "/admin/orders"
+        )
+
+
+    # ==============================================
+    # GET SHIPROCKET TOKEN
+    # ==============================================
+
+    token = get_shiprocket_token()
+
+
+    if not token:
+
+        flash(
+            "Shiprocket authentication failed."
+        )
+
+        return redirect(
+            "/admin/orders"
+        )
+
+
+    # ==============================================
+    # PAYMENT METHOD
+    # ==============================================
+
+    if order.payment_status == "Paid":
+
+        payment_method = "Prepaid"
+
+    else:
+
+        payment_method = "COD"
+
+
+    # ==============================================
+    # PICKUP LOCATION
+    # ==============================================
+
+    pickup_location = os.getenv(
+        "SHIPROCKET_PICKUP_LOCATION",
+        "Home"
+    )
+
+
+    # ==============================================
+    # SHIPROCKET ORDER ID
+    # Unique ID required for Shiprocket
+    # ==============================================
+
+    shiprocket_order_number = (
+        f"BESTTIVE-{order.id}"
+    )
+
+
+    # ==============================================
+    # ORDER DATE
+    # ==============================================
+
+    order_date = order.created_at.strftime(
+        "%Y-%m-%d %H:%M"
+    )
+
+
+    # ==============================================
+    # PRODUCT PRICE
+    # ==============================================
+
+    product_price = float(
+        order.price or 0
+    )
+
+
+    # ==============================================
+    # SUB TOTAL
+    # ==============================================
+
+    sub_total = float(
+        order.taxable_amount
+        or order.total_amount
+        or order.amount
+        or 0
+    )
+
+
+    # ==============================================
+    # SHIPROCKET API URL
+    # ==============================================
+
+    url = (
+        "https://apiv2.shiprocket.in/"
+        "v1/external/orders/create/adhoc"
+    )
+
+
+    # ==============================================
+    # REQUEST HEADERS
+    # ==============================================
+
+    headers = {
+
+        "Content-Type":
+            "application/json",
+
+        "Authorization":
+            f"Bearer {token}"
+
+    }
+
+
+    # ==============================================
+    # SHIPROCKET ORDER PAYLOAD
+    # ==============================================
+
+    payload = {
+
+        # ORDER
+
+        "order_id":
+            shiprocket_order_number,
+
+        "order_date":
+            order_date,
+
+        "pickup_location":
+            pickup_location,
+
+
+        # CUSTOMER
+
+        "billing_customer_name":
+            user.name or "BESTTIVE Customer",
+
+        "billing_last_name":
+            "",
+
+        "billing_address":
+            user.address,
+
+        "billing_address_2":
+            "",
+
+        "billing_city":
+            user.city,
+
+        "billing_pincode":
+            str(user.pincode),
+
+        "billing_state":
+            user.state,
+
+        "billing_country":
+            "India",
+
+        "billing_email":
+            user.email,
+
+        "billing_phone":
+            str(user.phone),
+
+
+        # SHIPPING SAME AS BILLING
+
+        "shipping_is_billing":
+            True,
+
+
+        # PRODUCT
+
+        "order_items": [
+
+            {
+
+                "name":
+                    product.name,
+
+                "sku":
+                    f"BESTTIVE-{product.id}",
+
+                "units":
+                    int(order.quantity or 1),
+
+                "selling_price":
+                    product_price,
+
+                "discount":
+                    0,
+
+                "tax":
+                    float(order.gst_rate or 0),
+
+                "hsn":
+                    order.hsn_code or ""
+
+            }
+
+        ],
+
+
+        # PAYMENT
+
+        "payment_method":
+            payment_method,
+
+
+        # CHARGES
+
+        "shipping_charges":
+            0,
+
+        "giftwrap_charges":
+            0,
+
+        "transaction_charges":
+            0,
+
+        "total_discount":
+            0,
+
+
+        # ORDER VALUE
+
+        "sub_total":
+            sub_total,
+
+
+        # ACTUAL PACKED PARCEL DETAILS
+
+        "length":
+            length,
+
+        "breadth":
+            breadth,
+
+        "height":
+            height,
+
+        "weight":
+            weight
+
+    }
+
+    # ==============================================
+    # SEND ORDER TO SHIPROCKET
+    # ==============================================
+
+    try:
+        response = requests.post(
+
+            url,
+
+            json=payload,
+
+            headers=headers,
+
+            timeout=30
+        )
+
+        data = response.json()
+        print("=================================")
+        print("SHIPROCKET RESPONSE STATUS:", response.status_code)
+        print("SHIPROCKET RESPONSE DATA:", data)
+        print("=================================")
+
+        # ==========================================
+        # SUCCESS
+        # ==========================================
+                
+        if response.status_code in [200, 201]:
+
+            print(
+                "Shiprocket Order Created:",
+                data
+            )
+
+            # ======================================
+            # SAVE SHIPROCKET DETAILS IN DATABASE
+            # ======================================
+
+            order.shiprocket_order_id = str(
+                data.get("order_id", "")
+            )
+
+            order.shiprocket_shipment_id = str(
+                data.get("shipment_id", "")
+            )
+
+            order.shiprocket_status = data.get(
+                "status",
+                "NEW"
+            )
+
+            order.awb_code = data.get(
+                "awb_code",
+                ""
+            )
+
+            order.courier_name = data.get(
+                "courier_name",
+                ""
+            )
+
+            # Save all Shiprocket details
+            db.session.commit()
+
+            print(
+                "Shiprocket details saved successfully!"
+            )
+
+            flash(
+                "Order successfully created in Shiprocket!"
+            )
+
+            return redirect(
+                "/admin/orders"
+            )
+
+
+        # ==========================================
+        # ERROR FROM SHIPROCKET
+        # ==========================================
+
+        print(
+            "Shiprocket Order Error:",
+            data
+        )
+
+
+        flash(
+            f"Shiprocket Error: {data}"
+        )
+
+
+        return redirect(
+            f"/admin/shiprocket/{order.id}"
+        )
+
+
+    # ==============================================
+    # CONNECTION ERROR
+    # ==============================================
+
+    except Exception as e:
+
+        print(
+            "Shiprocket Request Error:",
+            e
+        )
+
+
+        flash(
+            f"Shiprocket connection error: {e}"
+        )
+
+
+        return redirect(
+            f"/admin/shiprocket/{order.id}"
+        )
+
+# ==================================================
+# GET SHIPROCKET COURIER OPTIONS
+# ==================================================
+
+@app.route("/admin/shipping/couriers/<int:order_id>")
+def shiprocket_couriers(order_id):
+
+    # Admin login check
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    order = Order.query.get_or_404(order_id)
+    user = order.user
+    
+    # Shipment must exist
+    if not order.shiprocket_shipment_id:
+
+        flash("Shiprocket shipment not found.")
+
+        return redirect("/admin/shipping")
+
+    # Get Shiprocket token
+    token = get_shiprocket_token()
+
+    if not token:
+
+        flash("Shiprocket authentication failed.")
+
+        return redirect("/admin/shipping")
+
+    try:
+
+        # Shiprocket courier recommendation API
+        url = (
+            "https://apiv2.shiprocket.in/v1/external/"
+            "courier/serviceability/"
+        )
+
+        params = {
+
+            "pickup_postcode":
+                os.getenv(
+                    "SHIPROCKET_PICKUP_PINCODE"
+                ),
+
+            "delivery_postcode":
+                user.pincode,
+
+            "order_id":
+                int(order.shiprocket_order_id)
+
+        }
+
+        headers = {
+
+            "Authorization":
+                f"Bearer {token}"
+
+        }
+
+        response = requests.get(
+
+            url,
+
+            params=params,
+
+            headers=headers,
+
+            timeout=30
+
+        )
+
+        data = response.json()
+
+        print("=================================")
+        print(
+            "SHIPROCKET COURIER RESPONSE:",
+            response.status_code
+        )
+        print(data)
+        print("=================================")
+
+        if response.status_code == 200:
+
+            couriers = data.get(
+                "data",
+                {}).get(
+                    "available_courier_companies",
+                    []
+                )
+
+            return render_template(
+
+                "shiprocket_couriers.html",
+
+                order=order,
+
+                couriers=couriers
+
+            )
+
+        flash(f"Courier Error: {data}")
+
+        return redirect("/admin/shipping")
+
+    except Exception as e:
+
+        print("Shiprocket Courier Error:", e)
+
+        flash("Unable to fetch courier options.")
+
+        return redirect("/admin/shipping")
+
+# ==================================================
+# SELECT COURIER AND GENERATE AWB
+# ==================================================
+
+@app.route(
+    "/admin/shipping/select-courier/<int:order_id>",
+    methods=["POST"]
+)
+def select_shiprocket_courier(order_id):
+
+    # Admin login check
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    # Get order
+    order = Order.query.get_or_404(order_id)
+
+    # Get selected courier details
+    courier_company_id = request.form.get(
+        "courier_company_id"
+    )
+
+    courier_name = request.form.get(
+        "courier_name"
+    )
+
+    # Shipment validation
+    if not order.shiprocket_shipment_id:
+
+        flash(
+            "Shiprocket shipment not found."
+        )
+
+        return redirect(
+            "/admin/shipping"
+        )
+
+    # Courier validation
+    if not courier_company_id:
+
+        flash(
+            "Please select a courier."
+        )
+
+        return redirect(
+            f"/admin/shipping/couriers/{order.id}"
+        )
+
+    # Get Shiprocket token
+    token = get_shiprocket_token()
+
+    if not token:
+
+        flash(
+            "Shiprocket authentication failed."
+        )
+
+        return redirect(
+            "/admin/shipping"
+        )
+
+    try:
+
+        # ==========================================
+        # GENERATE AWB API
+        # ==========================================
+
+        url = (
+            "https://apiv2.shiprocket.in/"
+            "v1/external/courier/assign/awb"
+        )
+
+        payload = {
+
+            "shipment_id":
+                int(order.shiprocket_shipment_id),
+
+            "courier_id":
+                int(courier_company_id)
+
+        }
+
+        headers = {
+
+            "Authorization":
+                f"Bearer {token}",
+
+            "Content-Type":
+                "application/json"
+
+        }
+
+        response = requests.post(
+
+            url,
+
+            json=payload,
+
+            headers=headers,
+
+            timeout=30
+
+        )
+
+        data = response.json()
+
+        print("=================================")
+        print(
+            "SHIPROCKET AWB RESPONSE STATUS:",
+            response.status_code
+        )
+        print(
+            "SHIPROCKET AWB RESPONSE DATA:",
+            data
+        )
+        print("=================================")
+
+
+        # ==========================================
+        # SUCCESS
+        # ==========================================
+
+        if response.status_code in [200, 201]:
+
+            # Save selected courier
+            order.courier_name = courier_name or ""
+
+            # Shiprocket may return AWB inside data
+            awb_data = data.get(
+                "response",
+                {}
+            )
+
+            order.awb_code = (
+                awb_data.get("data", {})
+                .get("awb_code", "")
+            )
+
+            # Fallback locations
+            if not order.awb_code:
+
+                order.awb_code = (
+                    data.get("awb_code")
+                    or data.get("data", {})
+                    .get("awb_code", "")
+                )
+
+            # Update status
+            order.shiprocket_status = "AWB Assigned"
+
+            # Save database
+            db.session.commit()
+
+            print(
+                "AWB generated successfully:",
+                order.awb_code
+            )
+
+            flash(
+                f"Courier selected successfully: "
+                f"{courier_name}. AWB generated!"
+            )
+
+            return redirect(
+                "/admin/shipping"
+            )
+
+
+        # ==========================================
+        # ERROR
+        # ==========================================
+
+        print(
+            "Shiprocket AWB Error:",
+            data
+        )
+
+        flash(
+            f"AWB Generation Error: {data}"
+        )
+
+        return redirect(
+            f"/admin/shipping/couriers/{order.id}"
+        )
+
+
+    # ==============================================
+    # CONNECTION ERROR
+    # ==============================================
+
+    except Exception as e:
+
+        print(
+            "Shiprocket AWB Connection Error:",
+            e
+        )
+
+        flash(
+            "Unable to generate AWB. "
+            "Please check the terminal."
+        )
+
+        return redirect(
+            f"/admin/shipping/couriers/{order.id}"
+        )
+    
 if __name__ == "__main__":
     app.run(debug=False)
