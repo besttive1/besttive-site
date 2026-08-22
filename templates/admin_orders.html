@@ -185,7 +185,7 @@
         ========================= */
 
         .order-filter-select,
-        .order-date-input {
+        .custom-date-display {
             height: 52px;
 
             border: 1px solid #d5d5d5;
@@ -208,8 +208,28 @@
             width: 190px;
         }
 
-        .order-date-input {
+        .custom-date-wrapper {
+            position: relative;
             width: 190px;
+            height: 52px;
+            flex: 0 0 190px;
+            flex-shrink: 0;
+        }
+
+        .custom-date-display {
+            width: 100%;
+            color: #1f2937;
+            cursor: pointer;
+        }
+
+        .hidden-real-date {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+            left: 0;
+            top: 0;
         }
 
 
@@ -429,7 +449,7 @@
             /* TODAY + DATE */
 
             .order-filter-select,
-            .order-date-input {
+            .custom-date-wrapper {
                 width: calc(50% - 5px);
 
                 flex:
@@ -499,25 +519,14 @@
         @media (max-width: 480px) {
 
             .order-filter-select,
-            .order-date-input {
+            .custom-date-wrapper {
                 width: 100%;
 
                 flex: 0 0 100%;
             }
 
         }
-        .order-date-filter {
-            height: 56px;
-            padding: 0 16px;
-            border: 1px solid #d5d8df;
-            border-radius: 12px;
-            background: #fff;
-            color: #1f2937;
-            font-size: 16px;
-            font-family: inherit;
-            box-sizing: border-box;
-            cursor: pointer;
-        }   
+
 
     </style>
 
@@ -579,12 +588,23 @@
 
         <!-- SPECIFIC DATE -->
 
-        <input 
-            type="date" 
-            id="specificDateFilter" 
-            class="order-date-filter" 
-            onchange="filterOrders()" 
-        >
+        <div class="custom-date-wrapper">
+
+            <input
+                type="text"
+                id="specificDateDisplay"
+                class="order-filter-select custom-date-display"
+                placeholder="MM/DD/YYYY"
+                readonly
+            >
+
+            <input
+                type="date"
+                id="specificDateFilter"
+                class="hidden-real-date"
+            >
+
+        </div>
 
         <!-- =========================
              CLEAR + DELETE
@@ -1075,6 +1095,12 @@
         );
 
 
+    const specificDateDisplay =
+        document.getElementById(
+            "specificDateDisplay"
+        );
+
+
     const orderRows =
         document.querySelectorAll(
             ".order-row"
@@ -1357,23 +1383,36 @@
        SPECIFIC DATE
     ========================= */
 
+    specificDateDisplay.addEventListener(
+        "click",
+        function() {
+
+            if (specificOrderDate.showPicker) {
+                specificOrderDate.showPicker();
+            } else {
+                specificOrderDate.focus();
+                specificOrderDate.click();
+            }
+        }
+    );
+
+
     specificOrderDate.addEventListener(
         "change",
         function() {
 
-
-            if (
-                specificOrderDate.value !== ""
-            ) {
-
-                orderDateFilter.value =
-                    "all";
-
+            if (specificOrderDate.value !== "") {
+                const dateParts = specificOrderDate.value.split("-");
+                specificDateDisplay.value =
+                    dateParts[1] + "/" +
+                    dateParts[2] + "/" +
+                    dateParts[0];
+                orderDateFilter.value = "all";
+            } else {
+                specificDateDisplay.value = "";
             }
 
-
             filterOrders();
-
         }
     );
 
@@ -1393,6 +1432,9 @@
 
 
         specificOrderDate.value =
+            "";
+
+        specificDateDisplay.value =
             "";
 
 
