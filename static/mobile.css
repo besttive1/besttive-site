@@ -1137,3 +1137,66 @@
         display: block !important;
     }
 }
+
+/* =========================
+   INVENTORY MOBILE STAT CARDS
+========================= */
+
+@media (max-width: 768px) {
+
+    .inventory-stats {
+        display: grid !important;
+
+        grid-template-columns: repeat(2, 1fr) !important;
+
+        gap: 12px;
+
+        width: 100%;
+    }
+
+
+    .inventory-stats > div {
+        width: 100% !important;
+
+        max-width: none !important;
+
+        padding: 0 !important;
+
+        margin: 0 !important;
+    }
+
+
+    .inventory-stats .stat-card {
+        min-height: 170px;
+
+        padding: 18px !important;
+
+        border-radius: 16px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        justify-content: space-between;
+    }
+
+
+    .inventory-stats .stat-icon {
+        font-size: 28px;
+
+        margin-bottom: 8px;
+    }
+
+
+    .inventory-stats .stat-title {
+        font-size: 14px;
+
+        line-height: 1.3;
+    }
+
+
+    .inventory-stats .stat-number {
+        font-size: 28px;
+    }
+
+}

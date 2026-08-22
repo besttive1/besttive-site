@@ -10,76 +10,13 @@
 
     <title>BESTTIVE Inventory</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
     <style>
-         /* =========================
-   HISTORY HEADER + DELETE
-========================= */
 
-.history-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.history-header h4 {
-    margin: 0 !important;
-}
-
-
-/* DELETE BUTTON */
-
-.delete-history-btn {
-    background: #4b0082;
-    color: white;
-    border: none;
-    padding: 11px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.delete-history-btn:hover {
-    background: #3b0068;
-}
-
-
-/* HIDE CHECKBOX COLUMN INITIALLY */
-
-.history-checkbox-column {
-    display: none;
-    width: 45px;
-    text-align: center;
-}
-
-
-/* =========================
-   MOBILE HISTORY HEADER
-========================= */
-
-@media (max-width: 768px) {
-
-    .history-header {
-        align-items: center;
-        gap: 10px;
-    }
-
-    .history-header h4 {
-        font-size: 20px;
-    }
-
-    .delete-history-btn {
-        padding: 9px 13px;
-        font-size: 12px;
-    }
-
-}
         /* =========================
            BODY
         ========================= */
@@ -235,9 +172,56 @@
 
 
         .inventory-section h4 {
-            margin-bottom: 20px;
+            margin: 0;
 
             font-weight: 700;
+        }
+
+
+        /* =========================
+           HISTORY HEADER
+        ========================= */
+
+        .history-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+        }
+
+
+        /* =========================
+           DELETE BUTTON
+        ========================= */
+
+        .delete-history-btn {
+            background: #4b0082;
+
+            color: white;
+
+            border: none;
+
+            padding: 11px 20px;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+        }
+
+
+        .delete-history-btn:hover {
+            background: #3b0068;
         }
 
 
@@ -274,6 +258,19 @@
             padding: 13px !important;
 
             vertical-align: middle;
+        }
+
+
+        /* =========================
+           HISTORY CHECKBOX
+        ========================= */
+
+        .history-checkbox-column {
+            display: none;
+
+            width: 45px;
+
+            text-align: center;
         }
 
 
@@ -351,11 +348,15 @@
                 width: 100%;
 
                 height: auto;
+
+                text-align: center;
             }
 
 
             .sidebar h2 {
                 padding: 15px;
+
+                font-size: 24px;
             }
 
 
@@ -371,7 +372,7 @@
             .content {
                 margin-left: 0;
 
-                padding: 20px 12px;
+                padding: 20px 14px;
             }
 
 
@@ -380,13 +381,66 @@
             }
 
 
+            .page-subtitle {
+                margin-bottom: 20px;
+            }
+
+
+            /* MOBILE SQUARE CARDS */
+
             .stat-card {
+                aspect-ratio: 1 / 1;
+
                 padding: 18px;
+
+                display: flex;
+
+                flex-direction: column;
+
+                justify-content: center;
+            }
+
+
+            .stat-icon {
+                font-size: 28px;
+
+                margin-bottom: 12px;
+            }
+
+
+            .stat-title {
+                font-size: 14px;
+
+                margin-bottom: 10px;
             }
 
 
             .stat-number {
-                font-size: 26px;
+                font-size: 28px;
+            }
+
+
+            .inventory-section {
+                padding: 15px;
+
+                margin-top: 20px;
+            }
+
+
+            .inventory-section h4 {
+                font-size: 20px;
+            }
+
+
+            .history-header {
+                gap: 10px;
+            }
+
+
+            .delete-history-btn {
+                padding: 9px 12px;
+
+                font-size: 12px;
             }
 
         }
@@ -407,34 +461,44 @@
 
     <h2>BESTTIVE</h2>
 
+
     <a href="/admin/dashboard">
         📊 Dashboard
     </a>
 
-    <a href="/admin/inventory"
-       class="active">
+
+    <a
+        href="/admin/inventory"
+        class="active"
+    >
         📦 Inventory
     </a>
+
 
     <a href="/admin/products">
         🛍️ Products
     </a>
 
+
     <a href="/admin/orders">
         📦 Orders
     </a>
+
 
     <a href="/admin/shipping">
         🚚 Shipping
     </a>
 
+
     <a href="/admin/customers">
         👥 Customers
     </a>
 
+
     <a href="/admin/sales">
         💰 Sales
     </a>
+
 
     <a href="/admin">
         🚪 Logout
@@ -443,31 +507,35 @@
 </div>
 
 
+
 <!-- =========================
      MAIN CONTENT
 ========================= -->
 
 <div class="content">
 
+
     <h1 class="page-title">
         📦 Inventory Dashboard
     </h1>
+
 
     <p class="page-subtitle">
         Manage and monitor your product stock.
     </p>
 
 
+
     <!-- =========================
          STAT CARDS
     ========================= -->
 
-    <div class="row g-4">
+    <div class="row g-3 g-lg-4">
 
 
         <!-- TOTAL PRODUCTS -->
 
-        <div class="col-12 col-sm-6 col-lg-3">
+        <div class="col-6 col-lg-3">
 
             <div class="stat-card">
 
@@ -488,9 +556,10 @@
         </div>
 
 
+
         <!-- TOTAL STOCK -->
 
-        <div class="col-12 col-sm-6 col-lg-3">
+        <div class="col-6 col-lg-3">
 
             <div class="stat-card">
 
@@ -511,9 +580,10 @@
         </div>
 
 
+
         <!-- LOW STOCK -->
 
-        <div class="col-12 col-sm-6 col-lg-3">
+        <div class="col-6 col-lg-3">
 
             <div class="stat-card">
 
@@ -534,9 +604,10 @@
         </div>
 
 
+
         <!-- OUT OF STOCK -->
 
-        <div class="col-12 col-sm-6 col-lg-3">
+        <div class="col-6 col-lg-3">
 
             <div class="stat-card">
 
@@ -556,7 +627,9 @@
 
         </div>
 
+
     </div>
+
 
 
     <!-- =========================
@@ -568,6 +641,8 @@
         <h4>
             ⚠️ Low Stock Products
         </h4>
+
+        <br>
 
 
         {% if low_stock_products %}
@@ -601,9 +676,11 @@
                             {{ product.name }}
                         </td>
 
+
                         <td>
                             {{ product.stock }}
                         </td>
+
 
                         <td>
 
@@ -623,17 +700,19 @@
 
         </div>
 
+
         {% else %}
 
-            <div class="empty-state">
+        <div class="empty-state">
 
-                🎉 No products are running low on stock.
+            🎉 No products are running low on stock.
 
-            </div>
+        </div>
 
         {% endif %}
 
     </div>
+
 
 
     <!-- =========================
@@ -645,6 +724,8 @@
         <h4>
             🔴 Out of Stock Products
         </h4>
+
+        <br>
 
 
         {% if out_of_stock_products %}
@@ -678,9 +759,11 @@
                             {{ product.name }}
                         </td>
 
+
                         <td>
                             {{ product.stock }}
                         </td>
+
 
                         <td>
 
@@ -700,306 +783,343 @@
 
         </div>
 
+
         {% else %}
 
-            <div class="empty-state">
+        <div class="empty-state">
 
-                🎉 All products are currently in stock.
+            🎉 All products are currently in stock.
 
-            </div>
+        </div>
 
         {% endif %}
 
     </div>
+
 
 
     <!-- =========================
          RECENT STOCK HISTORY
     ========================= -->
 
-<div class="inventory-section">
+    <div class="inventory-section">
 
-    <div class="history-header">
 
-        <h4>
-            📜 Recent Stock History
-        </h4>
+        <div class="history-header">
 
-        {% if inventory_history %}
+            <h4>
+                📜 Recent Stock History
+            </h4>
 
-        <button
-            type="button"
-            class="delete-history-btn"
-            id="deleteHistoryBtn"
-            onclick="handleHistoryDelete()"
-        >
-            🗑 Delete History
-        </button>
 
-        {% endif %}
+            {% if inventory_history %}
 
-    </div>
+            <button
+                type="button"
+                class="delete-history-btn"
+                id="deleteHistoryBtn"
+                onclick="handleHistoryDelete()"
+            >
+                🗑 Delete History
+            </button>
 
-
-    {% if inventory_history %}
-
-    <form
-        id="historyDeleteForm"
-        action="/admin/delete-inventory-history"
-        method="POST"
-    >
-
-        <div class="table-wrapper">
-
-            <table class="table table-hover">
-
-                <thead>
-
-                    <tr>
-
-                        <!-- CHECKBOX -->
-                        <th class="history-checkbox-column">
-
-                            <input
-                                type="checkbox"
-                                id="selectAllHistory"
-                                onclick="toggleAllHistory(this)"
-                            >
-
-                        </th>
-
-
-                        <th>Date & Time</th>
-
-                        <th>Product</th>
-
-                        <th>Type</th>
-
-                        <th>Change</th>
-
-                        <th>Previous</th>
-
-                        <th>New Stock</th>
-
-                        <th>Note</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    {% for movement in inventory_history %}
-
-                    <tr>
-
-                        <!-- CHECKBOX -->
-                        <td class="history-checkbox-column">
-
-                            <input
-                                type="checkbox"
-                                name="movement_ids"
-                                value="{{ movement.id }}"
-                                class="history-checkbox"
-                            >
-
-                        </td>
-
-
-                        <!-- DATE -->
-                        <td>
-
-                            {{ movement.created_at.strftime('%d %b %Y, %I:%M %p') }}
-
-                        </td>
-
-
-                        <!-- PRODUCT -->
-                        <td>
-
-                            {% if movement.product %}
-
-                                {{ movement.product.name }}
-
-                            {% else %}
-
-                                Product Deleted
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- TYPE -->
-                        <td>
-
-                            <span class="sale-badge">
-
-                                {{ movement.movement_type }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- CHANGE -->
-                        <td>
-
-                            {% if movement.quantity > 0 %}
-
-                                +{{ movement.quantity }}
-
-                            {% else %}
-
-                                {{ movement.quantity }}
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- PREVIOUS -->
-                        <td>
-
-                            {{ movement.previous_stock }}
-
-                        </td>
-
-
-                        <!-- NEW STOCK -->
-                        <td>
-
-                            {{ movement.new_stock }}
-
-                        </td>
-
-
-                        <!-- NOTE -->
-                        <td>
-
-                            {{ movement.note }}
-
-                        </td>
-
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
+            {% endif %}
 
         </div>
 
-    </form>
 
 
-    {% else %}
+        {% if inventory_history %}
 
-    <div class="empty-state">
 
-        📦 No stock movement recorded yet.
+        <form
+            id="historyDeleteForm"
+            action="/admin/delete-inventory-history"
+            method="POST"
+        >
+
+
+            <div class="table-wrapper">
+
+
+                <table class="table table-hover">
+
+
+                    <thead>
+
+                        <tr>
+
+
+                            <th class="history-checkbox-column">
+
+                                <input
+                                    type="checkbox"
+                                    id="selectAllHistory"
+                                    onclick="toggleAllHistory(this)"
+                                >
+
+                            </th>
+
+
+                            <th>Date & Time</th>
+
+                            <th>Product</th>
+
+                            <th>Type</th>
+
+                            <th>Change</th>
+
+                            <th>Previous</th>
+
+                            <th>New Stock</th>
+
+                            <th>Note</th>
+
+
+                        </tr>
+
+                    </thead>
+
+
+
+                    <tbody>
+
+
+                        {% for movement in inventory_history %}
+
+
+                        <tr>
+
+
+                            <td class="history-checkbox-column">
+
+                                <input
+                                    type="checkbox"
+                                    name="movement_ids"
+                                    value="{{ movement.id }}"
+                                    class="history-checkbox"
+                                >
+
+                            </td>
+
+
+
+                            <td>
+
+                                {{ movement.created_at.strftime('%d %b %Y, %I:%M %p') }}
+
+                            </td>
+
+
+
+                            <td>
+
+                                {% if movement.product %}
+
+                                    {{ movement.product.name }}
+
+                                {% else %}
+
+                                    Product Deleted
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <td>
+
+                                <span class="sale-badge">
+
+                                    {{ movement.movement_type }}
+
+                                </span>
+
+                            </td>
+
+
+
+                            <td>
+
+                                {% if movement.quantity > 0 %}
+
+                                    +{{ movement.quantity }}
+
+                                {% else %}
+
+                                    {{ movement.quantity }}
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <td>
+
+                                {{ movement.previous_stock }}
+
+                            </td>
+
+
+
+                            <td>
+
+                                {{ movement.new_stock }}
+
+                            </td>
+
+
+
+                            <td>
+
+                                {{ movement.note }}
+
+                            </td>
+
+
+                        </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </form>
+
+
+
+        {% else %}
+
+
+        <div class="empty-state">
+
+            📦 No stock movement recorded yet.
+
+        </div>
+
+
+        {% endif %}
+
 
     </div>
 
-    {% endif %}
 
 </div>
+
+
+
 <script>
 
-let historyDeleteMode = false;
+
+    let historyDeleteMode = false;
 
 
-/* =========================
-   DELETE HISTORY
-========================= */
+    /* =========================
+       DELETE HISTORY
+    ========================= */
 
-function handleHistoryDelete() {
+    function handleHistoryDelete() {
 
-    const selected =
-        document.querySelectorAll(
+
+        const selected = document.querySelectorAll(
             ".history-checkbox:checked"
         );
 
 
-    /* FIRST CLICK → SHOW CHECKBOXES */
+        /* FIRST CLICK */
 
-    if (!historyDeleteMode) {
+        if (!historyDeleteMode) {
+
+
+            document.querySelectorAll(
+                ".history-checkbox-column"
+            ).forEach(function(column) {
+
+                column.style.display = "table-cell";
+
+            });
+
+
+            document.getElementById(
+                "deleteHistoryBtn"
+            ).innerHTML = "🗑 Delete Selected";
+
+
+            historyDeleteMode = true;
+
+
+            return;
+
+        }
+
+
+        /* SECOND CLICK */
+
+
+        if (selected.length === 0) {
+
+            alert(
+                "Please select at least one history record."
+            );
+
+            return;
+
+        }
+
+
+        const confirmed = confirm(
+
+            "Are you sure you want to delete " +
+
+            selected.length +
+
+            " selected history record(s)?"
+
+        );
+
+
+        if (confirmed) {
+
+            document.getElementById(
+                "historyDeleteForm"
+            ).submit();
+
+        }
+
+    }
+
+
+
+    /* =========================
+       SELECT ALL
+    ========================= */
+
+    function toggleAllHistory(source) {
+
 
         document.querySelectorAll(
-            ".history-checkbox-column"
-        ).forEach(function(column) {
+            ".history-checkbox"
+        ).forEach(function(checkbox) {
 
-            column.style.display = "table-cell";
+            checkbox.checked = source.checked;
 
         });
 
-
-        document
-            .getElementById("deleteHistoryBtn")
-            .innerHTML = "🗑 Delete Selected";
-
-
-        historyDeleteMode = true;
-
-        return;
-
     }
 
-
-    /* SECOND CLICK → DELETE */
-
-    if (selected.length === 0) {
-
-        alert(
-            "Please select at least one history record."
-        );
-
-        return;
-
-    }
-
-
-    const confirmed = confirm(
-
-        "Are you sure you want to delete " +
-
-        selected.length +
-
-        " selected history record(s)?"
-
-    );
-
-
-    if (confirmed) {
-
-        document
-            .getElementById("historyDeleteForm")
-            .submit();
-
-    }
-
-}
-
-
-/* =========================
-   SELECT ALL
-========================= */
-
-function toggleAllHistory(source) {
-
-    document.querySelectorAll(
-        ".history-checkbox"
-    ).forEach(function(checkbox) {
-
-        checkbox.checked = source.checked;
-
-    });
-
-}
 
 </script>
+
 
 </body>
 
