@@ -1759,19 +1759,32 @@ def admin_sales():
 
     import datetime
 
-    # Current date
-    today = datetime.datetime.utcnow().date()
+    # ==========================================
+    # INDIA TIMEZONE
+    # ==========================================
 
-    # Yesterday
-    yesterday = today - datetime.timedelta(days=1)
+    india_tz = datetime.timezone(
+        datetime.timedelta(hours=5, minutes=30)
+    )
 
-    # Start of current week
-    week_start = today - datetime.timedelta(days=today.weekday())
+    today = datetime.datetime.now(
+        india_tz
+    ).date()
 
-    # Start of current month
+    yesterday = today - datetime.timedelta(
+        days=1
+    )
+
+    week_start = today - datetime.timedelta(
+        days=today.weekday()
+    )
+
     month_start = today.replace(day=1)
 
-    # Get all paid orders
+    # ==========================================
+    # GET ALL PAID ORDERS
+    # ==========================================
+
     paid_orders = (
         Order.query
         .filter_by(payment_status="Paid")
@@ -1785,25 +1798,115 @@ def admin_sales():
     month_sales = 0
     total_paid_sales = 0
 
+    # ==========================================
+    # LAST 7 DAYS SALES DATA
+    # ==========================================
+
+    last_7_days = []
+
+    for i in range(6, -1, -1):
+
+        day = today - datetime.timedelta(days=i)
+
+        last_7_days.append({
+            "date": day,
+            "label": day.strftime("%d %b"),
+            "sales": 0
+        })
+
+    # ==========================================
+    # CALCULATE SALES
+    # ==========================================
+
     for order in paid_orders:
 
-        amount = float(order.total_amount or 0)
+        amount = float(
+            order.total_amount or 0
+        )
 
-        order_date = order.created_at.date()
+        order_datetime = order.created_at
 
+        if order_datetime.tzinfo is None:
+
+            order_date = order_datetime.date()
+
+        else:
+
+            order_date = order_datetime.astimezone(
+                india_tz
+            ).date()
+
+        # Total Paid Sales
         total_paid_sales += amount
 
+        # Today's Sales
         if order_date == today:
             today_sales += amount
 
+        # Yesterday's Sales
         if order_date == yesterday:
             yesterday_sales += amount
 
-        if order_date >= week_start:
+        # This Week Sales
+        if week_start <= order_date <= today:
             week_sales += amount
 
-        if order_date >= month_start:
+        # This Month Sales
+        if month_start <= order_date <= today:
             month_sales += amount
+
+        # ==========================================
+        # ADD SALE TO CORRECT DAY
+        # ==========================================
+
+        for day_data in last_7_days:
+
+            if order_date == day_data["date"]:
+
+                day_data["sales"] += amount
+
+                break
+
+    # ==========================================
+    # CHART DATA
+    # ==========================================
+
+    chart_labels = [
+        day["label"]
+        for day in last_7_days
+    ]
+
+    chart_sales = [
+        day["sales"]
+        for day in last_7_days
+    ]
+
+    # ==========================================
+    # TOP SELLING PRODUCTS
+    # ==========================================
+
+    top_products = (
+        db.session.query(
+            Order.product_name.label("product_name"),
+            db.func.sum(Order.quantity).label("units_sold"),
+            db.func.sum(Order.total_amount).label("total_sales")
+        )
+        .filter(
+            Order.payment_status == "Paid"
+        )
+        .group_by(
+            Order.product_name
+        )
+        .order_by(
+            db.func.sum(Order.quantity).desc()
+        )
+        .limit(5)
+        .all()
+    )
+    
+    # ==========================================
+    # RENDER PAGE
+    # ==========================================
 
     return render_template(
         "admin_sales.html",
@@ -1812,7 +1915,11 @@ def admin_sales():
         week_sales=week_sales,
         month_sales=month_sales,
         total_paid_sales=total_paid_sales,
-        paid_orders=paid_orders
+        paid_orders=paid_orders,
+
+        chart_labels=chart_labels,
+        chart_sales=chart_sales,
+        top_products=top_products
     )
 
 @app.route("/admin/payment")

@@ -5,11 +5,15 @@
 
     <title>Orders | BESTTIVE</title>
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
     <style>
 
@@ -34,42 +38,60 @@
 
 
         /* =========================
-           DELETE BUTTON
+           BUTTON COMMON
         ========================= */
-
-        .order-actions {
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin-bottom: 20px;
-        }
 
         .delete-orders-btn,
         .update-order-btn {
-
             background: #4b0082 !important;
             color: white !important;
 
             border: none;
-            border-radius: 7px;
+            border-radius: 10px;
 
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
 
             cursor: pointer;
             white-space: nowrap;
         }
 
-        .delete-orders-btn {
-            padding: 9px 16px;
-            margin-left: auto;
+
+        /* =========================
+           DELETE BUTTON
+        ========================= */
+
+        .order-actions {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
         }
+
+        .order-actions form {
+            margin: 0;
+        }
+
+        .delete-orders-btn {
+            height: 52px;
+            padding: 0 22px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+        }
+
+
+        /* =========================
+           UPDATE BUTTON
+        ========================= */
 
         .update-order-btn {
             padding: 7px 14px;
             margin-top: 2px;
         }
+
 
         .delete-orders-btn:hover,
         .update-order-btn:hover {
@@ -78,11 +100,214 @@
 
 
         /* =========================
+           SEARCH + FILTER BAR
+        ========================= */
+
+        .orders-filter-bar {
+            width: 100%;
+
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 20px;
+            padding: 14px;
+
+            background: #ffffff;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 3px 12px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* =========================
+           SEARCH BOX
+        ========================= */
+
+        .order-search-box {
+            position: relative;
+
+            flex: 1 1 auto;
+
+            min-width: 0;
+        }
+
+        .order-search-box input {
+            width: 100%;
+            height: 52px;
+
+            padding: 0 18px 0 54px;
+
+            border: 1px solid #d5d5d5;
+            border-radius: 10px;
+
+            outline: none;
+
+            font-size: 16px;
+
+            box-sizing: border-box;
+        }
+
+        .order-search-box input:focus {
+            border-color: #4b0082;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(75, 0, 130, 0.10);
+        }
+
+
+        /* SEARCH ICON */
+
+        .search-icon {
+            position: absolute;
+
+            left: 18px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            font-size: 18px;
+            line-height: 1;
+
+            pointer-events: none;
+
+            z-index: 2;
+        }
+
+
+        /* =========================
+           SELECT + DATE
+        ========================= */
+
+        .order-filter-select,
+        .order-date-input {
+            height: 52px;
+
+            border: 1px solid #d5d5d5;
+            border-radius: 10px;
+
+            padding: 0 14px;
+
+            outline: none;
+
+            font-size: 15px;
+
+            background: #ffffff;
+
+            box-sizing: border-box;
+
+            flex-shrink: 0;
+        }
+
+        .order-filter-select {
+            width: 190px;
+        }
+
+        .order-date-input {
+            width: 190px;
+        }
+
+
+        /* =========================
+           ACTION BUTTONS
+           CLEAR + DELETE
+        ========================= */
+
+        .filter-action-buttons {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            flex-shrink: 0;
+        }
+
+
+        /* =========================
+           CLEAR BUTTON
+        ========================= */
+
+        .clear-filter-btn {
+            height: 52px;
+
+            padding: 0 22px;
+
+            background: #4b0082;
+            color: white;
+
+            border: none;
+            border-radius: 10px;
+
+            font-size: 15px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+
+            flex-shrink: 0;
+        }
+
+        .clear-filter-btn:hover {
+            background: #310058;
+        }
+
+
+        /* =========================
+           FILTER RESULT
+        ========================= */
+
+        .filter-result-info {
+            display: none;
+
+            margin-bottom: 15px;
+
+            font-size: 14px;
+
+            color: #666;
+        }
+
+        .filter-result-info.show {
+            display: block;
+        }
+
+
+        /* =========================
+           NO RESULTS
+        ========================= */
+
+        .no-orders-found {
+            display: none;
+
+            text-align: center;
+
+            padding: 25px;
+
+            font-size: 16px;
+
+            color: #777;
+
+            border: 1px solid #e2e2e2;
+            border-radius: 8px;
+
+            margin-top: 15px;
+        }
+
+        .no-orders-found.show {
+            display: block;
+        }
+
+
+        /* =========================
            TABLE WRAPPER
         ========================= */
 
         .orders-table-wrapper {
-
             width: 100%;
             max-width: 100%;
 
@@ -100,7 +325,6 @@
         ========================= */
 
         .orders-table {
-
             width: 100%;
 
             min-width: 1450px;
@@ -112,7 +336,6 @@
 
         .orders-table th,
         .orders-table td {
-
             vertical-align: top;
 
             padding: 10px;
@@ -133,9 +356,7 @@
         /* ADDRESS */
 
         .orders-table td:nth-child(15) {
-
             min-width: 260px;
-
             max-width: 320px;
 
             line-height: 1.6;
@@ -163,10 +384,10 @@
 
 
         /* =========================
-           MOBILE
+           TABLET + MOBILE
         ========================= */
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
 
             body {
                 padding: 0 10px;
@@ -183,42 +404,70 @@
             }
 
 
-            /* DELETE BUTTON */
+            /* FILTER BAR */
 
-            .order-actions {
+            .orders-filter-bar {
+                flex-wrap: wrap;
 
-                width: 100%;
+                gap: 10px;
 
-                justify-content: flex-end;
-
-                margin-bottom: 15px;
+                padding: 12px;
             }
 
+
+            /* SEARCH FULL WIDTH */
+
+            .order-search-box {
+                width: 100%;
+
+                flex: 0 0 100%;
+
+                min-width: 0;
+            }
+
+
+            /* TODAY + DATE */
+
+            .order-filter-select,
+            .order-date-input {
+                width: calc(50% - 5px);
+
+                flex:
+                    0 0
+                    calc(50% - 5px);
+            }
+
+
+            /* CLEAR + DELETE PARALLEL */
+
+            .filter-action-buttons {
+                width: 100%;
+
+                display: flex;
+
+                gap: 10px;
+            }
+
+            .clear-filter-btn,
             .delete-orders-btn {
+                width: 100%;
 
-                margin-left: auto;
-
-                padding: 9px 14px;
-
-                font-size: 14px;
+                flex: 1;
             }
 
 
             /* TABLE */
 
             .orders-table-wrapper {
-
                 width: 100%;
 
                 overflow-x: auto;
-
                 overflow-y: hidden;
 
                 padding-bottom: 5px;
             }
 
             .orders-table {
-
                 min-width: 1450px;
 
                 font-size: 14px;
@@ -226,25 +475,35 @@
 
             .orders-table th,
             .orders-table td {
-
                 padding: 9px 10px;
             }
 
-
-            /* STATUS */
-
             .orders-table .form-select {
-
                 min-width: 155px;
 
                 font-size: 14px;
             }
 
             .update-order-btn {
-
                 font-size: 13px;
 
                 padding: 7px 13px;
+            }
+
+        }
+
+
+        /* =========================
+           SMALL MOBILE
+        ========================= */
+
+        @media (max-width: 480px) {
+
+            .order-filter-select,
+            .order-date-input {
+                width: 100%;
+
+                flex: 0 0 100%;
             }
 
         }
@@ -261,25 +520,114 @@
     <h2>📦 Orders</h2>
 
 
-    <!-- DELETE BUTTON -->
+    <!-- =========================
+         SEARCH + FILTER
+    ========================= -->
 
-    <div class="order-actions">
+    <div class="orders-filter-bar">
 
-        <form method="POST"
-              action="/admin/delete-orders"
-              id="orderDeleteForm">
 
-            <button type="button"
-                    class="delete-orders-btn"
-                    onclick="handleOrderDelete()">
+        <!-- SEARCH -->
 
-                🗑️ Delete
+        <div class="order-search-box">
 
+            <span class="search-icon">
+                🔎
+            </span>
+
+            <input
+                type="text"
+                id="orderSearchInput"
+                placeholder="Search Tracking ID, Customer, Mobile, Email, Product..."
+            >
+
+        </div>
+
+
+        <!-- QUICK DATE FILTER -->
+
+        <select
+            id="orderDateFilter"
+            class="order-filter-select"
+        >
+
+            <option value="all">
+                All Orders
+            </option>
+
+            <option value="today">
+                Today
+            </option>
+
+            <option value="yesterday">
+                Yesterday
+            </option>
+
+        </select>
+
+
+        <!-- SPECIFIC DATE -->
+
+        <input
+            type="date"
+            id="specificOrderDate"
+            class="order-date-input"
+        >
+
+
+        <!-- =========================
+             CLEAR + DELETE
+        ========================= -->
+
+        <div class="filter-action-buttons">
+
+
+            <!-- CLEAR -->
+
+            <button
+                type="button"
+                class="clear-filter-btn"
+                onclick="clearOrderFilters()"
+            >
+                🔄 Clear
             </button>
 
-        </form>
+
+            <!-- DELETE -->
+
+            <div class="order-actions">
+
+                <form
+                    method="POST"
+                    action="/admin/delete-orders"
+                    id="orderDeleteForm"
+                >
+
+                    <button
+                        type="button"
+                        class="delete-orders-btn"
+                        onclick="handleOrderDelete()"
+                    >
+                        🗑️ Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+
+        </div>
+
 
     </div>
+
+
+    <!-- FILTER RESULT -->
+
+    <div
+        id="filterResultInfo"
+        class="filter-result-info"
+    ></div>
 
 
     <!-- =========================
@@ -288,11 +636,14 @@
 
     <div class="orders-table-wrapper">
 
-        <table class="table table-bordered table-striped orders-table">
+        <table
+            class="table table-bordered table-striped orders-table"
+        >
 
             <thead>
 
                 <tr>
+
 
                     <!-- CHECKBOX -->
 
@@ -303,296 +654,383 @@
 
                     <!-- SERIAL NUMBER -->
 
-                    <th>S.No.</th>
+                    <th>
+                        S.No.
+                    </th>
 
 
-                    <!-- TRACKING -->
+                    <!-- TRACKING ID -->
 
-                    <th>Tracking ID</th>
+                    <th>
+                        Tracking ID
+                    </th>
 
 
                     <!-- CUSTOMER -->
 
-                    <th>Customer</th>
+                    <th>
+                        Customer
+                    </th>
 
 
                     <!-- EMAIL -->
 
-                    <th>Email</th>
+                    <th>
+                        Email
+                    </th>
 
 
                     <!-- MOBILE -->
 
-                    <th>Mobile</th>
+                    <th>
+                        Mobile
+                    </th>
 
 
                     <!-- PRODUCT -->
 
-                    <th>Product</th>
+                    <th>
+                        Product
+                    </th>
 
 
                     <!-- HSN -->
 
-                    <th>HSN</th>
+                    <th>
+                        HSN
+                    </th>
 
 
                     <!-- QUANTITY -->
 
-                    <th>Qty</th>
+                    <th>
+                        Qty
+                    </th>
 
 
                     <!-- PRICE -->
 
-                    <th>Price</th>
+                    <th>
+                        Price
+                    </th>
 
 
                     <!-- TAXABLE -->
 
-                    <th>Taxable</th>
+                    <th>
+                        Taxable
+                    </th>
 
 
-                    <!-- GST RATE -->
+                    <!-- GST -->
 
-                    <th>GST %</th>
+                    <th>
+                        GST %
+                    </th>
 
 
                     <!-- GST AMOUNT -->
 
-                    <th>GST Amount</th>
+                    <th>
+                        GST Amount
+                    </th>
 
 
                     <!-- TOTAL -->
 
-                    <th>Total</th>
+                    <th>
+                        Total
+                    </th>
 
 
                     <!-- ADDRESS -->
 
-                    <th>Address</th>
+                    <th>
+                        Address
+                    </th>
 
 
                     <!-- STATUS -->
 
-                    <th>Status</th>
+                    <th>
+                        Status
+                    </th>
 
 
                     <!-- SHIPROCKET -->
 
-                    <th>Shiprocket</th>
+                    <th>
+                        Shiprocket
+                    </th>
+
 
                 </tr>
 
             </thead>
 
 
-            <tbody>
-
-            {% for order in orders %}
-
-            <tr>
-
-                <!-- CHECKBOX -->
-
-                <td class="order-checkbox-column">
-
-                    <input type="checkbox"
-                           name="order_ids"
-                           value="{{ order.id }}"
-                           class="order-checkbox"
-                           form="orderDeleteForm">
-
-                </td>
+            <tbody id="ordersTableBody">
 
 
-                <!-- SERIAL NUMBER -->
+                {% for order in orders %}
 
-                <td>
-                    {{ loop.index }}
-                </td>
-
-
-                <!-- TRACKING ID -->
-
-                <td>
-                    {{ order.tracking_id or "Not available" }}
-                </td>
+                <tr
+                    class="order-row"
+                    data-order-date="{{ order.created_at.strftime('%Y-%m-%d') }}"
+                >
 
 
-                <!-- CUSTOMER -->
+                    <!-- CHECKBOX -->
 
-                <td>
-                    {{ order.user.name }}
-                </td>
+                    <td class="order-checkbox-column">
 
-
-                <!-- EMAIL -->
-
-                <td>
-                    {{ order.user.email }}
-                </td>
-
-
-                <!-- MOBILE -->
-
-                <td>
-                    {{ order.user.phone }}
-                </td>
-
-
-                <!-- PRODUCT -->
-
-                <td>
-                    {{ order.product.name }}
-                </td>
-
-
-                <!-- HSN -->
-
-                <td>
-                    {{ order.hsn_code or "—" }}
-                </td>
-
-
-                <!-- QUANTITY -->
-
-                <td>
-                    {{ order.quantity }}
-                </td>
-
-
-                <!-- PRICE -->
-
-                <td>
-                    ₹{{ "%.2f"|format(order.price or 0) }}
-                </td>
-
-
-                <!-- TAXABLE AMOUNT -->
-
-                <td>
-                    ₹{{ "%.2f"|format(order.taxable_amount or 0) }}
-                </td>
-
-
-                <!-- GST RATE -->
-
-                <td>
-                    {{ "%.2f"|format(order.gst_rate or 0) }}%
-                </td>
-
-
-                <!-- GST AMOUNT -->
-
-                <td>
-                    ₹{{ "%.2f"|format(order.gst_amount or 0) }}
-                </td>
-
-
-                <!-- TOTAL -->
-
-                <td>
-                    ₹{{ "%.2f"|format(order.total_amount or 0) }}
-                </td>
-
-
-                <!-- ADDRESS -->
-
-                <td>
-                    {{ order.address }}
-                </td>
-
-
-                <!-- STATUS -->
-
-                <td>
-
-                    <form
-                        action="/admin/update-order-status/{{ order.id }}"
-                        method="POST"
-                    >
-
-                        <select
-                            name="status"
-                            class="form-select"
+                        <input
+                            type="checkbox"
+                            name="order_ids"
+                            value="{{ order.id }}"
+                            class="order-checkbox"
+                            form="orderDeleteForm"
                         >
 
-                            <option value="Payment Verification"
-                                {% if order.status == "Payment Verification" %}selected{% endif %}>
-                                Payment Verification
-                            </option>
+                    </td>
 
-                            <option value="Pending"
-                                {% if order.status == "Pending" %}selected{% endif %}>
-                                Pending
-                            </option>
 
-                            <option value="Packed"
-                                {% if order.status == "Packed" %}selected{% endif %}>
-                                Packed
-                            </option>
+                    <!-- SERIAL NUMBER -->
 
-                            <option value="Shipped"
-                                {% if order.status == "Shipped" %}selected{% endif %}>
-                                Shipped
-                            </option>
+                    <td>
+                        {{ loop.index }}
+                    </td>
 
-                            <option value="Delivered"
-                                {% if order.status == "Delivered" %}selected{% endif %}>
-                                Delivered
-                            </option>
 
-                            <option value="Cancelled"
-                                {% if order.status == "Cancelled" %}selected{% endif %}>
-                                Cancelled
-                            </option>
+                    <!-- TRACKING ID -->
 
-                        </select>
+                    <td>
+                        {{ order.tracking_id or "Not available" }}
+                    </td>
 
-                        <br>
 
-                        <button
+                    <!-- CUSTOMER -->
+
+                    <td>
+                        {{ order.user.name }}
+                    </td>
+
+
+                    <!-- EMAIL -->
+
+                    <td>
+                        {{ order.user.email }}
+                    </td>
+
+
+                    <!-- MOBILE -->
+
+                    <td>
+                        {{ order.user.phone }}
+                    </td>
+
+
+                    <!-- PRODUCT -->
+
+                    <td>
+                        {{ order.product.name }}
+                    </td>
+
+
+                    <!-- HSN -->
+
+                    <td>
+                        {{ order.hsn_code or "—" }}
+                    </td>
+
+
+                    <!-- QUANTITY -->
+
+                    <td>
+                        {{ order.quantity }}
+                    </td>
+
+
+                    <!-- PRICE -->
+
+                    <td>
+                        ₹{{ "%.2f"|format(order.price or 0) }}
+                    </td>
+
+
+                    <!-- TAXABLE AMOUNT -->
+
+                    <td>
+                        ₹{{ "%.2f"|format(order.taxable_amount or 0) }}
+                    </td>
+
+
+                    <!-- GST RATE -->
+
+                    <td>
+                        {{ "%.2f"|format(order.gst_rate or 0) }}%
+                    </td>
+
+
+                    <!-- GST AMOUNT -->
+
+                    <td>
+                        ₹{{ "%.2f"|format(order.gst_amount or 0) }}
+                    </td>
+
+
+                    <!-- TOTAL -->
+
+                    <td>
+                        ₹{{ "%.2f"|format(order.total_amount or 0) }}
+                    </td>
+
+
+                    <!-- ADDRESS -->
+
+                    <td>
+                        {{ order.address }}
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+                        <form
+                            action="/admin/update-order-status/{{ order.id }}"
+                            method="POST"
+                        >
+
+                            <select
+                                name="status"
+                                class="form-select"
+                            >
+
+
+                                <option
+                                    value="Payment Verification"
+                                    {% if order.status == "Payment Verification" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Payment Verification
+                                </option>
+
+
+                                <option
+                                    value="Pending"
+                                    {% if order.status == "Pending" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Pending
+                                </option>
+
+
+                                <option
+                                    value="Packed"
+                                    {% if order.status == "Packed" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Packed
+                                </option>
+
+
+                                <option
+                                    value="Shipped"
+                                    {% if order.status == "Shipped" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Shipped
+                                </option>
+
+
+                                <option
+                                    value="Delivered"
+                                    {% if order.status == "Delivered" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Delivered
+                                </option>
+
+
+                                <option
+                                    value="Cancelled"
+                                    {% if order.status == "Cancelled" %}
+                                    selected
+                                    {% endif %}
+                                >
+                                    Cancelled
+                                </option>
+
+
+                            </select>
+
+
+                            <br>
+
+
+                            <button
+                                class="update-order-btn"
+                                type="submit"
+                            >
+                                Update
+                            </button>
+
+
+                        </form>
+
+                    </td>
+
+
+                    <!-- SHIPROCKET -->
+
+                    <td>
+
+                        <a
+                            href="/admin/shiprocket/{{ order.id }}"
                             class="update-order-btn"
-                            type="submit"
+                            style="
+                                display: inline-block;
+                                text-decoration: none;
+                                text-align: center;
+                            "
                         >
-                            Update
-                        </button>
 
-                    </form>
+                            ship with Shiprocket
 
-                </td>
+                        </a>
+
+                    </td>
 
 
-                <!-- =========================
-                     SHIPROCKET BUTTON
-                ========================= -->
+                </tr>
 
-                <td>
+                {% endfor %}
 
-                    <a
-                        href="/admin/shiprocket/{{ order.id }}"
-                        class="update-order-btn"
-                        style="
-                            display: inline-block;
-                            text-decoration: none;
-                            text-align: center;
-                        "
-                    >
-                        ship with Shiprocket
-
-                    </a>
-                     
-                   
-                </td>
-
-            </tr>
-
-            {% endfor %}
 
             </tbody>
 
         </table>
 
     </div>
+
+
+    <!-- NO RESULT MESSAGE -->
+
+    <div
+        id="noOrdersFound"
+        class="no-orders-found"
+    >
+
+        🔎 No matching orders found.
+
+    </div>
+
 
 </div>
 
@@ -603,115 +1041,494 @@
 
 <script>
 
-let orderDeleteMode = false;
 
+    /* =========================
+       SEARCH + DATE FILTER
+    ========================= */
 
-function handleOrderDelete() {
-
-    const checkboxes =
-        document.querySelectorAll(".order-checkbox");
-
-
-    const selected =
-        document.querySelectorAll(
-            ".order-checkbox:checked"
+    const orderSearchInput =
+        document.getElementById(
+            "orderSearchInput"
         );
 
 
-    /* FIRST CLICK → SHOW CHECKBOXES */
+    const orderDateFilter =
+        document.getElementById(
+            "orderDateFilter"
+        );
 
-    if (!orderDeleteMode) {
 
+    const specificOrderDate =
+        document.getElementById(
+            "specificOrderDate"
+        );
+
+
+    const orderRows =
         document.querySelectorAll(
-            ".order-checkbox-column"
-        ).forEach(function(column) {
+            ".order-row"
+        );
 
-            column.style.display = "table-cell";
 
-        });
+    const noOrdersFound =
+        document.getElementById(
+            "noOrdersFound"
+        );
 
-        orderDeleteMode = true;
 
-        return;
+    const filterResultInfo =
+        document.getElementById(
+            "filterResultInfo"
+        );
+
+
+    function getLocalDateString(date) {
+
+        const year =
+            date.getFullYear();
+
+
+        const month =
+            String(
+                date.getMonth() + 1
+            ).padStart(2, "0");
+
+
+        const day =
+            String(
+                date.getDate()
+            ).padStart(2, "0");
+
+
+        return (
+            year +
+            "-" +
+            month +
+            "-" +
+            day
+        );
+
     }
 
 
-    /* SECOND CLICK → DELETE */
+    /* =========================
+       FILTER ORDERS
+    ========================= */
 
-    if (selected.length === 0) {
+    function filterOrders() {
 
-        return;
+        const searchText =
+            orderSearchInput
+            .value
+            .toLowerCase()
+            .trim();
+
+
+        const selectedFilter =
+            orderDateFilter.value;
+
+
+        const selectedSpecificDate =
+            specificOrderDate.value;
+
+
+        const today =
+            new Date();
+
+
+        const todayString =
+            getLocalDateString(
+                today
+            );
+
+
+        const yesterday =
+            new Date();
+
+
+        yesterday.setDate(
+            yesterday.getDate() - 1
+        );
+
+
+        const yesterdayString =
+            getLocalDateString(
+                yesterday
+            );
+
+
+        let visibleCount = 0;
+
+
+        orderRows.forEach(
+            function(row) {
+
+
+                const rowText =
+                    row.textContent
+                    .toLowerCase();
+
+
+                const orderDate =
+                    row.dataset.orderDate;
+
+
+                let matchesSearch = true;
+                let matchesDate = true;
+
+
+                /* SEARCH */
+
+                if (searchText !== "") {
+
+                    matchesSearch =
+                        rowText.includes(
+                            searchText
+                        );
+
+                }
+
+
+                /* SPECIFIC DATE */
+
+                if (
+                    selectedSpecificDate !== ""
+                ) {
+
+                    matchesDate =
+                        orderDate ===
+                        selectedSpecificDate;
+
+                }
+
+
+                /* TODAY */
+
+                else if (
+                    selectedFilter === "today"
+                ) {
+
+                    matchesDate =
+                        orderDate ===
+                        todayString;
+
+                }
+
+
+                /* YESTERDAY */
+
+                else if (
+                    selectedFilter === "yesterday"
+                ) {
+
+                    matchesDate =
+                        orderDate ===
+                        yesterdayString;
+
+                }
+
+
+                /* SHOW / HIDE */
+
+                if (
+                    matchesSearch &&
+                    matchesDate
+                ) {
+
+                    row.style.display =
+                        "";
+
+                    visibleCount++;
+
+                }
+
+                else {
+
+                    row.style.display =
+                        "none";
+
+                }
+
+
+            }
+        );
+
+
+        /* NO RESULT */
+
+        if (visibleCount === 0) {
+
+            noOrdersFound
+                .classList
+                .add("show");
+
+        }
+
+        else {
+
+            noOrdersFound
+                .classList
+                .remove("show");
+
+        }
+
+
+        /* RESULT TEXT */
+
+        if (
+            searchText !== "" ||
+            selectedFilter !== "all" ||
+            selectedSpecificDate !== ""
+        ) {
+
+            filterResultInfo
+                .classList
+                .add("show");
+
+
+            filterResultInfo.textContent =
+                visibleCount +
+                " order(s) found";
+
+        }
+
+        else {
+
+            filterResultInfo
+                .classList
+                .remove("show");
+
+        }
 
     }
 
 
-    const confirmed = confirm(
-        "Are you sure you want to delete " +
-        selected.length +
-        " order(s)?"
+    /* =========================
+       SEARCH WHILE TYPING
+    ========================= */
+
+    orderSearchInput.addEventListener(
+        "input",
+        function() {
+
+            filterOrders();
+
+        }
     );
 
 
-    if (confirmed) {
+    /* =========================
+       TODAY / YESTERDAY
+    ========================= */
 
-        document
-            .getElementById("orderDeleteForm")
-            .submit();
+    orderDateFilter.addEventListener(
+        "change",
+        function() {
+
+
+            if (
+                orderDateFilter.value !== "all"
+            ) {
+
+                specificOrderDate.value =
+                    "";
+
+            }
+
+
+            filterOrders();
+
+        }
+    );
+
+
+    /* =========================
+       SPECIFIC DATE
+    ========================= */
+
+    specificOrderDate.addEventListener(
+        "change",
+        function() {
+
+
+            if (
+                specificOrderDate.value !== ""
+            ) {
+
+                orderDateFilter.value =
+                    "all";
+
+            }
+
+
+            filterOrders();
+
+        }
+    );
+
+
+    /* =========================
+       CLEAR FILTERS
+    ========================= */
+
+    function clearOrderFilters() {
+
+        orderSearchInput.value =
+            "";
+
+
+        orderDateFilter.value =
+            "all";
+
+
+        specificOrderDate.value =
+            "";
+
+
+        filterOrders();
 
     }
 
-}
+
+    /* =========================
+       DELETE MODE
+    ========================= */
+
+    let orderDeleteMode = false;
 
 
-/* CLICK ANYWHERE → EXIT DELETE MODE */
+    function handleOrderDelete() {
 
-document.addEventListener("click", function(event) {
+        const selected =
+            document.querySelectorAll(
+                ".order-checkbox:checked"
+            );
 
-    if (!orderDeleteMode) {
-        return;
+
+        /* FIRST CLICK */
+
+        if (!orderDeleteMode) {
+
+            document.querySelectorAll(
+                ".order-checkbox-column"
+            ).forEach(
+                function(column) {
+
+                    column.style.display =
+                        "table-cell";
+
+                }
+            );
+
+
+            orderDeleteMode = true;
+
+            return;
+
+        }
+
+
+        /* SECOND CLICK */
+
+        if (selected.length === 0) {
+
+            return;
+
+        }
+
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to delete " +
+                selected.length +
+                " order(s)?"
+            );
+
+
+        if (confirmed) {
+
+            document
+                .getElementById(
+                    "orderDeleteForm"
+                )
+                .submit();
+
+        }
+
     }
 
 
-    /* Don't close when clicking:
-       checkbox
-       delete button
-       inside checkbox column
-    */
+    /* =========================
+       CLICK ANYWHERE
+       EXIT DELETE MODE
+    ========================= */
 
-    if (
-        event.target.closest(".order-checkbox") ||
-        event.target.closest(".delete-orders-btn") ||
-        event.target.closest(".order-checkbox-column")
-    ) {
-        return;
-    }
+    document.addEventListener(
+        "click",
+        function(event) {
 
 
-    /* Hide checkbox columns */
+            if (!orderDeleteMode) {
 
-    document.querySelectorAll(
-        ".order-checkbox-column"
-    ).forEach(function(column) {
+                return;
 
-        column.style.display = "none";
-
-    });
+            }
 
 
-    /* Clear selected checkboxes */
+            if (
 
-    document.querySelectorAll(
-        ".order-checkbox"
-    ).forEach(function(checkbox) {
+                event.target.closest(
+                    ".order-checkbox"
+                ) ||
 
-        checkbox.checked = false;
+                event.target.closest(
+                    ".delete-orders-btn"
+                ) ||
 
-    });
+                event.target.closest(
+                    ".order-checkbox-column"
+                )
+
+            ) {
+
+                return;
+
+            }
 
 
-    orderDeleteMode = false;
+            /* HIDE CHECKBOX */
 
-});
+            document.querySelectorAll(
+                ".order-checkbox-column"
+            ).forEach(
+                function(column) {
+
+                    column.style.display =
+                        "none";
+
+                }
+            );
+
+
+            /* UNCHECK */
+
+            document.querySelectorAll(
+                ".order-checkbox"
+            ).forEach(
+                function(checkbox) {
+
+                    checkbox.checked =
+                        false;
+
+                }
+            );
+
+
+            orderDeleteMode = false;
+
+        }
+    );
+
 
 </script>
 

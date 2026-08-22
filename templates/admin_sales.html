@@ -5,7 +5,10 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Sales Overview | BESTTIVE Admin</title>
 
@@ -20,12 +23,14 @@
             box-sizing: border-box;
         }
 
+
         html,
         body {
             margin: 0;
             padding: 0;
             min-height: 100%;
         }
+
 
         body {
             background: #f4f6f9;
@@ -52,12 +57,14 @@
             z-index: 1100;
         }
 
+
         .sidebar h2 {
             text-align: center;
             padding: 25px 15px;
             margin: 0;
             font-size: 28px;
         }
+
 
         .sidebar a {
             display: block;
@@ -67,6 +74,7 @@
             font-size: 15px;
             white-space: nowrap;
         }
+
 
         .sidebar a:hover {
             background: #343a40;
@@ -84,6 +92,7 @@
             background: rgba(0, 0, 0, 0.45);
             z-index: 1050;
         }
+
 
         .sidebar-overlay.active {
             display: block;
@@ -112,6 +121,7 @@
             width: 100%;
             margin-bottom: 25px;
         }
+
 
         .page-title {
             font-size: 28px;
@@ -153,6 +163,7 @@
             width: 100%;
         }
 
+
         .sales-card {
             background: white;
             border-radius: 20px;
@@ -162,16 +173,19 @@
             box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
         }
 
+
         .sales-icon {
             font-size: 30px;
             margin-bottom: 12px;
         }
+
 
         .sales-title {
             color: #666;
             font-size: 16px;
             margin-bottom: 10px;
         }
+
 
         .sales-amount {
             font-size: 28px;
@@ -181,7 +195,7 @@
 
 
         /* =========================
-           CHART
+           SALES CHART
            ========================= */
 
         .chart-card {
@@ -190,13 +204,17 @@
             padding: 25px;
             margin-top: 30px;
             box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+            width: 100%;
         }
+
 
         .chart-title {
             font-size: 22px;
             font-weight: 600;
             margin-bottom: 20px;
+            color: #25113d;
         }
+
 
         .chart-wrapper {
             width: 100%;
@@ -204,6 +222,7 @@
             position: relative;
             overflow-x: auto;
         }
+
 
         #salesChart {
             width: 100% !important;
@@ -221,22 +240,27 @@
             padding: 25px;
             margin-top: 30px;
             box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+            width: 100%;
         }
+
 
         .orders-card h4 {
             margin-bottom: 20px;
             color: #25113d;
         }
 
+
         .orders-wrapper {
             width: 100%;
             overflow-x: auto;
         }
 
+
         .sales-table {
             min-width: 750px;
             width: 100%;
         }
+
 
         .sales-table th,
         .sales-table td {
@@ -244,10 +268,12 @@
             vertical-align: middle;
         }
 
+
         .tracking-id {
             color: #4b0082;
             font-weight: 700;
         }
+
 
         .paid-badge {
             background: #198754;
@@ -255,6 +281,79 @@
             padding: 5px 9px;
             border-radius: 6px;
             font-size: 12px;
+        }
+
+
+        /* =========================
+           TOP SELLING PRODUCTS
+           ========================= */
+
+        .top-products-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+            width: 100%;
+        }
+
+
+        .top-products-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #25113d;
+            margin-bottom: 20px;
+        }
+
+
+        .top-products-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+
+        .top-products-table {
+            width: 100%;
+            min-width: 650px;
+            border-collapse: collapse;
+        }
+
+
+        .top-products-table th {
+            background: #4b0082;
+            color: white;
+            padding: 14px;
+            text-align: left;
+            font-size: 15px;
+        }
+
+
+        .top-products-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+
+        .top-products-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+
+        .top-products-table td {
+            padding: 14px;
+            border-bottom: 1px solid #e5e5e5;
+            color: #25113d;
+        }
+
+
+        .top-products-table tbody tr:hover {
+            background: #f8f5fc;
+        }
+
+
+        .no-top-products {
+            text-align: center;
+            padding: 30px;
+            color: #777;
         }
 
 
@@ -282,7 +381,7 @@
             }
 
 
-            /* SIDEBAR HIDDEN */
+            /* SIDEBAR */
 
             .sidebar {
                 width: 230px;
@@ -293,14 +392,17 @@
                 z-index: 1100;
             }
 
+
             .sidebar.active {
                 left: 0;
             }
+
 
             .sidebar h2 {
                 font-size: 24px;
                 padding: 25px 15px;
             }
+
 
             .sidebar a {
                 padding: 14px 20px;
@@ -308,7 +410,7 @@
             }
 
 
-            /* FULL PAGE CONTENT */
+            /* MAIN CONTENT */
 
             .content {
                 margin-left: 0;
@@ -318,9 +420,7 @@
             }
 
 
-            /* HEADER:
-               SALES OVERVIEW LEFT
-               MENU RIGHT */
+            /* HEADER */
 
             .mobile-header {
                 display: flex;
@@ -330,24 +430,27 @@
                 margin-bottom: 20px;
             }
 
+
             .page-title {
                 font-size: 24px;
                 margin: 0;
                 white-space: nowrap;
             }
 
+
             .menu-btn {
                 display: flex;
             }
 
 
-            /* 2 CARDS PER ROW */
+            /* SALES CARDS */
 
             .sales-row {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 12px;
                 width: 100%;
             }
+
 
             .sales-card {
                 height: 170px;
@@ -356,15 +459,18 @@
                 border-radius: 20px;
             }
 
+
             .sales-icon {
                 font-size: 28px;
                 margin-bottom: 12px;
             }
 
+
             .sales-title {
                 font-size: 15px;
                 margin-bottom: 10px;
             }
+
 
             .sales-amount {
                 font-size: 26px;
@@ -380,14 +486,17 @@
                 overflow: hidden;
             }
 
+
             .chart-title {
                 font-size: 20px;
             }
+
 
             .chart-wrapper {
                 height: 300px;
                 overflow-x: auto;
             }
+
 
             #salesChart {
                 min-width: 500px;
@@ -395,13 +504,41 @@
             }
 
 
-            /* ORDERS */
+            /* PAID ORDERS */
 
             .orders-card {
                 width: 100%;
                 padding: 18px;
                 margin-top: 25px;
                 overflow: hidden;
+            }
+
+
+            /* TOP SELLING PRODUCTS */
+
+            .top-products-card {
+                width: 100%;
+                padding: 18px;
+                margin-top: 25px;
+                overflow: hidden;
+            }
+
+
+            .top-products-title {
+                font-size: 20px;
+                margin-bottom: 18px;
+            }
+
+
+            .top-products-table {
+                min-width: 550px;
+            }
+
+
+            .top-products-table th,
+            .top-products-table td {
+                padding: 12px;
+                font-size: 14px;
             }
 
         }
@@ -417,9 +554,11 @@
                 padding: 12px;
             }
 
+
             .page-title {
                 font-size: 22px;
             }
+
 
             .menu-btn {
                 width: 52px;
@@ -428,9 +567,11 @@
                 border-radius: 14px;
             }
 
+
             .sales-row {
                 gap: 12px;
             }
+
 
             .sales-card {
                 height: 165px;
@@ -438,13 +579,16 @@
                 padding: 18px 14px;
             }
 
+
             .sales-icon {
                 font-size: 27px;
             }
 
+
             .sales-title {
                 font-size: 14px;
             }
+
 
             .sales-amount {
                 font-size: 25px;
@@ -481,41 +625,51 @@
 
     <h2>BESTTIVE</h2>
 
+
     <a href="/admin/dashboard">
         🏠 Dashboard
     </a>
+
 
     <a href="/admin/products">
         📦 Products
     </a>
 
+
     <a href="/admin/add-product">
         ➕ Add Product
     </a>
+
 
     <a href="{{ url_for('admin_orders') }}">
         🛒 Orders
     </a>
 
+
     <a href="/admin/banners">
         🖼️ Manage Banners
     </a>
+
 
     <a href="{{ url_for('admin_customers') }}">
         👥 Customers
     </a>
 
+
     <a href="/admin/payment">
         💳 Payment
     </a>
+
 
     <a href="/admin/complaints">
         📝 Complaints
     </a>
 
+
     <a href="/">
         🌐 Website
     </a>
+
 
     <a href="/logout">
         🚪 Logout
@@ -538,6 +692,7 @@
         <h2 class="page-title">
             📊 Sales Overview
         </h2>
+
 
         <button
             class="menu-btn"
@@ -664,6 +819,7 @@
         <div class="chart-title">
             📈 Sales Overview
         </div>
+
 
         <div class="chart-wrapper">
 
@@ -807,6 +963,121 @@
     </div>
 
 
+    <!-- =========================
+         TOP SELLING PRODUCTS
+         ========================= -->
+
+    <div class="top-products-card">
+
+        <div class="top-products-title">
+            🏆 Top Selling Products
+        </div>
+
+
+        {% if top_products %}
+
+        <div class="top-products-table-wrapper">
+
+            <table class="top-products-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Rank
+                        </th>
+
+                        <th>
+                            Product
+                        </th>
+
+                        <th>
+                            Units Sold
+                        </th>
+
+                        <th>
+                            Total Sales
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for product in top_products %}
+
+                    <tr>
+
+                        <td>
+
+                            {% if loop.index == 1 %}
+
+                                🥇
+
+                            {% elif loop.index == 2 %}
+
+                                🥈
+
+                            {% elif loop.index == 3 %}
+
+                                🥉
+
+                            {% else %}
+
+                                #{{ loop.index }}
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ product.product_name }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ product.units_sold }}
+
+                        </td>
+
+
+                        <td>
+
+                            ₹{{ "%.2f"|format(product.total_sales or 0) }}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="no-top-products">
+
+            No paid sales yet.
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
 </div>
 
 
@@ -818,6 +1089,7 @@
 
 
 <script>
+
 
     /* =========================
        SIDEBAR TOGGLE
@@ -885,87 +1157,82 @@
        SALES CHART
        ========================= */
 
-    const salesData = {
+    const chartLabels = {{ chart_labels | tojson }};
 
-        labels: [
-
-            "Yesterday",
-            "Today",
-            "This Week",
-            "This Month"
-
-        ],
-
-        datasets: [
-
-            {
-
-                label: "Paid Sales",
-
-                data: [
-
-                    {{ yesterday_sales }},
-                    {{ today_sales }},
-                    {{ week_sales }},
-                    {{ month_sales }}
-
-                ],
-
-                borderWidth: 3,
-
-                tension: 0.4,
-
-                fill: false
-
-            }
-
-        ]
-
-    };
+    const chartSales = {{ chart_sales | tojson }};
 
 
-    const config = {
+    const salesChartCanvas = document.getElementById(
+        "salesChart"
+    );
 
-        type: "line",
 
-        data: salesData,
+    new Chart(
 
-        options: {
+        salesChartCanvas,
 
-            responsive: true,
+        {
 
-            maintainAspectRatio: false,
+            type: "line",
 
-            plugins: {
 
-                legend: {
+            data: {
 
-                    display: true
+                labels: chartLabels,
 
-                }
+
+                datasets: [
+
+                    {
+
+                        label: "Daily Paid Sales",
+
+                        data: chartSales,
+
+                        borderWidth: 3,
+
+                        tension: 0.4,
+
+                        fill: false
+
+                    }
+
+                ]
 
             },
 
-            scales: {
 
-                y: {
+            options: {
 
-                    beginAtZero: true
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+
+                plugins: {
+
+                    legend: {
+
+                        display: true
+
+                    }
+
+                },
+
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true
+
+                    }
 
                 }
 
             }
 
         }
-
-    };
-
-
-    new Chart(
-
-        document.getElementById("salesChart"),
-
-        config
 
     );
 
