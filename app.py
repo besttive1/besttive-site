@@ -1160,7 +1160,6 @@ TAX_MAPPING = {
         }
     },
 
-
     # =========================
     # HOME
     # =========================
@@ -1440,10 +1439,26 @@ class Order(db.Model):
         db.String(30),
         default=""
     )
+    # Refund Processing Date & Time
+    refund_processing_at = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
+    # Refund Completed Date & Time
+    refunded_at = db.Column(
+        db.DateTime,
+        nullable=True
+    )
 
     created_at = db.Column(
         db.DateTime,
         default=datetime.datetime.utcnow
+    )
+
+    status_updated_at = db.Column(
+    db.DateTime,
+    nullable=True
     )
 
     user = db.relationship("User")
@@ -2554,13 +2569,47 @@ def update_refund_status(order_id):
         "Processing",
         "Refunded"
     ]
-
     if refund_status in allowed_statuses:
 
-        order.refund_status = refund_status
+       order.refund_status = refund_status
 
-        db.session.commit()
+        # Processing start time
+    if refund_status == "Processing":
 
+        if order.refund_processing_at is None:
+            order.refund_processing_at = (
+                datetime.datetime.now(
+                    datetime.timezone(
+                        datetime.timedelta(hours=5, minutes=30)
+                    )
+                ).replace(tzinfo=None)
+            )
+
+    # Refund completed time
+    elif refund_status == "Refunded":
+
+        # Agar Processing Time pehle save nahi hua,
+        # to direct Refunded karne par processing time bhi set hoga
+        if order.refund_processing_at is None:
+            order.refund_processing_at = (
+                datetime.datetime.now(
+                    datetime.timezone(
+                        datetime.timedelta(hours=5, minutes=30)
+                    )
+                ).replace(tzinfo=None)
+            )
+
+        order.refunded_at = (
+            datetime.datetime.now(
+                datetime.timezone(
+                    datetime.timedelta(hours=5, minutes=30)
+                )
+            ).replace(tzinfo=None)
+        )
+
+    db.session.commit()
+    
+    
     return redirect("/admin/refunds")
 
 # ==================================================
@@ -2598,6 +2647,8 @@ def update_order_status(id):
     order = Order.query.get_or_404(id)
 
     order.status = request.form["status"]
+
+    order.status_updated_at = datetime.datetime.utcnow()
 
     db.session.commit()
 
