@@ -492,7 +492,6 @@
 
         }
 
-
         /* =========================
            SMALL MOBILE
         ========================= */
@@ -507,7 +506,19 @@
             }
 
         }
-             
+        .order-date-filter {
+            height: 56px;
+            padding: 0 16px;
+            border: 1px solid #d5d8df;
+            border-radius: 12px;
+            background: #fff;
+            color: #1f2937;
+            font-size: 16px;
+            font-family: inherit;
+            box-sizing: border-box;
+            cursor: pointer;
+        }   
+        
     </style>
 
 </head>
@@ -569,12 +580,9 @@
         <!-- SPECIFIC DATE -->
 
         <input
-            type="text"
+            type="date"
             id="orderDateFilter"
             class="order-date-filter"
-            placeholder="MM/DD/YYYY"
-            onfocus="this.type='date'; if(this.showPicker) this.showPicker();"
-            onblur="if(!this.value) this.type='text';"
             onchange="filterOrders()"
         >
 
