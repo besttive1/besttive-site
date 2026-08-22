@@ -36,41 +36,29 @@
         .sidebar {
             width: 250px;
             height: 100vh;
-
             background: #212529;
-
             position: fixed;
             left: 0;
             top: 0;
-
             color: white;
-
             overflow-y: auto;
-
             z-index: 1000;
         }
 
 
         .sidebar h2 {
             text-align: center;
-
             padding: 20px;
-
             margin: 0;
-
             font-size: 24px;
         }
 
 
         .sidebar a {
             display: block;
-
             color: white;
-
             text-decoration: none;
-
             padding: 14px 25px;
-
             font-size: 14px;
         }
 
@@ -87,25 +75,20 @@
 
         .content {
             margin-left: 250px;
-
             padding: 30px;
-
             min-height: 100vh;
         }
 
 
         .page-title {
             font-size: 28px;
-
             font-weight: 700;
-
             margin-bottom: 8px;
         }
 
 
         .page-subtitle {
             color: #777;
-
             margin-bottom: 25px;
         }
 
@@ -116,39 +99,30 @@
 
         .stat-card {
             background: white;
-
             border-radius: 15px;
-
             padding: 22px;
-
             height: 100%;
-
             box-shadow:
-                0 5px 18px rgba(0,0,0,.08);
+                0 5px 18px rgba(0, 0, 0, 0.08);
         }
 
 
         .stat-icon {
             font-size: 30px;
-
             margin-bottom: 10px;
         }
 
 
         .stat-title {
             font-size: 14px;
-
             color: #777;
-
             margin-bottom: 8px;
         }
 
 
         .stat-number {
             font-size: 30px;
-
             font-weight: 700;
-
             color: #25113d;
         }
 
@@ -159,21 +133,16 @@
 
         .inventory-section {
             background: white;
-
             border-radius: 15px;
-
             padding: 22px;
-
             margin-top: 30px;
-
             box-shadow:
-                0 5px 18px rgba(0,0,0,.08);
+                0 5px 18px rgba(0, 0, 0, 0.08);
         }
 
 
         .inventory-section h4 {
             margin: 0;
-
             font-weight: 700;
         }
 
@@ -184,13 +153,9 @@
 
         .history-header {
             display: flex;
-
             justify-content: space-between;
-
             align-items: center;
-
             gap: 15px;
-
             margin-bottom: 20px;
         }
 
@@ -201,21 +166,13 @@
 
         .delete-history-btn {
             background: #4b0082;
-
             color: white;
-
             border: none;
-
             padding: 11px 20px;
-
             border-radius: 8px;
-
             font-size: 14px;
-
             font-weight: 600;
-
             cursor: pointer;
-
             white-space: nowrap;
         }
 
@@ -231,32 +188,26 @@
 
         .table-wrapper {
             overflow-x: auto;
-
             -webkit-overflow-scrolling: touch;
         }
 
 
         table {
             width: 100%;
-
             min-width: 650px;
         }
 
 
         th {
             background: #4b0082 !important;
-
             color: white !important;
-
             padding: 13px !important;
-
             white-space: nowrap;
         }
 
 
         td {
             padding: 13px !important;
-
             vertical-align: middle;
         }
 
@@ -267,9 +218,7 @@
 
         .history-checkbox-column {
             display: none;
-
             width: 45px;
-
             text-align: center;
         }
 
@@ -280,45 +229,30 @@
 
         .low-stock-badge {
             background: #fff3cd;
-
             color: #856404;
-
             padding: 6px 10px;
-
             border-radius: 20px;
-
             font-size: 12px;
-
             font-weight: 600;
         }
 
 
         .out-stock-badge {
             background: #f8d7da;
-
             color: #842029;
-
             padding: 6px 10px;
-
             border-radius: 20px;
-
             font-size: 12px;
-
             font-weight: 600;
         }
 
 
         .sale-badge {
             background: #e8f5e9;
-
             color: #198754;
-
             padding: 6px 10px;
-
             border-radius: 20px;
-
             font-size: 12px;
-
             font-weight: 600;
         }
 
@@ -329,10 +263,87 @@
 
         .empty-state {
             text-align: center;
-
             padding: 30px;
-
             color: #777;
+        }
+
+
+        /* =========================
+           INVENTORY PAGINATION
+        ========================= */
+
+        .inventory-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+
+        .pagination-btn,
+        .page-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-width: 42px;
+            height: 42px;
+
+            padding: 0 14px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            background: white;
+
+            color: #4b0082;
+
+            border: 1px solid #4b0082;
+
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+
+        .pagination-btn:hover,
+        .page-number:hover {
+            background: #4b0082;
+            color: white;
+        }
+
+
+        .page-number.active {
+            background: #4b0082;
+            color: white;
+            border-color: #4b0082;
+        }
+
+
+        .pagination-btn.disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            background: #eee;
+            color: #777;
+            border-color: #ccc;
+        }
+
+
+        .page-numbers {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+
+        .page-dots {
+            font-weight: bold;
+            padding: 0 5px;
         }
 
 
@@ -344,34 +355,27 @@
 
             .sidebar {
                 position: relative;
-
                 width: 100%;
-
                 height: auto;
-
                 text-align: center;
             }
 
 
             .sidebar h2 {
                 padding: 15px;
-
                 font-size: 24px;
             }
 
 
             .sidebar a {
                 display: inline-block;
-
                 padding: 10px 12px;
-
                 font-size: 13px;
             }
 
 
             .content {
                 margin-left: 0;
-
                 padding: 20px 14px;
             }
 
@@ -390,27 +394,21 @@
 
             .stat-card {
                 aspect-ratio: 1 / 1;
-
                 padding: 18px;
-
                 display: flex;
-
                 flex-direction: column;
-
                 justify-content: center;
             }
 
 
             .stat-icon {
                 font-size: 28px;
-
                 margin-bottom: 12px;
             }
 
 
             .stat-title {
                 font-size: 14px;
-
                 margin-bottom: 10px;
             }
 
@@ -422,7 +420,6 @@
 
             .inventory-section {
                 padding: 15px;
-
                 margin-top: 20px;
             }
 
@@ -439,8 +436,36 @@
 
             .delete-history-btn {
                 padding: 9px 12px;
-
                 font-size: 12px;
+            }
+
+
+            /* MOBILE PAGINATION */
+
+            .inventory-pagination {
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+
+            .pagination-btn {
+                min-width: auto;
+                height: 38px;
+                padding: 0 12px;
+                font-size: 13px;
+            }
+
+
+            .page-number {
+                min-width: 38px;
+                height: 38px;
+                padding: 0 10px;
+                font-size: 13px;
+            }
+
+
+            .page-numbers {
+                gap: 6px;
             }
 
         }
@@ -533,8 +558,6 @@
     <div class="row g-3 g-lg-4">
 
 
-        <!-- TOTAL PRODUCTS -->
-
         <div class="col-6 col-lg-3">
 
             <div class="stat-card">
@@ -556,8 +579,6 @@
         </div>
 
 
-
-        <!-- TOTAL STOCK -->
 
         <div class="col-6 col-lg-3">
 
@@ -581,8 +602,6 @@
 
 
 
-        <!-- LOW STOCK -->
-
         <div class="col-6 col-lg-3">
 
             <div class="stat-card">
@@ -604,8 +623,6 @@
         </div>
 
 
-
-        <!-- OUT OF STOCK -->
 
         <div class="col-6 col-lg-3">
 
@@ -654,13 +671,9 @@
                 <thead>
 
                     <tr>
-
                         <th>Product</th>
-
                         <th>Current Stock</th>
-
                         <th>Status</th>
-
                     </tr>
 
                 </thead>
@@ -676,11 +689,9 @@
                             {{ product.name }}
                         </td>
 
-
                         <td>
                             {{ product.stock }}
                         </td>
-
 
                         <td>
 
@@ -704,9 +715,7 @@
         {% else %}
 
         <div class="empty-state">
-
             🎉 No products are running low on stock.
-
         </div>
 
         {% endif %}
@@ -737,13 +746,9 @@
                 <thead>
 
                     <tr>
-
                         <th>Product</th>
-
                         <th>Current Stock</th>
-
                         <th>Status</th>
-
                     </tr>
 
                 </thead>
@@ -759,11 +764,9 @@
                             {{ product.name }}
                         </td>
 
-
                         <td>
                             {{ product.stock }}
                         </td>
-
 
                         <td>
 
@@ -787,9 +790,7 @@
         {% else %}
 
         <div class="empty-state">
-
             🎉 All products are currently in stock.
-
         </div>
 
         {% endif %}
@@ -812,7 +813,7 @@
             </h4>
 
 
-            {% if inventory_history %}
+            {% if inventory_history.items %}
 
             <button
                 type="button"
@@ -829,7 +830,7 @@
 
 
 
-        {% if inventory_history %}
+        {% if inventory_history.items %}
 
 
         <form
@@ -862,17 +863,11 @@
 
 
                             <th>Date & Time</th>
-
                             <th>Product</th>
-
                             <th>Type</th>
-
                             <th>Change</th>
-
                             <th>Previous</th>
-
                             <th>New Stock</th>
-
                             <th>Note</th>
 
 
@@ -885,7 +880,7 @@
                     <tbody>
 
 
-                        {% for movement in inventory_history %}
+                        {% for movement in inventory_history.items %}
 
 
                         <tr>
@@ -905,9 +900,7 @@
 
 
                             <td>
-
                                 {{ movement.created_at.strftime('%d %b %Y, %I:%M %p') }}
-
                             </td>
 
 
@@ -915,13 +908,9 @@
                             <td>
 
                                 {% if movement.product %}
-
                                     {{ movement.product.name }}
-
                                 {% else %}
-
                                     Product Deleted
-
                                 {% endif %}
 
                             </td>
@@ -931,9 +920,7 @@
                             <td>
 
                                 <span class="sale-badge">
-
                                     {{ movement.movement_type }}
-
                                 </span>
 
                             </td>
@@ -943,13 +930,9 @@
                             <td>
 
                                 {% if movement.quantity > 0 %}
-
                                     +{{ movement.quantity }}
-
                                 {% else %}
-
                                     {{ movement.quantity }}
-
                                 {% endif %}
 
                             </td>
@@ -957,25 +940,19 @@
 
 
                             <td>
-
                                 {{ movement.previous_stock }}
-
                             </td>
 
 
 
                             <td>
-
                                 {{ movement.new_stock }}
-
                             </td>
 
 
 
                             <td>
-
                                 {{ movement.note }}
-
                             </td>
 
 
@@ -997,16 +974,107 @@
         </form>
 
 
+        <!-- =========================
+             INVENTORY PAGINATION
+        ========================= -->
 
-        {% else %}
+        {% if inventory_history.pages > 1 %}
+
+        <div class="inventory-pagination">
 
 
-        <div class="empty-state">
+            {% if inventory_history.has_prev %}
 
-            📦 No stock movement recorded yet.
+            <a
+                href="{{ url_for('admin_inventory', page=inventory_history.prev_num) }}"
+                class="pagination-btn"
+            >
+                ← Previous
+            </a>
+
+            {% else %}
+
+            <span class="pagination-btn disabled">
+                ← Previous
+            </span>
+
+            {% endif %}
+
+
+
+            <div class="page-numbers">
+
+
+                {% for page_num in inventory_history.iter_pages() %}
+
+
+                    {% if page_num %}
+
+
+                        {% if page_num == inventory_history.page %}
+
+                        <span class="page-number active">
+                            {{ page_num }}
+                        </span>
+
+
+                        {% else %}
+
+                        <a
+                            href="{{ url_for('admin_inventory', page=page_num) }}"
+                            class="page-number"
+                        >
+                            {{ page_num }}
+                        </a>
+
+                        {% endif %}
+
+
+                    {% else %}
+
+                    <span class="page-dots">
+                        ...
+                    </span>
+
+                    {% endif %}
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+
+            {% if inventory_history.has_next %}
+
+            <a
+                href="{{ url_for('admin_inventory', page=inventory_history.next_num) }}"
+                class="pagination-btn"
+            >
+                Next →
+            </a>
+
+            {% else %}
+
+            <span class="pagination-btn disabled">
+                Next →
+            </span>
+
+            {% endif %}
+
 
         </div>
 
+        {% endif %}
+
+
+
+        {% else %}
+
+        <div class="empty-state">
+            📦 No stock movement recorded yet.
+        </div>
 
         {% endif %}
 
@@ -1057,14 +1125,12 @@
 
             historyDeleteMode = true;
 
-
             return;
 
         }
 
 
         /* SECOND CLICK */
-
 
         if (selected.length === 0) {
 
@@ -1078,13 +1144,9 @@
 
 
         const confirmed = confirm(
-
             "Are you sure you want to delete " +
-
             selected.length +
-
             " selected history record(s)?"
-
         );
 
 
@@ -1106,7 +1168,6 @@
 
     function toggleAllHistory(source) {
 
-
         document.querySelectorAll(
             ".history-checkbox"
         ).forEach(function(checkbox) {
@@ -1117,6 +1178,56 @@
 
     }
 
+document.addEventListener("click", function(event) {
+
+    if (!historyDeleteMode) {
+        return;
+    }
+
+    const deleteButton = document.getElementById(
+        "deleteHistoryBtn"
+    );
+
+    const deleteForm = document.getElementById(
+        "historyDeleteForm"
+    );
+
+    if (
+        deleteButton.contains(event.target) ||
+        deleteForm.contains(event.target)
+    ) {
+        return;
+    }
+
+    document.querySelectorAll(
+        ".history-checkbox-column"
+    ).forEach(function(column) {
+
+        column.style.display = "none";
+
+    });
+
+    document.querySelectorAll(
+        ".history-checkbox"
+    ).forEach(function(checkbox) {
+
+        checkbox.checked = false;
+
+    });
+
+    const selectAll = document.getElementById(
+        "selectAllHistory"
+    );
+
+    if (selectAll) {
+        selectAll.checked = false;
+    }
+
+    historyDeleteMode = false;
+
+    deleteButton.innerHTML = "🗑 Delete History";
+
+});
 
 </script>
 

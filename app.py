@@ -1708,22 +1708,46 @@ def admin_inventory():
     out_of_stock_products = Product.query.filter(
         Product.stock <= 0
     ).all()
+
+
     # ==============================================
-    # RECENT INVENTORY HISTORY
+    # INVENTORY HISTORY PAGINATION
     # ==============================================
+
+    page = request.args.get(
+        "page",
+        1,
+        type=int
+    )
 
     inventory_history = InventoryMovement.query.order_by(
         InventoryMovement.created_at.desc()
-    ).limit(20).all()
+    ).paginate(
+        page=page,
+        per_page=10,
+        error_out=False
+    )
+
+
+    # ==============================================
+    # RENDER PAGE
+    # ==============================================
 
     return render_template(
         "admin_inventory.html",
+
         total_products=total_products,
+
         total_stock=total_stock,
+
         low_stock_count=low_stock_count,
+
         out_of_stock_count=out_of_stock_count,
+
         low_stock_products=low_stock_products,
+
         out_of_stock_products=out_of_stock_products,
+
         inventory_history=inventory_history
     )
 
