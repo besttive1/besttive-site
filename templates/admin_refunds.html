@@ -19,10 +19,13 @@
 
     <style>
 
+        /* =========================
+           GLOBAL
+        ========================= */
+
         * {
             box-sizing: border-box;
         }
-
 
         body {
             margin: 0;
@@ -37,40 +40,28 @@
         ========================= */
 
         .refund-header {
-
             background: #4b0082;
             color: white;
-
             padding: 22px 30px;
 
             display: flex;
             align-items: center;
             justify-content: space-between;
-
             gap: 20px;
         }
 
-
         .refund-header h1 {
-
             margin: 0;
-
             font-size: 26px;
         }
 
-
         .refund-header p {
-
             margin: 6px 0 0;
-
             opacity: 0.85;
-
             font-size: 14px;
         }
 
-
         .back-orders-btn {
-
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -92,17 +83,14 @@
 
 
         /* =========================
-           MAIN
+           CONTAINER
         ========================= */
 
         .refund-container {
-
             width: 100%;
-
-            max-width: 1600px;
+            max-width: 1800px;
 
             margin: 0 auto;
-
             padding: 30px;
         }
 
@@ -112,7 +100,6 @@
         ========================= */
 
         .refund-summary {
-
             background: white;
 
             border-radius: 14px;
@@ -126,9 +113,7 @@
                 rgba(0, 0, 0, 0.07);
         }
 
-
         .refund-summary strong {
-
             display: block;
 
             font-size: 28px;
@@ -136,9 +121,7 @@
             color: #4b0082;
         }
 
-
         .refund-summary span {
-
             display: block;
 
             margin-top: 5px;
@@ -160,7 +143,7 @@
             display: flex;
             align-items: center;
 
-            gap: 10px;
+            gap: 12px;
 
             padding: 14px;
 
@@ -180,17 +163,15 @@
 
         .refund-search-box {
 
-            flex: 1 1 auto;
+            flex: 1;
 
-            min-width: 180px;
+            min-width: 200px;
         }
-
 
         .refund-search-box input {
 
             width: 100%;
-
-            height: 50px;
+            height: 54px;
 
             padding: 0 16px;
 
@@ -199,11 +180,10 @@
 
             border-radius: 10px;
 
-            font-size: 14px;
+            font-size: 15px;
 
             outline: none;
         }
-
 
         .refund-search-box input:focus {
 
@@ -215,40 +195,12 @@
         }
 
 
-        /* STATUS */
+        /* SELECT + DATE */
 
-        .refund-filters select {
-
-            flex: 0 0 140px;
-
-            width: 140px;
-
-            height: 50px;
-
-            border:
-                1px solid #d5d5d5;
-
-            border-radius: 10px;
-
-            background: white;
-
-            padding: 0 12px;
-
-            font-size: 14px;
-
-            outline: none;
-        }
-
-
-        /* DATE */
-
+        .refund-filters select,
         .refund-filters input[type="date"] {
 
-            flex: 0 0 140px;
-
-            width: 140px;
-
-            height: 50px;
+            height: 54px;
 
             border:
                 1px solid #d5d5d5;
@@ -257,75 +209,135 @@
 
             background: white;
 
-            padding: 0 10px;
+            padding: 0 14px;
 
-            font-size: 13px;
+            font-size: 15px;
 
             outline: none;
         }
 
+        .refund-filters select {
+            width: 180px;
+        }
 
-        /* =========================
-           FILTER BUTTONS
-        ========================= */
+        .refund-filters input[type="date"] {
+            width: 190px;
+        }
+
+        /* CUSTOM DATE FILTER */
+        .refund-date-wrapper {
+            position: relative;
+            width: 190px;
+            min-width: 190px;
+        }
+
+        .refund-date-display {
+            width: 100%;
+            height: 54px;
+            box-sizing: border-box;
+            border: 1px solid #d5d5d5;
+            border-radius: 10px;
+            background: white;
+            padding: 0 14px;
+            font-size: 15px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .refund-real-date {
+            position: absolute;
+            width: 1px !important;
+            height: 1px !important;
+            opacity: 0;
+            pointer-events: none;
+            left: 0;
+            top: 0;
+        }
+
+
+        /* BUTTONS */
 
         .clear-refund-btn,
-        .delete-refund-btn {
+        .delete-refund-btn,
+        .cancel-delete-btn,
+        .delete-selected-btn {
 
-            height: 50px;
+            height: 54px;
 
             border: none;
 
             border-radius: 10px;
 
-            background: #4b0082;
-
-            color: white;
+            padding: 0 20px;
 
             font-size: 14px;
-
             font-weight: 700;
 
             cursor: pointer;
 
             white-space: nowrap;
-
-            transition:
-                background 0.2s,
-                width 0.2s;
         }
-
 
         .clear-refund-btn {
 
-            flex: 0 0 105px;
-
-            width: 105px;
+            background: #4b0082;
+            color: white;
         }
-
 
         .delete-refund-btn {
 
-            flex: 0 0 105px;
-
-            width: 105px;
+            background: #4b0082;
+            color: white;
         }
 
+        .cancel-delete-btn {
 
-        /* DELETE SELECTED MODE */
-
-        .delete-refund-btn.delete-selected-mode {
-
-            flex-basis: 170px;
-
-            width: 170px;
+            background: #eeeeee;
+            color: #444;
         }
 
+        .delete-selected-btn {
+
+            background: #b91c1c;
+            color: white;
+        }
 
         .clear-refund-btn:hover,
         .delete-refund-btn:hover {
 
             background: #310058;
+        }
+
+        .delete-selected-btn:hover {
+
+            background: #991b1b;
+        }
+
+        /* Keep Clear and Delete compact */
+        .clear-refund-btn,
+        .delete-refund-btn {
+            width: auto;
+            min-width: 100px;
+        }
+
+
+        /* DELETE MODE ACTIONS */
+
+        .delete-mode-actions {
+
+            display: none;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+        body.delete-mode .delete-mode-actions {
+            display: flex;
+        }
+
+        body.delete-mode .delete-refund-btn {
+            display: none;
         }
 
 
@@ -345,21 +357,17 @@
                 0 4px 15px
                 rgba(0, 0, 0, 0.07);
 
-            width: 100%;
-
-            overflow: hidden;
+            overflow-x: auto;
         }
-
 
         .refund-table {
 
             width: 100%;
 
+            min-width: 1500px;
+
             border-collapse: collapse;
-
-            table-layout: auto;
         }
-
 
         .refund-table th {
 
@@ -369,90 +377,48 @@
 
             text-align: left;
 
-            padding: 14px 8px;
+            padding: 14px 12px;
 
-            font-size: 12px;
-
-            font-weight: 700;
+            font-size: 13px;
 
             white-space: nowrap;
         }
 
-
         .refund-table td {
 
-            padding: 14px 8px;
+            padding: 14px 12px;
 
             border-bottom:
                 1px solid #eeeeee;
 
-            font-size: 12px;
+            font-size: 13px;
 
             vertical-align: middle;
-
-            white-space: nowrap;
         }
 
-
         .refund-table tr:last-child td {
-
             border-bottom: none;
         }
 
 
         /* =========================
-           DELETE CHECKBOX
+           CHECKBOX
         ========================= */
 
         .refund-checkbox-column {
 
             display: none;
-
-            width: 60px;
-
-            text-align: center;
+            width: 45px;
         }
-
 
         body.delete-mode .refund-checkbox-column {
-
             display: table-cell;
         }
-
 
         .refund-checkbox {
 
             width: 18px;
             height: 18px;
-
-            cursor: pointer;
-        }
-
-
-        .select-all-wrapper {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            gap: 6px;
-
-            font-size: 12px;
-
-            font-weight: 700;
-
-            color: #4b0082;
-
-            white-space: nowrap;
-        }
-
-
-        .select-all-checkbox {
-
-            width: 17px;
-            height: 17px;
 
             cursor: pointer;
         }
@@ -467,6 +433,8 @@
             font-weight: 700;
 
             color: #4b0082;
+
+            white-space: nowrap;
         }
 
 
@@ -489,14 +457,12 @@
             white-space: nowrap;
         }
 
-
         .cancelled-badge {
 
             background: #fee2e2;
 
             color: #b91c1c;
         }
-
 
         .paid-badge {
 
@@ -505,7 +471,6 @@
             color: #15803d;
         }
 
-
         .refund-pending {
 
             background: #fff3cd;
@@ -513,14 +478,12 @@
             color: #856404;
         }
 
-
         .refund-processing {
 
             background: #dbeafe;
 
             color: #1d4ed8;
         }
-
 
         .refund-refunded {
 
@@ -531,18 +494,17 @@
 
 
         /* =========================
-           DATE / TIME
+           DATE TIME
         ========================= */
 
         .refund-time {
 
-            min-width: 120px;
+            min-width: 190px;
 
             line-height: 1.5;
 
             color: #555;
         }
-
 
         .refund-time strong {
 
@@ -553,17 +515,16 @@
             color: #333;
         }
 
-
         .refund-time span {
 
-            font-size: 11px;
+            font-size: 12px;
 
             color: #777;
         }
 
 
         /* =========================
-           UPDATE REFUND
+           UPDATE FORM
         ========================= */
 
         .refund-update-form {
@@ -573,16 +534,13 @@
             align-items: center;
 
             gap: 8px;
-
-            min-width: 205px;
         }
-
 
         .refund-select {
 
-            width: 115px;
-
             height: 40px;
+
+            min-width: 115px;
 
             padding: 0 10px;
 
@@ -598,18 +556,11 @@
             outline: none;
         }
 
-
-        .refund-select:focus {
-
-            border-color: #4b0082;
-        }
-
-
         .refund-update-btn {
 
-            width: 82px;
-
             height: 40px;
+
+            padding: 0 14px;
 
             border: none;
 
@@ -627,7 +578,6 @@
 
             white-space: nowrap;
         }
-
 
         .refund-update-btn:hover {
 
@@ -648,14 +598,12 @@
             color: #777;
         }
 
-
         .no-refunds div {
 
             font-size: 50px;
 
             margin-bottom: 15px;
         }
-
 
         .no-refunds h2 {
 
@@ -668,120 +616,62 @@
         /* =========================
            MOBILE
         ========================= */
-        @media (max-width: 768px) {
 
-    .filter-date {
-        display: block !important;
-        width: 100% !important;
-        min-width: 0 !important;
-        height: 56px !important;
-        padding: 0 15px !important;
-        box-sizing: border-box !important;
-        font-size: 15px !important;
-        color: #222 !important;
-        background: #fff !important;
-    }
-
-}
         @media (max-width: 768px) {
 
             .refund-header {
-
                 padding: 18px;
-
                 flex-direction: column;
-
                 align-items: stretch;
             }
-            
-            .refund-header h1 {
 
+            .refund-header h1 {
                 font-size: 22px;
             }
 
-
             .back-orders-btn {
-
                 width: 100%;
             }
 
-
             .refund-container {
-
                 padding: 15px;
             }
 
+            .refund-summary {
+                margin-bottom: 15px;
+            }
 
             .refund-filters {
-
                 display: grid;
-
-                grid-template-columns:
-                    1fr 1fr;
-
+                grid-template-columns: 1fr 1fr;
+                align-items: stretch;
                 gap: 10px;
-
                 padding: 12px;
             }
 
-
             .refund-search-box {
-
                 grid-column: 1 / -1;
-
                 width: 100%;
-
                 min-width: 0;
             }
-
 
             .refund-filters select,
-            .refund-filters input[type="date"] {
-
-                width: 100%;
-
-                min-width: 0;
-
-                flex: none;
-            }
-
-
+            .refund-date-wrapper,
             .clear-refund-btn,
-            .delete-refund-btn,
-            .delete-refund-btn.delete-selected-mode {
-
+            .delete-refund-btn {
                 width: 100%;
-
                 min-width: 0;
-
-                flex: none;
             }
 
+            .refund-date-wrapper {
+                min-width: 0;
+            }
 
             .refund-card {
-
                 padding: 10px;
-
                 overflow-x: auto;
-
                 -webkit-overflow-scrolling: touch;
             }
-            
-
-            .refund-table {
-
-                min-width: 1100px;
-
-                width: max-content;
-            }
-
-
-            .refund-table th,
-            .refund-table td {
-
-                padding: 12px 10px;
-            }
-
         }
 
     </style>
@@ -792,7 +682,9 @@
 <body>
 
 
-    <!-- HEADER -->
+    <!-- =========================
+         HEADER
+    ========================= -->
 
     <header class="refund-header">
 
@@ -819,7 +711,9 @@
     </header>
 
 
-    <!-- MAIN -->
+    <!-- =========================
+         MAIN
+    ========================= -->
 
     <main class="refund-container">
 
@@ -839,20 +733,18 @@
         </div>
 
 
-        <!-- FILTERS -->
+        <!-- =========================
+             SEARCH / FILTER
+        ========================= -->
 
-        <div
-            class="refund-filters"
-            id="refundFilters"
-        >
-
+        <div class="refund-filters">
 
             <div class="refund-search-box">
 
                 <input
                     type="text"
                     id="refundSearch"
-                    placeholder="🔍 Search Tracking ID, Customer, Product..."
+                    placeholder="🔍 Search Tracking ID, Customer, Product, Amount..."
                     oninput="filterRefunds()"
                 >
 
@@ -883,11 +775,24 @@
             </select>
 
 
-            <input
-                type="date"
-                id="refundDateFilter"
-                onchange="filterRefunds()"
-            >
+            <!-- CUSTOM DATE FILTER -->
+            <div class="refund-date-wrapper">
+
+                <input
+                    type="text"
+                    id="refundDateDisplay"
+                    class="refund-date-display"
+                    placeholder="MM/DD/YYYY"
+                    readonly
+                >
+
+                <input
+                    type="date"
+                    id="refundDateFilter"
+                    class="refund-real-date"
+                >
+
+            </div>
 
 
             <button
@@ -911,35 +816,30 @@
         </div>
 
 
-        <!-- TABLE -->
+        <!-- =========================
+             REFUND TABLE
+        ========================= -->
 
-        <div class="refund-card">
+        <div
+            class="refund-card"
+            id="refundCard"
+        >
+
 
             {% if orders %}
 
+
                 <table class="refund-table">
+
 
                     <thead>
 
                         <tr>
 
-                            <th class="refund-checkbox-column">
-
-                                <label class="select-all-wrapper">
-
-                                    <input
-                                        type="checkbox"
-                                        id="selectAllRefunds"
-                                        class="select-all-checkbox"
-                                        onchange="toggleSelectAllRefunds()"
-                                    >
-
-                                    <span>
-                                        All
-                                    </span>
-
-                                </label>
-
+                            <th
+                                class="refund-checkbox-column"
+                            >
+                                Select
                             </th>
 
 
@@ -988,9 +888,13 @@
                     </thead>
 
 
-                    <tbody>
+                    <tbody
+                        id="refundTableBody"
+                    >
+
 
                         {% for order in orders %}
+
 
                             {% set refund_status =
                                 order.refund_status
@@ -1017,7 +921,9 @@
 
                                 <!-- CHECKBOX -->
 
-                                <td class="refund-checkbox-column">
+                                <td
+                                    class="refund-checkbox-column"
+                                >
 
                                     <input
                                         type="checkbox"
@@ -1025,16 +931,16 @@
                                         class="refund-checkbox"
 
                                         value="{{ order.id }}"
-
-                                        onchange="updateSelectAllState()"
                                     >
 
                                 </td>
 
 
-                                <!-- TRACKING -->
+                                <!-- TRACKING ID -->
 
-                                <td class="tracking-id">
+                                <td
+                                    class="tracking-id"
+                                >
 
                                     {{
                                         order.tracking_id
@@ -1126,7 +1032,9 @@
                                             refund-{{ refund_status|lower }}
                                         "
                                     >
+
                                         {{ refund_status }}
+
                                     </span>
 
                                 </td>
@@ -1134,7 +1042,9 @@
 
                                 <!-- PROCESSING TIME -->
 
-                                <td class="refund-time">
+                                <td
+                                    class="refund-time"
+                                >
 
                                     {% if order.processing_at %}
 
@@ -1157,7 +1067,9 @@
 
                                 <!-- REFUNDED TIME -->
 
-                                <td class="refund-time">
+                                <td
+                                    class="refund-time"
+                                >
 
                                     {% if order.refunded_at %}
 
@@ -1183,20 +1095,25 @@
                                 <td>
 
                                     <form
-                                        action="{{ url_for('update_refund_status', order_id=order.id) }}"
                                         method="POST"
+
+                                        action="/admin/refund/{{ order.id }}/update"
+
                                         class="refund-update-form"
                                     >
 
+
                                         <select
                                             name="refund_status"
+
                                             class="refund-select"
                                         >
 
                                             <option
                                                 value="Pending"
+
                                                 {% if refund_status == "Pending" %}
-                                                selected
+                                                    selected
                                                 {% endif %}
                                             >
                                                 Pending
@@ -1205,8 +1122,9 @@
 
                                             <option
                                                 value="Processing"
+
                                                 {% if refund_status == "Processing" %}
-                                                selected
+                                                    selected
                                                 {% endif %}
                                             >
                                                 Processing
@@ -1215,8 +1133,9 @@
 
                                             <option
                                                 value="Refunded"
+
                                                 {% if refund_status == "Refunded" %}
-                                                selected
+                                                    selected
                                                 {% endif %}
                                             >
                                                 Refunded
@@ -1227,10 +1146,12 @@
 
                                         <button
                                             type="submit"
+
                                             class="refund-update-btn"
                                         >
                                             Update
                                         </button>
+
 
                                     </form>
 
@@ -1239,9 +1160,12 @@
 
                             </tr>
 
+
                         {% endfor %}
 
+
                     </tbody>
+
 
                 </table>
 
@@ -1268,12 +1192,16 @@
 
             {% endif %}
 
+
         </div>
+
 
     </main>
 
 
-    <!-- DELETE FORM -->
+    <!-- =========================
+         DELETE FORM
+    ========================= -->
 
     <form
         id="refundDeleteForm"
@@ -1288,6 +1216,68 @@
         /* =========================
            SEARCH + FILTER
         ========================= */
+
+        const refundDateFilter =
+            document.getElementById(
+                "refundDateFilter"
+            );
+
+
+        const refundDateDisplay =
+            document.getElementById(
+                "refundDateDisplay"
+            );
+
+
+        refundDateDisplay.addEventListener(
+            "click",
+            function() {
+
+                if (
+                    refundDateFilter.showPicker
+                ) {
+
+                    refundDateFilter.showPicker();
+
+                } else {
+
+                    refundDateFilter.click();
+
+                }
+
+            }
+        );
+
+
+        refundDateFilter.addEventListener(
+            "change",
+            function() {
+
+                if (
+                    refundDateFilter.value
+                ) {
+
+                    const dateParts =
+                        refundDateFilter.value.split("-");
+
+                    refundDateDisplay.value =
+                        dateParts[1] +
+                        "/" +
+                        dateParts[2] +
+                        "/" +
+                        dateParts[0];
+
+                } else {
+
+                    refundDateDisplay.value = "";
+
+                }
+
+                filterRefunds();
+
+            }
+        );
+
 
         function filterRefunds() {
 
@@ -1318,6 +1308,7 @@
 
 
             rows.forEach(function(row) {
+
 
                 const searchText =
                     row.dataset.search
@@ -1364,6 +1355,7 @@
 
                 }
 
+
             });
 
         }
@@ -1385,9 +1377,10 @@
             .value = "";
 
 
-            document
-            .getElementById("refundDateFilter")
-            .value = "";
+            refundDateFilter.value = "";
+
+
+            refundDateDisplay.value = "";
 
 
             filterRefunds();
@@ -1396,123 +1389,10 @@
 
 
         /* =========================
-           SELECT ALL
-        ========================= */
-
-        function toggleSelectAllRefunds() {
-
-            const selectAll =
-                document.getElementById(
-                    "selectAllRefunds"
-                );
-
-
-            const checkboxes =
-                document.querySelectorAll(
-                    ".refund-checkbox"
-                );
-
-
-            checkboxes.forEach(function(checkbox) {
-
-                checkbox.checked =
-                    selectAll.checked;
-
-            });
-
-        }
-
-
-        function updateSelectAllState() {
-
-            const selectAll =
-                document.getElementById(
-                    "selectAllRefunds"
-                );
-
-
-            const checkboxes =
-                document.querySelectorAll(
-                    ".refund-checkbox"
-                );
-
-
-            const checked =
-                document.querySelectorAll(
-                    ".refund-checkbox:checked"
-                );
-
-
-            if (selectAll) {
-
-                selectAll.checked =
-                    checkboxes.length > 0
-                    &&
-                    checkboxes.length === checked.length;
-
-            }
-
-        }
-
-
-        /* =========================
-           DELETE MODE
+           REFUND DELETE MODE
         ========================= */
 
         let refundDeleteMode = false;
-
-
-        function exitRefundDeleteMode() {
-
-            document.body
-                .classList
-                .remove("delete-mode");
-
-
-            const checkboxes =
-                document.querySelectorAll(
-                    ".refund-checkbox"
-                );
-
-
-            checkboxes.forEach(function(checkbox) {
-
-                checkbox.checked = false;
-
-            });
-
-
-            const selectAll =
-                document.getElementById(
-                    "selectAllRefunds"
-                );
-
-
-            if (selectAll) {
-
-                selectAll.checked = false;
-
-            }
-
-
-            const deleteButton =
-                document.getElementById(
-                    "deleteRefundBtn"
-                );
-
-
-            deleteButton.innerHTML =
-                "🗑️ Delete";
-
-
-            deleteButton.classList.remove(
-                "delete-selected-mode"
-            );
-
-
-            refundDeleteMode = false;
-
-        }
 
 
         function handleRefundDelete() {
@@ -1523,33 +1403,24 @@
                 );
 
 
-            /* FIRST CLICK */
+            /* First click: show checkboxes */
 
             if (!refundDeleteMode) {
 
-                document.body
-                    .classList
-                    .add("delete-mode");
-
+                document.body.classList.add(
+                    "delete-mode"
+                );
 
                 refundDeleteMode = true;
-
 
                 deleteButton.innerHTML =
                     "🗑️ Delete Selected";
 
-
-                deleteButton.classList.add(
-                    "delete-selected-mode"
-                );
-
-
                 return;
-
             }
 
 
-            /* SECOND CLICK */
+            /* Second click: delete selected */
 
             const selected =
                 document.querySelectorAll(
@@ -1579,9 +1450,7 @@
 
 
             if (!confirmed) {
-
                 return;
-
             }
 
 
@@ -1597,22 +1466,15 @@
             selected.forEach(function(checkbox) {
 
                 const input =
-                    document.createElement(
-                        "input"
-                    );
-
+                    document.createElement("input");
 
                 input.type = "hidden";
 
                 input.name = "order_ids";
 
-                input.value =
-                    checkbox.value;
+                input.value = checkbox.value;
 
-
-                form.appendChild(
-                    input
-                );
+                form.appendChild(input);
 
             });
 
@@ -1624,7 +1486,7 @@
 
         /* =========================
            CLICK OUTSIDE
-           DELETE MODE OFF
+           EXIT DELETE MODE
         ========================= */
 
         document.addEventListener(
@@ -1632,39 +1494,55 @@
             function(event) {
 
                 if (!refundDeleteMode) {
-
                     return;
-
                 }
 
 
                 const filterBar =
-                    document.getElementById(
-                        "refundFilters"
+                    document.querySelector(
+                        ".refund-filters"
                     );
 
 
                 const refundCard =
-                    document.querySelector(
-                        ".refund-card"
+                    document.getElementById(
+                        "refundCard"
                     );
 
 
                 if (
-
-                    !filterBar.contains(
-                        event.target
-                    )
-
+                    !filterBar.contains(event.target)
                     &&
-
-                    !refundCard.contains(
-                        event.target
-                    )
-
+                    !refundCard.contains(event.target)
                 ) {
 
-                    exitRefundDeleteMode();
+                    document.body.classList.remove(
+                        "delete-mode"
+                    );
+
+
+                    document
+                    .querySelectorAll(
+                        ".refund-checkbox"
+                    )
+                    .forEach(function(checkbox) {
+
+                        checkbox.checked = false;
+
+                    });
+
+
+                    const deleteButton =
+                        document.getElementById(
+                            "deleteRefundBtn"
+                        );
+
+
+                    deleteButton.innerHTML =
+                        "🗑️ Delete";
+
+
+                    refundDeleteMode = false;
 
                 }
 
@@ -1673,6 +1551,7 @@
 
 
     </script>
+
 
 </body>
 
