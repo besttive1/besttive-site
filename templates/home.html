@@ -387,6 +387,7 @@
                     </p>
 
                     <div class="product-actions">
+                    {% if product.stock > 0 %}
 
                         <a href="/add-to-cart/{{ product.id }}">
                             <button>
@@ -399,6 +400,12 @@
                                 Buy Now
                             </button>
                         </a>
+                    {% else %}
+
+                            <button disabled class="out-of-stock-btn">
+                                Out of Stock
+                            </button>
+                    {% endif %}
                     
                     </div>
                 </div>
@@ -532,11 +539,24 @@
 
              <div class="product-actions">
 
-                 <a href="/payment/{{ product.name }}/{{ product.price }}">
-                     <button class="buy-now-full">
-                        🛍️ Buy Now
+                 {% if product.stock > 0 %}
+
+                     <a href="/payment/{{ product.name }}/{{ product.price }}">
+                         <button class="buy-now-full">
+                             🛍️ Buy Now
+                         </button>
+                     </a>
+
+                 {% else %}
+
+                     <button
+                         class="buy-now-full out-of-stock-btn"
+                         disabled
+                     >
+                         Out of Stock
                      </button>
-                 </a>
+
+                 {% endif %}
 
              </div>
 

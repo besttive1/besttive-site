@@ -144,19 +144,32 @@
 
         <br>
 
-        <a href="/add-to-cart/{{ product.id }}">
-            <button class="product-detail-btn add-cart-btn">
-                🛒 Add To Cart
-            </button>
-        </a>
+        {% if product.stock > 0 %}
 
-        <br><br>
+            <a href="/add-to-cart/{{ product.id }}">
+                <button class="product-detail-btn add-cart-btn">
+                    🛒 Add To Cart
+                </button>
+            </a>
 
-        <a href="/payment/{{ product.name }}/{{ product.price }}">
-            <button class="product-detail-btn buy-now-btn">
-                🛍️ Buy Now
+            <br><br>
+
+            <a href="/payment/{{ product.name }}/{{ product.price }}">
+                <button class="product-detail-btn buy-now-btn">
+                    🛍️ Buy Now
+                </button>
+            </a>
+
+        {% else %}
+
+            <button
+                class="product-detail-btn out-of-stock-btn"
+                disabled
+            >
+                Out of Stock
             </button>
-        </a>
+
+        {% endif %}
 
         <br><br>
 

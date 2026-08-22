@@ -33,8 +33,6 @@ from flask import send_file
 import resend
 app = Flask(__name__)
 
-
-
 app.secret_key = "secret123"
 PAYU_KEY = "BGGPVO"
 PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gxbT"
@@ -480,6 +478,16 @@ def qr_payment_success():
         return redirect("/")
 
     # =========================
+    # STOCK AVAILABILITY CHECK
+    # =========================
+
+    if product.stock <= 0:
+
+        flash("Sorry, this product is currently out of stock.")
+
+        return redirect("/")
+        
+    # =========================
     # AUTOMATIC GST CALCULATION
     # =========================
 
@@ -534,6 +542,28 @@ def qr_payment_success():
     db.session.add(new_order)
 
     assign_tracking_id(new_order)
+
+    # =========================
+    # DECREASE PRODUCT STOCK
+    # =========================
+
+    previous_stock = product.stock
+    product.stock -= 1
+
+    # =========================
+    # SAVE INVENTORY HISTORY
+    # =========================
+
+    inventory_history = InventoryMovement(
+        product_id=product.id,
+        movement_type="Sale",
+        quantity=1,
+        previous_stock=previous_stock,
+        new_stock=product.stock,
+        note=f"Sold through QR Payment | Order #{new_order.id}"
+    )
+
+    db.session.add(inventory_history)
 
     db.session.commit()
 
@@ -670,7 +700,17 @@ def payment_success():
     if not product:
         flash("Product not found.")
         return redirect("/")
+    
+    # =========================
+    # STOCK AVAILABILITY CHECK
+    # =========================
 
+    if product.stock <= 0:
+
+        flash("Sorry, this product is currently out of stock.")
+
+        return redirect("/")
+    
     # Automatic GST calculation
     tax = calculate_tax(product, 1)
 
@@ -718,6 +758,21 @@ def payment_success():
 
     assign_tracking_id(new_order)
 
+    # =========================
+    # DECREASE PRODUCT STOCK
+    # =========================
+    previous_stock = product.stock
+    product.stock -= 1
+    inventory_history = InventoryMovement(
+        product_id=product.id,
+        movement_type="Sale",
+        quantity=1,
+        previous_stock=previous_stock,
+        new_stock=product.stock,
+        note=f"Sold through Buy Now | Order #{new_order.id}"
+    )
+
+    db.session.add(inventory_history)
     db.session.commit()
 
     return render_template(
@@ -1180,6 +1235,66 @@ class ProductImage(db.Model):
         backref=db.backref("images", lazy=True)
     )
 
+# ==========================================
+# INVENTORY MOVEMENT HISTORY
+# ==========================================
+
+class InventoryMovement(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    product_id = db.Column(
+        db.Integer,
+        db.ForeignKey("product.id"),
+        nullable=False
+    )
+
+    movement_type = db.Column(
+        db.String(50),
+        nullable=False
+    )
+
+    quantity = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    previous_stock = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    new_stock = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    note = db.Column(
+        db.String(255),
+        default=""
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.datetime.now(
+            datetime.timezone.utc
+        ).replace(tzinfo=None) + datetime.timedelta(
+            hours=5,
+            minutes=30
+        )
+    )
+
+    product = db.relationship(
+        "Product",
+        backref=db.backref(
+            "inventory_movements",
+            lazy=True
+        )
+    )
+
 class Wishlist(db.Model):
 
     id = db.Column(
@@ -1539,6 +1654,77 @@ def admin_dashboard():
         pending_orders=pending_orders,
 
         recent_orders=recent_orders
+    )
+
+# ==================================================
+# INVENTORY DASHBOARD
+# ==================================================
+
+@app.route("/admin/inventory")
+def admin_inventory():
+
+    # Admin login check
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    # ==============================================
+    # INVENTORY COUNTS
+    # ==============================================
+
+    total_products = Product.query.count()
+
+    total_stock = db.session.query(
+        db.func.coalesce(
+            db.func.sum(Product.stock),
+            0
+        )
+    ).scalar()
+
+    # फिलहाल stock 1 से 3 = Low Stock
+    low_stock_count = Product.query.filter(
+        Product.stock > 0,
+        Product.stock <= 3
+    ).count()
+
+    out_of_stock_count = Product.query.filter(
+        Product.stock <= 0
+    ).count()
+
+    # ==============================================
+    # LOW STOCK PRODUCTS
+    # ==============================================
+
+    low_stock_products = Product.query.filter(
+        Product.stock > 0,
+        Product.stock <= 3
+    ).order_by(
+        Product.stock.asc()
+    ).all()
+
+    # ==============================================
+    # OUT OF STOCK PRODUCTS
+    # ==============================================
+
+    out_of_stock_products = Product.query.filter(
+        Product.stock <= 0
+    ).all()
+    # ==============================================
+    # RECENT INVENTORY HISTORY
+    # ==============================================
+
+    inventory_history = InventoryMovement.query.order_by(
+        InventoryMovement.created_at.desc()
+    ).limit(20).all()
+
+    return render_template(
+        "admin_inventory.html",
+        total_products=total_products,
+        total_stock=total_stock,
+        low_stock_count=low_stock_count,
+        out_of_stock_count=out_of_stock_count,
+        low_stock_products=low_stock_products,
+        out_of_stock_products=out_of_stock_products,
+        inventory_history=inventory_history
     )
 
 @app.route("/admin/sales")
@@ -1993,9 +2179,38 @@ def edit_product(id):
             ""
         )
 
-        product.stock = int(
+        # ==========================================
+        # STOCK UPDATE + INVENTORY HISTORY
+        # ==========================================
+
+        previous_stock = product.stock
+        new_stock = int(
             request.form.get("stock") or 0
         )
+
+        product.stock = new_stock
+        
+        # Calculate stock difference
+        stock_difference = new_stock - previous_stock
+
+        # Save history only if stock changed
+        if stock_difference != 0:
+
+            if stock_difference > 0:
+                movement_type = "Stock Added"
+            else:
+                movement_type = "Stock Removed"
+
+            inventory_history = InventoryMovement(
+                product_id=product.id,
+                movement_type=movement_type,
+                quantity=(stock_difference),
+                previous_stock=previous_stock,
+                new_stock=new_stock,
+                note="Manual stock update from Admin"
+            )
+
+            db.session.add(inventory_history)
 
 
         # ==========================================
@@ -2071,6 +2286,58 @@ def edit_product(id):
     return render_template(
         "edit_product.html",
         product=product
+    )
+
+# =========================
+# DELETE INVENTORY HISTORY
+# =========================
+
+@app.route(
+    "/admin/delete-inventory-history",
+    methods=["POST"]
+)
+def delete_inventory_history():
+
+    # Admin login check
+    if not session.get("admin"):
+        return redirect("/admin")
+
+
+    movement_ids = request.form.getlist(
+        "movement_ids"
+    )
+
+
+    # Nothing selected
+    if not movement_ids:
+
+        flash(
+            "Please select at least one history record."
+        )
+
+        return redirect(
+            "/admin/inventory"
+        )
+
+
+    # Delete selected records
+    InventoryMovement.query.filter(
+        InventoryMovement.id.in_(movement_ids)
+    ).delete(
+        synchronize_session=False
+    )
+
+
+    db.session.commit()
+
+
+    flash(
+        f"{len(movement_ids)} inventory history record(s) deleted successfully!"
+    )
+
+
+    return redirect(
+        "/admin/inventory"
     )
 
 @app.route("/admin/orders")
