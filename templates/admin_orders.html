@@ -595,11 +595,14 @@
         <!-- SPECIFIC DATE -->
 
         <input
-            type="date"
-            id="specificOrderDate"
-            class="order-date-input"
+            type="text"
+            id="orderDateFilter"
+            class="order-date-filter"
+            placeholder="MM/DD/YYYY"
+            onfocus="this.type='date'; if(this.showPicker) this.showPicker();"
+            onblur="if(!this.value) this.type='text';"
+            onchange="filterOrders()"
         >
-
 
         <!-- =========================
              CLEAR + DELETE
