@@ -117,7 +117,9 @@
                     <article class="customer-order-card">
 
 
-                        <!-- ORDER TOP -->
+                        <!-- =========================
+                             ORDER TOP
+                             ========================= -->
 
                         <div class="customer-order-top">
 
@@ -228,13 +230,51 @@
 
 
                         <!-- =========================
+                             REFUND STATUS
+                             SHOW ONLY FOR
+                             CANCELLED + PAID ORDER
+                             ========================= -->
+
+                        {% if order.status == "Cancelled"
+                              and order.payment_status == "Paid"
+                              and order.refund_status %}
+
+                            <div class="customer-refund-status">
+
+                                <span class="refund-label">
+
+                                    💰 Refund Status
+
+                                </span>
+
+
+                                <span
+                                    class="
+                                        refund-badge
+                                        refund-{{ order.refund_status|lower }}
+                                    "
+                                >
+
+                                    {{ order.refund_status }}
+
+                                </span>
+
+                            </div>
+
+                        {% endif %}
+
+
+
+                        <!-- =========================
                              ORDER ACTIONS
                              ========================= -->
 
                         <div class="customer-order-actions">
 
 
-                            <!-- LEFT BUTTONS -->
+                            <!-- =========================
+                                 LEFT BUTTONS
+                                 ========================= -->
 
                             <div class="customer-order-left-actions">
 
@@ -353,10 +393,15 @@
 
 
     <!-- =========================
-         CANCEL BUTTON STYLE
+         PAGE STYLE
          ========================= -->
 
     <style>
+
+
+        /* =========================
+           ORDER ACTIONS
+           ========================= */
 
         .customer-order-actions {
 
@@ -385,6 +430,10 @@
 
         }
 
+
+        /* =========================
+           CANCEL ORDER
+           ========================= */
 
         .cancel-order-form {
 
@@ -420,9 +469,95 @@
 
         .customer-cancel-button:hover {
 
-            background: #4b0082;
+            background: #310058;
 
             color: #ffffff;
+
+        }
+
+
+        /* =========================
+           REFUND STATUS
+           ========================= */
+
+        .customer-refund-status {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 12px;
+
+            margin-top: 18px;
+
+            padding: 13px 15px;
+
+            border-radius: 10px;
+
+            background: #f8f4fc;
+
+            border: 1px solid #e5d8ef;
+
+        }
+
+
+        .refund-label {
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #333333;
+
+        }
+
+
+        .refund-badge {
+
+            padding: 7px 13px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            white-space: nowrap;
+
+        }
+
+
+        /* PENDING */
+
+        .refund-pending {
+
+            background: #fff3cd;
+
+            color: #856404;
+
+        }
+
+
+        /* PROCESSING */
+
+        .refund-processing {
+
+            background: #dbeafe;
+
+            color: #1d4ed8;
+
+        }
+
+
+        /* REFUNDED */
+
+        .refund-refunded {
+
+            background: #dcfce7;
+
+            color: #15803d;
 
         }
 
@@ -432,6 +567,7 @@
            ========================= */
 
         @media (max-width: 768px) {
+
 
             .customer-order-actions {
 
@@ -475,7 +611,17 @@
 
             }
 
+
+            .customer-refund-status {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+            }
+
         }
+
 
     </style>
 

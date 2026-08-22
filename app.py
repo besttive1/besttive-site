@@ -536,7 +536,7 @@ def qr_payment_success():
         status="Pending",
 
         # Payment Status
-        payment_status="Pending"
+        payment_status="Paid"
     )
 
     db.session.add(new_order)
@@ -1431,6 +1431,14 @@ class Order(db.Model):
     payment_status = db.Column(
         db.String(30),
         default="Pending"
+    )
+    # =========================
+    # REFUND STATUS
+    # =========================
+
+    refund_status = db.Column(
+        db.String(30),
+        default=""
     )
 
     created_at = db.Column(
@@ -2484,6 +2492,77 @@ def admin_orders():
         orders=orders
     )
 
+# =========================
+# ADMIN REFUND MANAGEMENT
+# =========================
+
+@app.route("/admin/refunds")
+def admin_refunds():
+
+    # Admin login check
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    # Only Cancelled + Paid orders
+    refund_orders = (
+        Order.query
+        .filter(
+            Order.status == "Cancelled",
+            Order.payment_status == "Paid"
+        )
+        .order_by(Order.created_at.desc())
+        .all()
+    )
+
+    return render_template(
+        "admin_refunds.html",
+        orders=refund_orders
+    )
+
+# =========================
+# UPDATE REFUND STATUS
+# =========================
+
+@app.route(
+    "/admin/refund/<int:order_id>/update",
+    methods=["POST"]
+)
+def update_refund_status(order_id):
+
+    # Admin login check
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    # Get order
+    order = Order.query.get_or_404(order_id)
+
+    # Only Cancelled + Paid orders
+    if (
+        order.status != "Cancelled"
+        or order.payment_status != "Paid"
+    ):
+        return redirect("/admin/refunds")
+
+    # Get selected refund status
+    refund_status = request.form.get(
+        "refund_status"
+    )
+
+    # Allowed refund statuses
+    allowed_statuses = [
+        "Pending",
+        "Processing",
+        "Refunded"
+    ]
+
+    if refund_status in allowed_statuses:
+
+        order.refund_status = refund_status
+
+        db.session.commit()
+
+    return redirect("/admin/refunds")
+
 # ==================================================
 # SHIPROCKET SHIPPING DASHBOARD
 # ==================================================
@@ -2699,8 +2778,8 @@ def cancel_order(order_id):
 
 
     # =========================
-    # GET ORDER
-    # Only logged-in user's order
+    # GET ONLY LOGGED-IN
+    # USER'S ORDER
     # =========================
 
     order = Order.query.filter_by(
@@ -2724,7 +2803,22 @@ def cancel_order(order_id):
 
     if order.status == "Pending":
 
+        # Cancel order
         order.status = "Cancelled"
+
+
+        # =========================
+        # REFUND STATUS
+        # =========================
+
+        if order.payment_status == "Paid":
+
+            order.refund_status = "Pending"
+
+
+        # =========================
+        # SAVE CHANGES
+        # =========================
 
         db.session.commit()
 

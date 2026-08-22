@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Refund Management - BESTTIVE</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f7;
+            color: #222;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .refund-header {
+
+            background: #4b0082;
+            color: white;
+
+            padding: 22px 30px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+
+        .refund-header h1 {
+
+            margin: 0;
+
+            font-size: 26px;
+        }
+
+
+        .refund-header p {
+
+            margin: 6px 0 0;
+
+            opacity: 0.85;
+
+            font-size: 14px;
+        }
+
+
+        .back-orders-btn {
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            text-decoration: none;
+
+            background: white;
+            color: #4b0082;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .refund-container {
+
+            width: 100%;
+
+            max-width: 1600px;
+
+            margin: 0 auto;
+
+            padding: 30px;
+        }
+
+
+        /* =========================
+           SUMMARY
+        ========================= */
+
+        .refund-summary {
+
+            background: white;
+
+            border-radius: 14px;
+
+            padding: 20px;
+
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.07);
+        }
+
+
+        .refund-summary strong {
+
+            display: block;
+
+            font-size: 28px;
+
+            color: #4b0082;
+        }
+
+
+        .refund-summary span {
+
+            display: block;
+
+            margin-top: 5px;
+
+            color: #777;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           FILTER BAR
+        ========================= */
+
+        .refund-filters {
+
+            width: 100%;
+
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 14px;
+
+            background: white;
+
+            border-radius: 14px;
+
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.07);
+        }
+
+
+        /* SEARCH */
+
+        .refund-search-box {
+
+            flex: 1 1 auto;
+
+            min-width: 180px;
+        }
+
+
+        .refund-search-box input {
+
+            width: 100%;
+
+            height: 50px;
+
+            padding: 0 16px;
+
+            border:
+                1px solid #d5d5d5;
+
+            border-radius: 10px;
+
+            font-size: 14px;
+
+            outline: none;
+        }
+
+
+        .refund-search-box input:focus {
+
+            border-color: #4b0082;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(75, 0, 130, 0.10);
+        }
+
+
+        /* STATUS */
+
+        .refund-filters select {
+
+            flex: 0 0 140px;
+
+            width: 140px;
+
+            height: 50px;
+
+            border:
+                1px solid #d5d5d5;
+
+            border-radius: 10px;
+
+            background: white;
+
+            padding: 0 12px;
+
+            font-size: 14px;
+
+            outline: none;
+        }
+
+
+        /* DATE */
+
+        .refund-filters input[type="date"] {
+
+            flex: 0 0 140px;
+
+            width: 140px;
+
+            height: 50px;
+
+            border:
+                1px solid #d5d5d5;
+
+            border-radius: 10px;
+
+            background: white;
+
+            padding: 0 10px;
+
+            font-size: 13px;
+
+            outline: none;
+        }
+
+
+        /* =========================
+           FILTER BUTTONS
+        ========================= */
+
+        .clear-refund-btn,
+        .delete-refund-btn {
+
+            height: 50px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #4b0082;
+
+            color: white;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+
+            transition:
+                background 0.2s,
+                width 0.2s;
+        }
+
+
+        .clear-refund-btn {
+
+            flex: 0 0 105px;
+
+            width: 105px;
+        }
+
+
+        .delete-refund-btn {
+
+            flex: 0 0 105px;
+
+            width: 105px;
+        }
+
+
+        /* DELETE SELECTED MODE */
+
+        .delete-refund-btn.delete-selected-mode {
+
+            flex-basis: 170px;
+
+            width: 170px;
+        }
+
+
+        .clear-refund-btn:hover,
+        .delete-refund-btn:hover {
+
+            background: #310058;
+        }
+
+
+        /* =========================
+           TABLE CARD
+        ========================= */
+
+        .refund-card {
+
+            background: white;
+
+            border-radius: 14px;
+
+            padding: 16px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.07);
+
+            width: 100%;
+
+            overflow: hidden;
+        }
+
+
+        .refund-table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            table-layout: auto;
+        }
+
+
+        .refund-table th {
+
+            background: #f3ebf8;
+
+            color: #4b0082;
+
+            text-align: left;
+
+            padding: 14px 8px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+
+        .refund-table td {
+
+            padding: 14px 8px;
+
+            border-bottom:
+                1px solid #eeeeee;
+
+            font-size: 12px;
+
+            vertical-align: middle;
+
+            white-space: nowrap;
+        }
+
+
+        .refund-table tr:last-child td {
+
+            border-bottom: none;
+        }
+
+
+        /* =========================
+           DELETE CHECKBOX
+        ========================= */
+
+        .refund-checkbox-column {
+
+            display: none;
+
+            width: 60px;
+
+            text-align: center;
+        }
+
+
+        body.delete-mode .refund-checkbox-column {
+
+            display: table-cell;
+        }
+
+
+        .refund-checkbox {
+
+            width: 18px;
+            height: 18px;
+
+            cursor: pointer;
+        }
+
+
+        .select-all-wrapper {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            color: #4b0082;
+
+            white-space: nowrap;
+        }
+
+
+        .select-all-checkbox {
+
+            width: 17px;
+            height: 17px;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           TRACKING ID
+        ========================= */
+
+        .tracking-id {
+
+            font-weight: 700;
+
+            color: #4b0082;
+        }
+
+
+        /* =========================
+           STATUS BADGES
+        ========================= */
+
+        .status-badge {
+
+            display: inline-block;
+
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            white-space: nowrap;
+        }
+
+
+        .cancelled-badge {
+
+            background: #fee2e2;
+
+            color: #b91c1c;
+        }
+
+
+        .paid-badge {
+
+            background: #dcfce7;
+
+            color: #15803d;
+        }
+
+
+        .refund-pending {
+
+            background: #fff3cd;
+
+            color: #856404;
+        }
+
+
+        .refund-processing {
+
+            background: #dbeafe;
+
+            color: #1d4ed8;
+        }
+
+
+        .refund-refunded {
+
+            background: #dcfce7;
+
+            color: #15803d;
+        }
+
+
+        /* =========================
+           DATE / TIME
+        ========================= */
+
+        .refund-time {
+
+            min-width: 120px;
+
+            line-height: 1.5;
+
+            color: #555;
+        }
+
+
+        .refund-time strong {
+
+            display: block;
+
+            font-size: 12px;
+
+            color: #333;
+        }
+
+
+        .refund-time span {
+
+            font-size: 11px;
+
+            color: #777;
+        }
+
+
+        /* =========================
+           UPDATE REFUND
+        ========================= */
+
+        .refund-update-form {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            min-width: 205px;
+        }
+
+
+        .refund-select {
+
+            width: 115px;
+
+            height: 40px;
+
+            padding: 0 10px;
+
+            border:
+                1px solid #d5d5d5;
+
+            border-radius: 7px;
+
+            background: white;
+
+            font-size: 13px;
+
+            outline: none;
+        }
+
+
+        .refund-select:focus {
+
+            border-color: #4b0082;
+        }
+
+
+        .refund-update-btn {
+
+            width: 82px;
+
+            height: 40px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            background: #4b0082;
+
+            color: white;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+        }
+
+
+        .refund-update-btn:hover {
+
+            background: #310058;
+        }
+
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+
+        .no-refunds {
+
+            text-align: center;
+
+            padding: 60px 20px;
+
+            color: #777;
+        }
+
+
+        .no-refunds div {
+
+            font-size: 50px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .no-refunds h2 {
+
+            color: #333;
+
+            margin: 0 0 10px;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            .refund-header {
+
+                padding: 18px;
+
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+
+            .refund-header h1 {
+
+                font-size: 22px;
+            }
+
+
+            .back-orders-btn {
+
+                width: 100%;
+            }
+
+
+            .refund-container {
+
+                padding: 15px;
+            }
+
+
+            .refund-filters {
+
+                display: grid;
+
+                grid-template-columns:
+                    1fr 1fr;
+
+                gap: 10px;
+
+                padding: 12px;
+            }
+
+
+            .refund-search-box {
+
+                grid-column: 1 / -1;
+
+                width: 100%;
+
+                min-width: 0;
+            }
+
+
+            .refund-filters select,
+            .refund-filters input[type="date"] {
+
+                width: 100%;
+
+                min-width: 0;
+
+                flex: none;
+            }
+
+
+            .clear-refund-btn,
+            .delete-refund-btn,
+            .delete-refund-btn.delete-selected-mode {
+
+                width: 100%;
+
+                min-width: 0;
+
+                flex: none;
+            }
+
+
+            .refund-card {
+
+                padding: 10px;
+
+                overflow-x: auto;
+
+                -webkit-overflow-scrolling: touch;
+            }
+
+
+            .refund-table {
+
+                min-width: 1100px;
+
+                width: max-content;
+            }
+
+
+            .refund-table th,
+            .refund-table td {
+
+                padding: 12px 10px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- HEADER -->
+
+    <header class="refund-header">
+
+        <div>
+
+            <h1>
+                💰 Refund Management
+            </h1>
+
+            <p>
+                Manage refunds for cancelled paid orders.
+            </p>
+
+        </div>
+
+
+        <a
+            href="/admin/orders"
+            class="back-orders-btn"
+        >
+            ← Back to Orders
+        </a>
+
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="refund-container">
+
+
+        <!-- SUMMARY -->
+
+        <div class="refund-summary">
+
+            <strong>
+                {{ orders|length }}
+            </strong>
+
+            <span>
+                Refund order{% if orders|length != 1 %}s{% endif %}
+            </span>
+
+        </div>
+
+
+        <!-- FILTERS -->
+
+        <div
+            class="refund-filters"
+            id="refundFilters"
+        >
+
+
+            <div class="refund-search-box">
+
+                <input
+                    type="text"
+                    id="refundSearch"
+                    placeholder="🔍 Search Tracking ID, Customer, Product..."
+                    oninput="filterRefunds()"
+                >
+
+            </div>
+
+
+            <select
+                id="refundStatusFilter"
+                onchange="filterRefunds()"
+            >
+
+                <option value="">
+                    All Refunds
+                </option>
+
+                <option value="Pending">
+                    Pending
+                </option>
+
+                <option value="Processing">
+                    Processing
+                </option>
+
+                <option value="Refunded">
+                    Refunded
+                </option>
+
+            </select>
+
+
+            <input
+                type="date"
+                id="refundDateFilter"
+                onchange="filterRefunds()"
+            >
+
+
+            <button
+                type="button"
+                class="clear-refund-btn"
+                onclick="clearRefundFilters()"
+            >
+                🔄 Clear
+            </button>
+
+
+            <button
+                type="button"
+                class="delete-refund-btn"
+                id="deleteRefundBtn"
+                onclick="handleRefundDelete()"
+            >
+                🗑️ Delete
+            </button>
+
+        </div>
+
+
+        <!-- TABLE -->
+
+        <div class="refund-card">
+
+            {% if orders %}
+
+                <table class="refund-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th class="refund-checkbox-column">
+
+                                <label class="select-all-wrapper">
+
+                                    <input
+                                        type="checkbox"
+                                        id="selectAllRefunds"
+                                        class="select-all-checkbox"
+                                        onchange="toggleSelectAllRefunds()"
+                                    >
+
+                                    <span>
+                                        All
+                                    </span>
+
+                                </label>
+
+                            </th>
+
+
+                            <th>
+                                Tracking ID
+                            </th>
+
+                            <th>
+                                Customer
+                            </th>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Amount
+                            </th>
+
+                            <th>
+                                Order Status
+                            </th>
+
+                            <th>
+                                Payment
+                            </th>
+
+                            <th>
+                                Refund Status
+                            </th>
+
+                            <th>
+                                Processing Time
+                            </th>
+
+                            <th>
+                                Refunded Time
+                            </th>
+
+                            <th>
+                                Update Refund
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for order in orders %}
+
+                            {% set refund_status =
+                                order.refund_status
+                                or
+                                "Pending"
+                            %}
+
+
+                            <tr
+                                class="refund-row"
+
+                                data-search="
+                                    {{ order.tracking_id or '' }}
+                                    {{ order.user.name if order.user else order.customer_name }}
+                                    {{ order.product.name if order.product else order.product_name }}
+                                    {{ order.total_amount or 0 }}
+                                "
+
+                                data-refund-status="{{ refund_status }}"
+
+                                data-order-date="{{ order.created_at.strftime('%Y-%m-%d') }}"
+                            >
+
+
+                                <!-- CHECKBOX -->
+
+                                <td class="refund-checkbox-column">
+
+                                    <input
+                                        type="checkbox"
+
+                                        class="refund-checkbox"
+
+                                        value="{{ order.id }}"
+
+                                        onchange="updateSelectAllState()"
+                                    >
+
+                                </td>
+
+
+                                <!-- TRACKING -->
+
+                                <td class="tracking-id">
+
+                                    {{
+                                        order.tracking_id
+                                        or
+                                        "Not available"
+                                    }}
+
+                                </td>
+
+
+                                <!-- CUSTOMER -->
+
+                                <td>
+
+                                    {{
+                                        order.user.name
+                                        if order.user
+                                        else order.customer_name
+                                    }}
+
+                                </td>
+
+
+                                <!-- PRODUCT -->
+
+                                <td>
+
+                                    {{
+                                        order.product.name
+                                        if order.product
+                                        else order.product_name
+                                    }}
+
+                                </td>
+
+
+                                <!-- AMOUNT -->
+
+                                <td>
+
+                                    ₹{{
+                                        "%.2f"|format(
+                                            order.total_amount or 0
+                                        )
+                                    }}
+
+                                </td>
+
+
+                                <!-- ORDER STATUS -->
+
+                                <td>
+
+                                    <span
+                                        class="
+                                            status-badge
+                                            cancelled-badge
+                                        "
+                                    >
+                                        Cancelled
+                                    </span>
+
+                                </td>
+
+
+                                <!-- PAYMENT -->
+
+                                <td>
+
+                                    <span
+                                        class="
+                                            status-badge
+                                            paid-badge
+                                        "
+                                    >
+                                        Paid
+                                    </span>
+
+                                </td>
+
+
+                                <!-- REFUND STATUS -->
+
+                                <td>
+
+                                    <span
+                                        class="
+                                            status-badge
+                                            refund-{{ refund_status|lower }}
+                                        "
+                                    >
+                                        {{ refund_status }}
+                                    </span>
+
+                                </td>
+
+
+                                <!-- PROCESSING TIME -->
+
+                                <td class="refund-time">
+
+                                    {% if order.processing_at %}
+
+                                        <strong>
+                                            {{ order.processing_at.strftime('%d %b %Y') }}
+                                        </strong>
+
+                                        <span>
+                                            {{ order.processing_at.strftime('%I:%M %p') }}
+                                        </span>
+
+                                    {% else %}
+
+                                        —
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- REFUNDED TIME -->
+
+                                <td class="refund-time">
+
+                                    {% if order.refunded_at %}
+
+                                        <strong>
+                                            {{ order.refunded_at.strftime('%d %b %Y') }}
+                                        </strong>
+
+                                        <span>
+                                            {{ order.refunded_at.strftime('%I:%M %p') }}
+                                        </span>
+
+                                    {% else %}
+
+                                        —
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- UPDATE -->
+
+                                <td>
+
+                                    <form
+                                        action="{{ url_for('update_refund_status', order_id=order.id) }}"
+                                        method="POST"
+                                        class="refund-update-form"
+                                    >
+
+                                        <select
+                                            name="refund_status"
+                                            class="refund-select"
+                                        >
+
+                                            <option
+                                                value="Pending"
+                                                {% if refund_status == "Pending" %}
+                                                selected
+                                                {% endif %}
+                                            >
+                                                Pending
+                                            </option>
+
+
+                                            <option
+                                                value="Processing"
+                                                {% if refund_status == "Processing" %}
+                                                selected
+                                                {% endif %}
+                                            >
+                                                Processing
+                                            </option>
+
+
+                                            <option
+                                                value="Refunded"
+                                                {% if refund_status == "Refunded" %}
+                                                selected
+                                                {% endif %}
+                                            >
+                                                Refunded
+                                            </option>
+
+                                        </select>
+
+
+                                        <button
+                                            type="submit"
+                                            class="refund-update-btn"
+                                        >
+                                            Update
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+
+            {% else %}
+
+
+                <div class="no-refunds">
+
+                    <div>
+                        💰
+                    </div>
+
+                    <h2>
+                        No refund orders
+                    </h2>
+
+                    <p>
+                        Cancelled paid orders will appear here.
+                    </p>
+
+                </div>
+
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+
+    <!-- DELETE FORM -->
+
+    <form
+        id="refundDeleteForm"
+        method="POST"
+        action="/admin/refunds/delete"
+    ></form>
+
+
+    <script>
+
+
+        /* =========================
+           SEARCH + FILTER
+        ========================= */
+
+        function filterRefunds() {
+
+            const search =
+                document
+                .getElementById("refundSearch")
+                .value
+                .toLowerCase()
+                .trim();
+
+
+            const status =
+                document
+                .getElementById("refundStatusFilter")
+                .value;
+
+
+            const date =
+                document
+                .getElementById("refundDateFilter")
+                .value;
+
+
+            const rows =
+                document.querySelectorAll(
+                    ".refund-row"
+                );
+
+
+            rows.forEach(function(row) {
+
+                const searchText =
+                    row.dataset.search
+                    .toLowerCase();
+
+
+                const rowStatus =
+                    row.dataset.refundStatus;
+
+
+                const rowDate =
+                    row.dataset.orderDate;
+
+
+                const searchMatch =
+                    searchText.includes(search);
+
+
+                const statusMatch =
+                    !status
+                    ||
+                    rowStatus === status;
+
+
+                const dateMatch =
+                    !date
+                    ||
+                    rowDate === date;
+
+
+                if (
+                    searchMatch
+                    &&
+                    statusMatch
+                    &&
+                    dateMatch
+                ) {
+
+                    row.style.display = "";
+
+                } else {
+
+                    row.style.display = "none";
+
+                }
+
+            });
+
+        }
+
+
+        /* =========================
+           CLEAR FILTERS
+        ========================= */
+
+        function clearRefundFilters() {
+
+            document
+            .getElementById("refundSearch")
+            .value = "";
+
+
+            document
+            .getElementById("refundStatusFilter")
+            .value = "";
+
+
+            document
+            .getElementById("refundDateFilter")
+            .value = "";
+
+
+            filterRefunds();
+
+        }
+
+
+        /* =========================
+           SELECT ALL
+        ========================= */
+
+        function toggleSelectAllRefunds() {
+
+            const selectAll =
+                document.getElementById(
+                    "selectAllRefunds"
+                );
+
+
+            const checkboxes =
+                document.querySelectorAll(
+                    ".refund-checkbox"
+                );
+
+
+            checkboxes.forEach(function(checkbox) {
+
+                checkbox.checked =
+                    selectAll.checked;
+
+            });
+
+        }
+
+
+        function updateSelectAllState() {
+
+            const selectAll =
+                document.getElementById(
+                    "selectAllRefunds"
+                );
+
+
+            const checkboxes =
+                document.querySelectorAll(
+                    ".refund-checkbox"
+                );
+
+
+            const checked =
+                document.querySelectorAll(
+                    ".refund-checkbox:checked"
+                );
+
+
+            if (selectAll) {
+
+                selectAll.checked =
+                    checkboxes.length > 0
+                    &&
+                    checkboxes.length === checked.length;
+
+            }
+
+        }
+
+
+        /* =========================
+           DELETE MODE
+        ========================= */
+
+        let refundDeleteMode = false;
+
+
+        function exitRefundDeleteMode() {
+
+            document.body
+                .classList
+                .remove("delete-mode");
+
+
+            const checkboxes =
+                document.querySelectorAll(
+                    ".refund-checkbox"
+                );
+
+
+            checkboxes.forEach(function(checkbox) {
+
+                checkbox.checked = false;
+
+            });
+
+
+            const selectAll =
+                document.getElementById(
+                    "selectAllRefunds"
+                );
+
+
+            if (selectAll) {
+
+                selectAll.checked = false;
+
+            }
+
+
+            const deleteButton =
+                document.getElementById(
+                    "deleteRefundBtn"
+                );
+
+
+            deleteButton.innerHTML =
+                "🗑️ Delete";
+
+
+            deleteButton.classList.remove(
+                "delete-selected-mode"
+            );
+
+
+            refundDeleteMode = false;
+
+        }
+
+
+        function handleRefundDelete() {
+
+            const deleteButton =
+                document.getElementById(
+                    "deleteRefundBtn"
+                );
+
+
+            /* FIRST CLICK */
+
+            if (!refundDeleteMode) {
+
+                document.body
+                    .classList
+                    .add("delete-mode");
+
+
+                refundDeleteMode = true;
+
+
+                deleteButton.innerHTML =
+                    "🗑️ Delete Selected";
+
+
+                deleteButton.classList.add(
+                    "delete-selected-mode"
+                );
+
+
+                return;
+
+            }
+
+
+            /* SECOND CLICK */
+
+            const selected =
+                document.querySelectorAll(
+                    ".refund-checkbox:checked"
+                );
+
+
+            if (selected.length === 0) {
+
+                alert(
+                    "Please select at least one refund order."
+                );
+
+                return;
+
+            }
+
+
+            const confirmed =
+                confirm(
+                    "Are you sure you want to permanently delete "
+                    +
+                    selected.length
+                    +
+                    " selected refund order(s)?"
+                );
+
+
+            if (!confirmed) {
+
+                return;
+
+            }
+
+
+            const form =
+                document.getElementById(
+                    "refundDeleteForm"
+                );
+
+
+            form.innerHTML = "";
+
+
+            selected.forEach(function(checkbox) {
+
+                const input =
+                    document.createElement(
+                        "input"
+                    );
+
+
+                input.type = "hidden";
+
+                input.name = "order_ids";
+
+                input.value =
+                    checkbox.value;
+
+
+                form.appendChild(
+                    input
+                );
+
+            });
+
+
+            form.submit();
+
+        }
+
+
+        /* =========================
+           CLICK OUTSIDE
+           DELETE MODE OFF
+        ========================= */
+
+        document.addEventListener(
+            "click",
+            function(event) {
+
+                if (!refundDeleteMode) {
+
+                    return;
+
+                }
+
+
+                const filterBar =
+                    document.getElementById(
+                        "refundFilters"
+                    );
+
+
+                const refundCard =
+                    document.querySelector(
+                        ".refund-card"
+                    );
+
+
+                if (
+
+                    !filterBar.contains(
+                        event.target
+                    )
+
+                    &&
+
+                    !refundCard.contains(
+                        event.target
+                    )
+
+                ) {
+
+                    exitRefundDeleteMode();
+
+                }
+
+            }
+        );
+
+
+    </script>
+
+</body>
+
+</html>
