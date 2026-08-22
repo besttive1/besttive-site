@@ -99,6 +99,31 @@
         }
 
 
+
+        /* =========================
+           STATUS UPDATED TIME
+        ========================= */
+
+        .status-updated-time {
+            min-width: 150px;
+            line-height: 1.45;
+            white-space: nowrap;
+        }
+
+        .status-updated-time strong {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d1b4e;
+        }
+
+        .status-updated-time span {
+            display: block;
+            margin-top: 2px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
         /* =========================
            SEARCH + FILTER BAR
         ========================= */
@@ -788,6 +813,13 @@
                     </th>
 
 
+                    <!-- STATUS UPDATED -->
+
+                    <th>
+                        Status Updated
+                    </th>
+
+
                     <!-- SHIPROCKET -->
 
                     <th>
@@ -1014,6 +1046,52 @@
 
 
                         </form>
+
+                    </td>
+
+
+                    <!-- STATUS UPDATED -->
+
+                    <td class="status-updated-time">
+
+                        {% set status_time = none %}
+
+                        {% if order.status == "Payment Verification" %}
+                            {% set status_time = order.payment_verification_at %}
+
+                        {% elif order.status == "Pending" %}
+                            {% set status_time = order.pending_at %}
+
+                        {% elif order.status == "Packed" %}
+                            {% set status_time = order.packed_at %}
+
+                        {% elif order.status == "Shipped" %}
+                            {% set status_time = order.shipped_at %}
+
+                        {% elif order.status == "Delivered" %}
+                            {% set status_time = order.delivered_at %}
+
+                         {% elif order.status == "Cancelled" %}
+                             {% set status_time = order.cancelled_at %}
+
+                        {% endif %}
+
+
+                        {% if status_time %}
+
+                            <strong>
+                                {{ status_time.strftime('%d %b %Y') }}
+                            </strong>
+
+                            <span>
+                                {{ status_time.strftime('%I:%M %p') }}
+                            </span>
+
+                        {% else %}
+
+                             —
+
+                        {% endif %}
 
                     </td>
 

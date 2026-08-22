@@ -1461,6 +1461,36 @@ class Order(db.Model):
     nullable=True
     )
 
+    payment_verification_at = db.Column(
+    db.DateTime,
+    nullable=True
+    )
+
+    pending_at = db.Column(
+    db.DateTime,
+    nullable=True
+    )
+
+    packed_at = db.Column(
+    db.DateTime,
+    nullable=True
+    )
+
+    shipped_at = db.Column(
+    db.DateTime,
+    nullable=True
+    )
+
+    delivered_at = db.Column(
+    db.DateTime,
+    nullable=True
+    )
+
+    cancelled_at = db.Column(
+    db.DateTime,
+    nullable=True
+    )
+
     user = db.relationship("User")
 
     product = db.relationship("Product")
@@ -2641,20 +2671,86 @@ def admin_shipping():
 @app.route("/admin/update-order-status/<int:id>", methods=["POST"])
 def update_order_status(id):
 
+    # Admin login check
     if not session.get("admin"):
         return redirect("/admin")
 
+    # Get order
     order = Order.query.get_or_404(id)
 
-    order.status = request.form["status"]
+    # Get new status
+    new_status = request.form.get("status")
 
-    order.status_updated_at = datetime.datetime.utcnow()
+    # Current India date & time
+    india_time = (
+        datetime.datetime.now(
+            datetime.timezone(
+                datetime.timedelta(
+                    hours=5,
+                    minutes=30
+                )
+            )
+        ).replace(tzinfo=None)
+    )
 
-    db.session.commit()
+    # Update only if a valid status is selected
+    if new_status:
 
-    flash("Order Status Updated Successfully!")
+        # Update current status
+        order.status = new_status
 
-    return redirect("/admin/dashboard")
+        # Keep latest update time also
+        order.status_updated_at = india_time
+
+
+        # =========================
+        # SAVE FIRST TIME OF STATUS
+        # =========================
+
+        if new_status == "Payment Verification":
+
+            if order.payment_verification_at is None:
+                order.payment_verification_at = india_time
+
+
+        elif new_status == "Pending":
+
+            if order.pending_at is None:
+                order.pending_at = india_time
+
+
+        elif new_status == "Packed":
+
+            if order.packed_at is None:
+                order.packed_at = india_time
+
+
+        elif new_status == "Shipped":
+
+            if order.shipped_at is None:
+                order.shipped_at = india_time
+
+
+        elif new_status == "Delivered":
+
+            if order.delivered_at is None:
+                order.delivered_at = india_time
+
+
+        elif new_status == "Cancelled":
+
+            if order.cancelled_at is None:
+                order.cancelled_at = india_time
+
+
+        # Save all changes
+        db.session.commit()
+
+        flash("Order Status Updated Successfully!")
+
+
+    # Stay on Orders page
+    return redirect("/admin/orders")
 
 @app.route("/admin/update-payment-status/<int:id>", methods=["POST"])
 def update_payment_status(id):
