@@ -1,65 +1,485 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>My Orders - BESTTIVE</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='desktop.css') }}">
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='mobile.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='desktop.css') }}"
+    >
+
 </head>
+
+
 <body class="customer-orders-page">
+
+
+    <!-- =========================
+         ORDERS HEADER
+         ========================= -->
+
     <header class="customer-orders-hero">
-        <a class="orders-home-link" href="/">← Continue Shopping</a>
+
+        <a
+            class="orders-home-link"
+            href="/"
+        >
+            ← Continue Shopping
+        </a>
+
+
         <div>
-            <p>BESTTIVE ACCOUNT</p>
-            <h1>My Orders</h1>
-            <span>Keep track of every purchase in one place.</span>
+
+            <p>
+                BESTTIVE ACCOUNT
+            </p>
+
+            <h1>
+                My Orders
+            </h1>
+
+            <span>
+                Keep track of every purchase in one place.
+            </span>
+
         </div>
+
     </header>
 
+
+
+    <!-- =========================
+         ORDERS CONTAINER
+         ========================= -->
+
     <main class="customer-orders-container">
+
+
         {% if orders %}
+
+
+            <!-- =========================
+                 ORDERS SUMMARY
+                 ========================= -->
+
             <div class="orders-summary">
-                <strong>{{ orders|length }}</strong>
-                <span>order{% if orders|length != 1 %}s{% endif %} placed</span>
+
+                <strong>
+                    {{ orders|length }}
+                </strong>
+
+                <span>
+
+                    order{% if orders|length != 1 %}s{% endif %} placed
+
+                </span>
+
             </div>
 
+
+
+            <!-- =========================
+                 ORDERS LIST
+                 ========================= -->
+
             <section class="customer-orders-list">
+
+
                 {% for order in orders %}
+
+
                     {% set status = order.status|lower|replace(' ', '-') %}
+
+
+                    <!-- =========================
+                         ORDER CARD
+                         ========================= -->
+
                     <article class="customer-order-card">
+
+
+                        <!-- ORDER TOP -->
+
                         <div class="customer-order-top">
+
+
                             <div>
-                                <p class="customer-order-id">{{ order.tracking_id or 'Tracking ID not available' }}</p>
-                                <h2>{{ order.product.name if order.product else order.product_name }}</h2>
+
+                                <p class="customer-order-id">
+
+                                    {{
+                                        order.tracking_id
+                                        or
+                                        'Tracking ID not available'
+                                    }}
+
+                                </p>
+
+
+                                <h2>
+
+                                    {{
+                                        order.product.name
+                                        if order.product
+                                        else order.product_name
+                                    }}
+
+                                </h2>
+
                             </div>
-                            <span class="customer-order-status status-{{ status }}">{{ order.status }}</span>
+
+
+
+                            <span
+                                class="
+                                    customer-order-status
+                                    status-{{ status }}
+                                "
+                            >
+
+                                {{ order.status }}
+
+                            </span>
+
+
                         </div>
+
+
+
+                        <!-- =========================
+                             ORDER DETAILS
+                             ========================= -->
 
                         <div class="customer-order-details">
-                            <div><span>Order date</span><strong>{{ order.created_at.strftime('%d %b %Y') }}</strong></div>
-                            <div><span>Quantity</span><strong>{{ order.quantity }}</strong></div>
-                            <div><span>Total amount</span><strong>₹{{ order.total_amount }}</strong></div>
+
+
+                            <div>
+
+                                <span>
+                                    Order date
+                                </span>
+
+                                <strong>
+
+                                    {{
+                                        order.created_at.strftime(
+                                            '%d %b %Y'
+                                        )
+                                    }}
+
+                                </strong>
+
+                            </div>
+
+
+
+                            <div>
+
+                                <span>
+                                    Quantity
+                                </span>
+
+                                <strong>
+
+                                    {{ order.quantity }}
+
+                                </strong>
+
+                            </div>
+
+
+
+                            <div>
+
+                                <span>
+                                    Total amount
+                                </span>
+
+                                <strong>
+
+                                    ₹{{ order.total_amount }}
+
+                                </strong>
+
+                            </div>
+
+
                         </div>
 
+
+
+                        <!-- =========================
+                             ORDER ACTIONS
+                             ========================= -->
+
                         <div class="customer-order-actions">
-                            {% if order.tracking_id %}
-                                <a class="customer-track-button" href="/track-order">Track Order</a>
+
+
+                            <!-- LEFT BUTTONS -->
+
+                            <div class="customer-order-left-actions">
+
+
+                                {% if order.tracking_id %}
+
+                                    <a
+                                        class="customer-track-button"
+                                        href="/track-order"
+                                    >
+
+                                        Track Order
+
+                                    </a>
+
+                                {% endif %}
+
+
+
+                                <a
+                                    class="customer-invoice-button"
+                                    href="/invoice/{{ order.id }}"
+                                >
+
+                                    Download Invoice
+
+                                </a>
+
+
+                            </div>
+
+
+
+                            <!-- =========================
+                                 CANCEL ORDER
+                                 ========================= -->
+
+                            {% if order.status == "Pending" %}
+
+                                <form
+                                    method="POST"
+                                    action="/cancel-order/{{ order.id }}"
+                                    class="cancel-order-form"
+                                    onsubmit="
+                                        return confirm(
+                                            'Are you sure you want to cancel this order?'
+                                        );
+                                    "
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="customer-cancel-button"
+                                    >
+
+                                        Cancel Order
+
+                                    </button>
+
+                                </form>
+
                             {% endif %}
-                            <a class="customer-invoice-button" href="/invoice/{{ order.id }}">Download Invoice</a>
+
+
                         </div>
+
+
                     </article>
+
+
                 {% endfor %}
+
+
             </section>
+
+
+
         {% else %}
+
+
+            <!-- =========================
+                 EMPTY ORDERS
+                 ========================= -->
+
             <section class="customer-orders-empty">
-                <div>🛍️</div>
-                <h2>No orders yet</h2>
-                <p>Your future BESTTIVE orders will appear here.</p>
-                <a href="/">Start Shopping</a>
+
+
+                <div>
+                    🛍️
+                </div>
+
+
+                <h2>
+                    No orders yet
+                </h2>
+
+
+                <p>
+                    Your future BESTTIVE orders will appear here.
+                </p>
+
+
+                <a href="/">
+                    Start Shopping
+                </a>
+
+
             </section>
+
+
         {% endif %}
+
+
     </main>
+
+
+
+    <!-- =========================
+         CANCEL BUTTON STYLE
+         ========================= -->
+
+    <style>
+
+        .customer-order-actions {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-top: 22px;
+
+        }
+
+
+        .customer-order-left-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+        }
+
+
+        .cancel-order-form {
+
+            margin-left: auto;
+
+        }
+
+
+        .customer-cancel-button {
+
+            background: #4b0082;
+
+            color: #ffffff;
+
+            border: 1px solid #ffffff;
+
+            border-radius: 8px;
+
+            padding: 11px 18px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+
+            transition: 0.2s ease;
+
+        }
+
+
+        .customer-cancel-button:hover {
+
+            background: #4b0082;
+
+            color: #ffffff;
+
+        }
+
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 768px) {
+
+            .customer-order-actions {
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+            }
+
+
+            .customer-order-left-actions {
+
+                width: 100%;
+
+            }
+
+
+            .customer-track-button,
+
+            .customer-invoice-button {
+
+                flex: 1;
+
+                text-align: center;
+
+            }
+
+
+            .cancel-order-form {
+
+                width: 100%;
+
+                margin-left: 0;
+
+            }
+
+
+            .customer-cancel-button {
+
+                width: 100%;
+
+            }
+
+        }
+
+    </style>
+
+
 </body>
+
 </html>

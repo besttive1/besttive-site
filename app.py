@@ -1903,7 +1903,7 @@ def admin_sales():
         .limit(5)
         .all()
     )
-    
+
     # ==========================================
     # RENDER PAGE
     # ==========================================
@@ -2686,6 +2686,54 @@ def orders():
         "orders.html",
         orders=orders
     )
+
+@app.route("/cancel-order/<int:order_id>", methods=["POST"])
+def cancel_order(order_id):
+
+    # =========================
+    # CHECK USER LOGIN
+    # =========================
+
+    if not session.get("user_id"):
+        return redirect("/login")
+
+
+    # =========================
+    # GET ORDER
+    # Only logged-in user's order
+    # =========================
+
+    order = Order.query.filter_by(
+        id=order_id,
+        user_id=session["user_id"]
+    ).first()
+
+
+    # =========================
+    # ORDER NOT FOUND
+    # =========================
+
+    if not order:
+        return redirect("/orders")
+
+
+    # =========================
+    # ONLY PENDING ORDER
+    # CAN BE CANCELLED
+    # =========================
+
+    if order.status == "Pending":
+
+        order.status = "Cancelled"
+
+        db.session.commit()
+
+
+    # =========================
+    # BACK TO MY ORDERS
+    # =========================
+
+    return redirect("/orders")
 
 @app.route("/invoice/<int:id>")
 def invoice(id):
