@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Terms & Conditions | BESTTIVE
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .policy-header {
+            background: #4b0b72;
+            color: white;
+            padding: 45px 20px 55px;
+            text-align: center;
+            position: relative;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .language-btn {
+            border: 1px solid rgba(255,255,255,0.5);
+            background: transparent;
+            color: white;
+            padding: 7px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .language-btn.active {
+            background: white;
+            color: #4b0b72;
+            font-weight: bold;
+        }
+
+        .policy-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .policy-header p {
+            font-size: 17px;
+            opacity: 0.9;
+        }
+
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .policy-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px 50px;
+        }
+
+
+        /* =========================
+           POLICY CARD
+        ========================= */
+
+        .policy-card {
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow:
+                0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .policy-card h2 {
+            color: #4b0b72;
+            font-size: 26px;
+            margin-bottom: 18px;
+        }
+
+        .policy-card p {
+            color: #555;
+            margin-bottom: 14px;
+        }
+
+        .policy-card ul {
+            padding-left: 22px;
+            margin-top: 10px;
+        }
+
+        .policy-card li {
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+
+        /* =========================
+           IMPORTANT BOX
+        ========================= */
+
+        .important-box {
+            background: #f4eafd;
+            border-left: 5px solid #4b0b72;
+            padding: 18px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .important-box strong {
+            color: #4b0b72;
+        }
+
+
+        /* =========================
+           BACK BUTTON
+        ========================= */
+
+        .back-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 24px;
+            background: #4b0b72;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            background: #350650;
+        }
+
+
+        /* =========================
+           LANGUAGE
+        ========================= */
+
+        .hindi-content {
+            display: none;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .policy-header {
+                padding: 75px 15px 40px;
+            }
+
+            .language-switcher {
+                top: 15px;
+                right: 15px;
+            }
+
+            .language-btn {
+                padding: 6px 10px;
+                font-size: 13px;
+            }
+
+            .policy-header h1 {
+                font-size: 27px;
+            }
+
+            .policy-header p {
+                font-size: 15px;
+            }
+
+            .policy-container {
+                margin-top: 25px;
+                padding: 0 12px 35px;
+            }
+
+            .policy-card {
+                padding: 22px 18px;
+                border-radius: 14px;
+            }
+
+            .policy-card h2 {
+                font-size: 22px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <section class="policy-header">
+
+        <div class="language-switcher">
+
+            <button
+                class="language-btn active"
+                id="englishBtn"
+                onclick="showEnglish()"
+            >
+                English
+            </button>
+
+            <button
+                class="language-btn"
+                id="hindiBtn"
+                onclick="showHindi()"
+            >
+                हिंदी
+            </button>
+
+        </div>
+
+
+        <div class="english-content">
+
+            <h1>
+                Terms & Conditions
+            </h1>
+
+            <p>
+                Please read these terms carefully before using BESTTIVE.
+            </p>
+
+        </div>
+
+
+        <div class="hindi-content">
+
+            <h1>
+                नियम और शर्तें
+            </h1>
+
+            <p>
+                BESTTIVE का उपयोग करने से पहले कृपया इन नियमों और शर्तों को ध्यान से पढ़ें।
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         ENGLISH CONTENT
+    ========================= -->
+
+    <main class="policy-container english-content">
+
+
+        <section class="policy-card">
+
+            <h2>
+                1. Acceptance of Terms
+            </h2>
+
+            <p>
+                By accessing, browsing or using the BESTTIVE website,
+                creating an account or placing an order, you agree to
+                these Terms & Conditions and any other applicable
+                policies available on our website.
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                2. Account & Customer Responsibility
+            </h2>
+
+            <p>
+                Customers are responsible for providing accurate,
+                complete and updated information, including their name,
+                mobile number, email address and delivery details.
+            </p>
+
+            <p>
+                Customers are also responsible for maintaining the
+                confidentiality of their account credentials and for
+                activities carried out through their account.
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                3. Product Information & Pricing
+            </h2>
+
+            <p>
+                BESTTIVE makes reasonable efforts to provide accurate
+                product descriptions, images, prices and availability
+                information.
+            </p>
+
+            <p>
+                However, minor variations, technical errors, pricing
+                errors or availability changes may occur. BESTTIVE
+                reserves the right to correct such errors or update
+                product information when necessary.
+            </p>
+
+            <div class="important-box">
+
+                <strong>Note:</strong>
+
+                Product colours or appearance may vary slightly
+                depending on screen settings, lighting or other
+                display-related factors.
+
+            </div>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                4. Orders & Acceptance
+            </h2>
+
+            <p>
+                Placing an order on BESTTIVE does not automatically mean
+                that the order has been finally accepted or confirmed.
+            </p>
+
+            <p>
+                Orders may be subject to payment verification, product
+                availability, address verification or other necessary
+                checks.
+            </p>
+
+            <p>
+                BESTTIVE may cancel an order for valid reasons such as
+                product unavailability, incorrect pricing, payment
+                issues, suspected fraudulent activity or other
+                operational requirements.
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                5. Payment
+            </h2>
+
+            <p>
+                Payments must be made through the payment methods
+                available on the BESTTIVE website.
+            </p>
+
+            <p>
+                A successful payment does not always guarantee final
+                order acceptance, as the order may still require
+                verification or be affected by stock availability or
+                other valid issues.
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                6. Shipping & Delivery
+            </h2>
+
+            <p>
+                Shipping timelines, delivery estimates, shipping charges
+                and other delivery-related conditions are governed by
+                the BESTTIVE Shipping & Delivery Policy.
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                7. Returns, Refunds & Cancellations
+            </h2>
+
+            <p>
+                Return, refund and cancellation eligibility, timelines,
+                charges and related conditions are governed by the
+                BESTTIVE Return / Refund / Cancellation Policy.
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                8. Customer Conduct & Website Misuse
+            </h2>
+
+            <p>
+                Customers must not misuse the BESTTIVE website or
+                services.
+            </p>
+
+            <ul>
+
+                <li>Placing fake or fraudulent orders.</li>
+
+                <li>Using unauthorized payment methods.</li>
+
+                <li>Providing false or misleading information.</li>
+
+                <li>
+                    Attempting to damage, disrupt or gain unauthorized
+                    access to the website or its systems.
+                </li>
+
+                <li>
+                    Engaging in abusive, threatening or unlawful
+                    behaviour towards BESTTIVE or its representatives.
+                </li>
+
+            </ul>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                9. Intellectual Property
+            </h2>
+
+            <p>
+                The BESTTIVE name, logo, branding, website content,
+                design, images and other materials may be protected by
+                applicable intellectual property rights.
+            </p>
+
+            <p>
+                Such content may not be copied, reproduced, modified or
+                used for commercial purposes without appropriate
+                permission.
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                10. Changes to Terms & Conditions
+            </h2>
+
+            <p>
+                BESTTIVE may update or modify these Terms & Conditions
+                from time to time due to changes in services, business
+                processes or applicable requirements.
+            </p>
+
+            <p>
+                The latest version will be made available on the
+                BESTTIVE website.
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                Contact Us
+            </h2>
+
+            <p>
+                If you have any questions regarding these Terms &
+                Conditions, you may contact BESTTIVE Customer Support
+                through the available contact options on our website.
+            </p>
+
+            <a
+                href="/"
+                class="back-button"
+            >
+                ← Continue Shopping
+            </a>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================
+         HINDI CONTENT
+    ========================= -->
+
+    <main class="policy-container hindi-content">
+
+
+        <section class="policy-card">
+
+            <h2>
+                1. नियमों की स्वीकृति
+            </h2>
+
+            <p>
+                BESTTIVE वेबसाइट का उपयोग करने, ब्राउज़ करने, अकाउंट
+                बनाने या ऑर्डर देने पर आप इन नियमों और शर्तों तथा
+                वेबसाइट पर उपलब्ध अन्य लागू पॉलिसियों से सहमत होते हैं।
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                2. अकाउंट और ग्राहक की जिम्मेदारी
+            </h2>
+
+            <p>
+                ग्राहक का नाम, मोबाइल नंबर, ईमेल और डिलीवरी जानकारी
+                सहित सही, पूर्ण और अपडेटेड जानकारी प्रदान करना ग्राहक
+                की जिम्मेदारी है।
+            </p>
+
+            <p>
+                ग्राहक अपने अकाउंट की जानकारी और अकाउंट के माध्यम से
+                की जाने वाली गतिविधियों के लिए भी जिम्मेदार होगा।
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                3. प्रोडक्ट जानकारी और कीमत
+            </h2>
+
+            <p>
+                BESTTIVE प्रोडक्ट विवरण, इमेज, कीमत और उपलब्धता की
+                सही जानकारी देने का उचित प्रयास करता है।
+            </p>
+
+            <p>
+                हालांकि, कभी-कभी तकनीकी त्रुटि, कीमत में गलती या
+                प्रोडक्ट उपलब्धता में बदलाव हो सकता है। आवश्यकता होने
+                पर BESTTIVE ऐसी जानकारी को सही या अपडेट कर सकता है।
+            </p>
+
+            <div class="important-box">
+
+                <strong>नोट:</strong>
+
+                स्क्रीन सेटिंग, लाइटिंग या अन्य डिस्प्ले कारणों की वजह
+                से प्रोडक्ट का रंग या दिखाई देने का तरीका थोड़ा अलग
+                हो सकता है।
+
+            </div>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                4. ऑर्डर और स्वीकृति
+            </h2>
+
+            <p>
+                BESTTIVE पर ऑर्डर देने का मतलब यह नहीं है कि ऑर्डर
+                तुरंत अंतिम रूप से स्वीकार या कन्फर्म हो गया है।
+            </p>
+
+            <p>
+                ऑर्डर पेमेंट वेरिफिकेशन, प्रोडक्ट उपलब्धता, एड्रेस
+                वेरिफिकेशन या अन्य आवश्यक जांच के अधीन हो सकता है।
+            </p>
+
+            <p>
+                प्रोडक्ट उपलब्ध न होने, गलत कीमत, पेमेंट समस्या,
+                संदिग्ध फ्रॉड या अन्य उचित कारणों की स्थिति में
+                BESTTIVE ऑर्डर को रद्द कर सकता है।
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                5. पेमेंट
+            </h2>
+
+            <p>
+                पेमेंट BESTTIVE वेबसाइट पर उपलब्ध पेमेंट विकल्पों के
+                माध्यम से किया जाना चाहिए।
+            </p>
+
+            <p>
+                सफल पेमेंट होने के बाद भी ऑर्डर वेरिफिकेशन, स्टॉक
+                उपलब्धता या अन्य उचित कारणों के आधार पर ऑर्डर की जांच
+                आवश्यक हो सकती है।
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                6. शिपिंग और डिलीवरी
+            </h2>
+
+            <p>
+                शिपिंग समय, अनुमानित डिलीवरी, शिपिंग चार्ज और अन्य
+                डिलीवरी संबंधी नियम BESTTIVE की Shipping & Delivery
+                Policy के अनुसार होंगे।
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                7. रिटर्न, रिफंड और कैंसिलेशन
+            </h2>
+
+            <p>
+                रिटर्न, रिफंड और कैंसिलेशन की पात्रता, समय सीमा,
+                चार्ज और संबंधित नियम BESTTIVE की Return / Refund /
+                Cancellation Policy के अनुसार होंगे।
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                8. ग्राहक व्यवहार और वेबसाइट का गलत उपयोग
+            </h2>
+
+            <p>
+                ग्राहक BESTTIVE वेबसाइट या उसकी सेवाओं का गलत उपयोग
+                नहीं कर सकते।
+            </p>
+
+            <ul>
+
+                <li>फर्जी या फ्रॉड ऑर्डर देना।</li>
+
+                <li>अनधिकृत पेमेंट तरीकों का उपयोग करना।</li>
+
+                <li>गलत या भ्रामक जानकारी देना।</li>
+
+                <li>
+                    वेबसाइट या उसके सिस्टम को नुकसान पहुंचाने या
+                    अनधिकृत एक्सेस करने की कोशिश करना।
+                </li>
+
+                <li>
+                    BESTTIVE या उसके प्रतिनिधियों के साथ अपमानजनक,
+                    धमकी भरा या गैरकानूनी व्यवहार करना।
+                </li>
+
+            </ul>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                9. बौद्धिक संपत्ति
+            </h2>
+
+            <p>
+                BESTTIVE का नाम, लोगो, ब्रांडिंग, वेबसाइट कंटेंट,
+                डिजाइन, इमेज और अन्य सामग्री संबंधित बौद्धिक संपत्ति
+                अधिकारों द्वारा सुरक्षित हो सकती है।
+            </p>
+
+            <p>
+                उचित अनुमति के बिना ऐसी सामग्री को कॉपी, पुनः प्रकाशित,
+                संशोधित या व्यावसायिक उपयोग के लिए इस्तेमाल नहीं किया
+                जा सकता।
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                10. नियमों और शर्तों में बदलाव
+            </h2>
+
+            <p>
+                BESTTIVE अपनी सेवाओं, बिजनेस प्रक्रियाओं या लागू
+                आवश्यकताओं में बदलाव के अनुसार समय-समय पर इन नियमों
+                और शर्तों को अपडेट या संशोधित कर सकता है।
+            </p>
+
+            <p>
+                इसका नवीनतम संस्करण BESTTIVE वेबसाइट पर उपलब्ध कराया
+                जाएगा।
+            </p>
+
+        </section>
+
+
+        <section class="policy-card">
+
+            <h2>
+                हमसे संपर्क करें
+            </h2>
+
+            <p>
+                यदि आपके पास इन नियमों और शर्तों से संबंधित कोई प्रश्न
+                है, तो आप वेबसाइट पर उपलब्ध संपर्क विकल्पों के माध्यम
+                से BESTTIVE Customer Support से संपर्क कर सकते हैं।
+            </p>
+
+            <a
+                href="/"
+                class="back-button"
+            >
+                ← शॉपिंग जारी रखें
+            </a>
+
+        </section>
+
+    </main>
+
+
+
+    <script>
+
+        function showEnglish() {
+
+            document
+                .querySelectorAll(".english-content")
+                .forEach(function(element) {
+
+                    element.style.display = "block";
+
+                });
+
+            document
+                .querySelectorAll(".hindi-content")
+                .forEach(function(element) {
+
+                    element.style.display = "none";
+
+                });
+
+            document
+                .getElementById("englishBtn")
+                .classList.add("active");
+
+            document
+                .getElementById("hindiBtn")
+                .classList.remove("active");
+
+        }
+
+
+        function showHindi() {
+
+            document
+                .querySelectorAll(".english-content")
+                .forEach(function(element) {
+
+                    element.style.display = "none";
+
+                });
+
+            document
+                .querySelectorAll(".hindi-content")
+                .forEach(function(element) {
+
+                    element.style.display = "block";
+
+                });
+
+            document
+                .getElementById("hindiBtn")
+                .classList.add("active");
+
+            document
+                .getElementById("englishBtn")
+                .classList.remove("active");
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

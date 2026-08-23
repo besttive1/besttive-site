@@ -125,6 +125,18 @@ def shipping_delivery():
         "shipping_delivery.html"
     )
 
+@app.route("/privacy-policy")
+def privacy_policy():
+    return render_template(
+        "privacy_policy.html"
+    )
+
+@app.route("/terms-conditions")
+def terms_conditions():
+    return render_template(
+        "terms_conditions.html"
+    )
+
 # 🔥 HOME PAGE (ONLY ONCE)
 @app.route("/")
 def home():
