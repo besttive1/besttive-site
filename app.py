@@ -119,6 +119,12 @@ def return_refund_cancellation():
         "return_refund_cancellation.html"
     )
 
+@app.route("/shipping-delivery")
+def shipping_delivery():
+    return render_template(
+        "shipping_delivery.html"
+    )
+
 # 🔥 HOME PAGE (ONLY ONCE)
 @app.route("/")
 def home():
