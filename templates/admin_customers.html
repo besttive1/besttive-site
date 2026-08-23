@@ -406,6 +406,8 @@
             <th>Total Spent</th>
 
             <th>DOB</th>
+            <th>Terms Accepted</th>
+            <th>Accepted On</th>
 
         </tr>
 
@@ -484,6 +486,29 @@
 
             <td>
                 {{ customer.dob }}
+            </td>
+            <!-- TERMS ACCEPTED -->
+
+            <td>
+
+                {% if customer.terms_accepted %}
+                    Yes
+                {% else %}
+                    No
+                {% endif %}
+
+            </td>
+
+            <!-- ACCEPTED ON -->
+
+            <td>
+
+                {% if customer.terms_accepted_at %}
+                {{ customer.terms_accepted_at }}
+                {% else %}
+                    -
+                {% endif %}
+
             </td>
 
         </tr>

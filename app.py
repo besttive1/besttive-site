@@ -969,7 +969,17 @@ class User(db.Model):
     state = db.Column(db.String(100), default="")
     pincode = db.Column(db.String(20), default="")
     dob = db.Column(db.String(50), default="")
-    
+
+    terms_accepted = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    terms_accepted_at = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
@@ -1622,17 +1632,65 @@ def verify():
             user = User.query.filter_by(email=email).first()
 
             if not user:
-                user = User(email=email)
-                db.session.add(user)
-                db.session.commit()
+
+               session["new_user_email"] = email
+
+               return redirect("/accept-terms")
+
 
             session["user_id"] = user.id
 
             return redirect("/profile")
-
+        
         flash("Wrong OTP")
 
     return render_template("verify.html")
+
+@app.route("/accept-terms", methods=["GET", "POST"])
+def accept_terms():
+
+    email = session.get("new_user_email")
+
+    # New user email nahi hai to login page par bhejo
+    if not email:
+        return redirect("/login")
+
+    if request.method == "POST":
+
+        accept_terms = request.form.get("accept_terms")
+
+        # Checkbox accept nahi kiya
+        if not accept_terms:
+            return render_template(
+                "accept_terms.html"
+            )
+
+        # Safety check: agar user already exist karta hai
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+
+            user = User(
+                email=email,
+                terms_accepted=True,
+                terms_accepted_at=datetime.datetime.now(
+                    datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+                )
+            )
+            db.session.add(user)
+            db.session.commit()
+
+        # User login
+        session["user_id"] = user.id
+
+        # Temporary new user email remove
+        session.pop("new_user_email", None)
+
+        return redirect("/profile")
+
+    return render_template(
+        "accept_terms.html"
+    )
 
 # REGISTER
 @app.route("/register", methods=["GET", "POST"])
