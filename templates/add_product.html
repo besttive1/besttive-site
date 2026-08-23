@@ -378,7 +378,6 @@
 
         </select>
 
-
         <!-- AUTO HSN + GST -->
 
         <div class="tax-box">
@@ -449,6 +448,117 @@
                min="0"
                value="0">
 
+        <!-- PACKAGING PROFILE -->
+
+<p>Packaging Profile</p>
+
+<select name="packaging_profile"
+        id="packaging_profile"
+        required
+        onchange="updatePackagingDetails()">
+
+    <option value="">
+        Select Packaging Profile
+    </option>
+
+    <option value="Small Jewellery">
+        Small Jewellery
+    </option>
+
+    <option value="Medium Jewellery">
+        Medium Jewellery
+    </option>
+
+    <option value="Small Product">
+        Small Product
+    </option>
+
+    <option value="Medium Product">
+        Medium Product
+    </option>
+
+    <option value="Large Product">
+        Large Product
+    </option>
+
+</select>
+
+
+<!-- AUTO PACKAGE DETAILS -->
+
+<div class="tax-box">
+
+    <div class="tax-box-title">
+        📦 Automatic Package Details
+    </div>
+
+    <div class="tax-grid">
+
+        <div class="tax-field">
+            <label>Weight (KG)</label>
+
+            <input type="number"
+                   id="package_weight_display"
+                   step="0.01"
+                   min="0.01"
+                   oninput="syncPackageDetails()">
+        </div>
+
+
+        <div class="tax-field">
+            <label>Length (CM)</label>
+
+            <input type="number"
+                   id="package_length_display"
+                   step="0.1"
+                   min="1"
+                   oninput="syncPackageDetails()">
+        </div>
+
+
+        <div class="tax-field">
+            <label>Breadth (CM)</label>
+
+            <input type="number"
+                   id="package_breadth_display"
+                   step="0.1"
+                   min="1"
+                   oninput="syncPackageDetails()">
+        </div>
+
+
+        <div class="tax-field">
+            <label>Height (CM)</label>
+
+            <input type="number"
+                   id="package_height_display"
+                   step="0.1"
+                   min="1"
+                   oninput="syncPackageDetails()">
+        </div>
+
+    </div>
+
+
+    <!-- ACTUAL VALUES SENT TO FLASK -->
+
+    <input type="hidden"
+           name="package_weight"
+           id="package_weight">
+
+    <input type="hidden"
+           name="package_length"
+           id="package_length">
+
+    <input type="hidden"
+           name="package_breadth"
+           id="package_breadth">
+
+    <input type="hidden"
+           name="package_height"
+           id="package_height">
+
+</div>
 
         <!-- MAIN IMAGE -->
 
@@ -863,6 +973,150 @@ function updateTaxDetails() {
         gstDisplay.value = "";
 
     }
+
+}
+function updatePackagingDetails() {
+
+    const packagingProfiles = {
+
+        "Small Jewellery": {
+            weight: 0.25,
+            length: 15,
+            breadth: 15,
+            height: 8
+        },
+
+        "Medium Jewellery": {
+            weight: 0.50,
+            length: 20,
+            breadth: 20,
+            height: 10
+        },
+
+        "Small Product": {
+            weight: 0.50,
+            length: 20,
+            breadth: 15,
+            height: 10
+        },
+
+        "Medium Product": {
+            weight: 1.00,
+            length: 30,
+            breadth: 20,
+            height: 15
+        },
+
+        "Large Product": {
+            weight: 2.00,
+            length: 40,
+            breadth: 30,
+            height: 20
+        }
+
+    };
+
+
+    const selectedProfile =
+        document.getElementById(
+            "packaging_profile"
+        ).value;
+
+
+    const details =
+        packagingProfiles[selectedProfile];
+
+
+    if (!details) {
+
+        document.getElementById(
+            "package_weight_display"
+        ).value = "";
+
+        document.getElementById(
+            "package_length_display"
+        ).value = "";
+
+        document.getElementById(
+            "package_breadth_display"
+        ).value = "";
+
+        document.getElementById(
+            "package_height_display"
+        ).value = "";
+
+        return;
+    }
+
+
+    /* DISPLAY VALUES */
+
+    document.getElementById(
+        "package_weight_display"
+    ).value = details.weight;
+
+    document.getElementById(
+        "package_length_display"
+    ).value = details.length;
+
+    document.getElementById(
+        "package_breadth_display"
+    ).value = details.breadth;
+
+    document.getElementById(
+        "package_height_display"
+    ).value = details.height;
+
+
+    /* VALUES SENT TO FLASK */
+
+    document.getElementById(
+        "package_weight"
+    ).value = details.weight;
+
+    document.getElementById(
+        "package_length"
+    ).value = details.length;
+
+    document.getElementById(
+        "package_breadth"
+    ).value = details.breadth;
+
+    document.getElementById(
+        "package_height"
+    ).value = details.height;
+
+}
+
+function syncPackageDetails() {
+
+    document.getElementById(
+        "package_weight"
+    ).value =
+        document.getElementById(
+            "package_weight_display"
+        ).value;
+
+    document.getElementById(
+        "package_length"
+    ).value =
+        document.getElementById(
+            "package_length_display"
+        ).value;
+
+    document.getElementById(
+        "package_breadth"
+    ).value =
+        document.getElementById(
+            "package_breadth_display"
+        ).value;
+
+    document.getElementById(
+        "package_height"
+    ).value =
+        document.getElementById(
+            "package_height_display"
+        ).value;
 
 }
 

@@ -377,11 +377,92 @@ def checkout_cart():
 @app.route("/payment/<string:name>/<int:price>")
 def payment(name, price):
 
+# Logged-in customer
+    user = None
+
+    if session.get("user_id"):
+       user = User.query.get(session["user_id"])
+
+    # =========================
+    # CART CHECKOUT
+    # =========================
+
+    if name == "BESTTIVE-CART":
+
+        customer_name = session.get(
+            "customer_name",
+            "Guest Customer"
+        )
+
+        cart_items = Cart.query.filter_by(
+            customer_name=customer_name
+        ).all()
+
+        if not cart_items:
+            flash("Your cart is empty!")
+            return redirect("/cart")
+
+        product_total = 0
+        gst_amount = 0
+        gst_rate = 0
+
+        for item in cart_items:
+
+            product = Product.query.get(
+                item.product_id
+            )
+
+            if product:
+
+                tax = calculate_tax(
+                    product,
+                    item.quantity
+                )
+
+                product_total += (
+                    product.price * item.quantity
+                )
+
+                gst_amount += tax["gst_amount"]
+
+                gst_rate = tax["gst_rate"]
+
+        # Temporary shipping charge
+        shipping_charge = 0
+
+        final_amount = (
+            product_total +
+            gst_amount +
+            shipping_charge
+        )
+
+        return render_template(
+            "payment.html",
+            name="BESTTIVE CART",
+            price=product_total,
+            gst_rate=gst_rate,
+            gst_amount=gst_amount,
+            shipping_charge=shipping_charge,
+            final_amount=final_amount,
+            user=user,
+        )
+
+    # =========================
+    # BUY NOW / SINGLE PRODUCT
+    # =========================
+
     product = Product.query.filter_by(
         name=name
     ).first_or_404()
 
     tax = calculate_tax(product, 1)
+
+    shipping_charge = 0
+
+    final_amount = (
+        tax["total_amount"] +
+        shipping_charge
+    )
 
     return render_template(
         "payment.html",
@@ -390,7 +471,9 @@ def payment(name, price):
         taxable_amount=tax["taxable_amount"],
         gst_rate=tax["gst_rate"],
         gst_amount=tax["gst_amount"],
-        final_amount=tax["total_amount"]
+        shipping_charge=shipping_charge,
+        final_amount=final_amount,
+        user=user,
     )
 
 @app.route("/payu-payment", methods=["POST"])
@@ -989,15 +1072,43 @@ class Product(db.Model):
     stock = db.Column(db.Integer, default=0)
     category = db.Column(db.String(100), default="")
     subcategory = db.Column(db.String(100), default="")
+    
     gst_rate = db.Column(
     db.Float,
     default=0
     )
+
     hsn_code = db.Column(
     db.String(20),
     default=""
     )
-    # ==========================================
+
+    packaging_profile = db.Column(
+        db.String(100),
+        default="Small Product"
+    )
+
+    package_weight = db.Column(
+        db.Float,
+        default=0.50
+    )
+
+    package_length = db.Column(
+        db.Float,
+        default=20
+    )
+
+    package_breadth = db.Column(
+        db.Float,
+        default=15
+    )
+
+    package_height = db.Column(
+        db.Float,
+        default=10
+    )
+
+# ==========================================
 # BESTTIVE - HSN & GST AUTO MAPPING
 # ==========================================
 
@@ -1232,6 +1343,48 @@ def get_tax_details(category, subcategory):
         "hsn": tax_data["hsn"],
         "gst": tax_data["gst"]
     }
+# ==========================================
+# BESTTIVE - PACKAGING PROFILES
+# ==========================================
+
+PACKAGING_PROFILES = {
+
+    "Small Jewellery": {
+        "weight": 0.25,
+        "length": 15,
+        "breadth": 15,
+        "height": 8
+    },
+
+    "Medium Jewellery": {
+        "weight": 0.50,
+        "length": 20,
+        "breadth": 20,
+        "height": 10
+    },
+
+    "Small Product": {
+        "weight": 0.50,
+        "length": 20,
+        "breadth": 15,
+        "height": 10
+    },
+
+    "Medium Product": {
+        "weight": 1.00,
+        "length": 30,
+        "breadth": 20,
+        "height": 15
+    },
+
+    "Large Product": {
+        "weight": 2.00,
+        "length": 40,
+        "breadth": 30,
+        "height": 20
+    }
+
+    }
 
 class ContactMessage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -1423,6 +1576,12 @@ class Order(db.Model):
     total_amount = db.Column(
         db.Integer,
         nullable=False
+    )
+
+    shipping_charge = db.Column(
+    db.Float,
+    nullable=False,
+    default=0
     )
 
     taxable_amount = db.Column(
@@ -2303,6 +2462,43 @@ def admin_add_product():
         stock = request.form.get("stock")
         category = request.form.get("category")
         subcategory = request.form.get("subcategory")
+        packaging_profile = request.form.get("packaging_profile")
+
+        # ==========================================
+        # PACKAGING DETAILS
+        # ==========================================
+
+        packaging_profile = request.form.get(
+            "packaging_profile"
+        )
+
+        package_weight = float(
+            request.form.get(
+                "package_weight",
+                0.50
+            )
+        )
+
+        package_length = float(
+            request.form.get(
+                "package_length",
+                20
+            )
+        )
+
+        package_breadth = float(
+            request.form.get(
+                "package_breadth",
+                15
+            )
+        )
+
+        package_height = float(
+            request.form.get(
+                "package_height",
+                10
+            )
+        )
 
         # ==========================================
         # AUTO HSN + GST
@@ -2338,10 +2534,15 @@ def admin_add_product():
 
             category=category,
             subcategory=subcategory,
-
+                        
             # Automatically assigned
             hsn_code=hsn_code,
-            gst_rate=float(gst_rate)
+            gst_rate=float(gst_rate),
+            packaging_profile=packaging_profile,
+            package_weight=package_weight,
+            package_length=package_length,
+            package_breadth=package_breadth,
+            package_height=package_height
         )
 
         db.session.add(new_product)
@@ -3927,7 +4128,8 @@ def shiprocket_parcel_details(order_id):
 
     return render_template(
         "shiprocket_parcel.html",
-        order=order
+        order=order,
+        product=order.product
     )
 
 

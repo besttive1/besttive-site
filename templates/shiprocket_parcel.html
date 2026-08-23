@@ -326,7 +326,7 @@
                 name="weight"
                 step="0.01"
                 min="0.01"
-                placeholder="Example: 0.5"
+                value="{{ order.product.package_weight or 0.50 }}"
                 required
             >
 
@@ -354,7 +354,7 @@
                 name="length"
                 step="0.1"
                 min="0.6"
-                placeholder="Example: 15"
+                value="{{ order.product.package_length or 20 }}"
                 required
             >
 
@@ -382,7 +382,7 @@
                 name="breadth"
                 step="0.1"
                 min="0.6"
-                placeholder="Example: 10"
+                value="{{ order.product.package_breadth or 15 }}"
                 required
             >
 
@@ -410,7 +410,7 @@
                 name="height"
                 step="0.1"
                 min="0.6"
-                placeholder="Example: 5"
+                value="{{ order.product.package_height or 10 }}"
                 required
             >
 

@@ -25,12 +25,53 @@
     </p>
 
     <p>
+        <b>Shipping Charge:</b>
+        ₹{{ shipping_charge }}
+    </p>
+
+    <p>
         <b>Total Payable:</b>
         <strong>₹{{ final_amount }}</strong>
     </p>
 
     <hr>
+    {% if user %}
 
+    <hr>
+
+    <div style="
+        max-width:500px;
+        margin:20px auto;
+        padding:18px;
+        border:1px solid #ddd;
+        border-radius:10px;
+        text-align:left;
+    ">
+
+        <h3>📦 Delivery Address</h3>
+
+        <p>
+            <b>{{ user.name }}</b>
+        </p>
+        <p>
+            {{ user.address }}
+        </p>
+        <p>
+            {{ user.city }}, {{ user.state }}
+            - {{ user.pincode }}
+        </p>
+        <p>
+            <b>Phone:</b> {{ user.phone }}
+        </p>
+
+        <a href="/profile">
+            Change Address
+        </a>
+
+    </div>
+
+    {% endif %}
+    
     <h3>Option 1 - Pay with PayU (Recommended)</h3>
 
     <form action="/payu-payment" method="POST">
