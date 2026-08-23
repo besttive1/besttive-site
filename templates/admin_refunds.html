@@ -1046,14 +1046,14 @@
                                     class="refund-time"
                                 >
 
-                                    {% if order.processing_at %}
+                                    {% if order.refund_processing_at %}
 
                                         <strong>
-                                            {{ order.processing_at.strftime('%d %b %Y') }}
+                                            {{ order.refund_processing_at.strftime('%d %b %Y') }}
                                         </strong>
 
                                         <span>
-                                            {{ order.processing_at.strftime('%I:%M %p') }}
+                                            {{ order.refund_processing_at.strftime('%I:%M %p') }}
                                         </span>
 
                                     {% else %}

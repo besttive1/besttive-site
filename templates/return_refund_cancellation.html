@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Return, Refund & Cancellation | BESTTIVE
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .policy-header {
+            background: #4b0b72;
+            color: white;
+            padding: 45px 20px 55px;
+            text-align: center;
+            position: relative;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .language-btn {
+            border: 1px solid rgba(255,255,255,0.5);
+            background: transparent;
+            color: white;
+            padding: 7px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .language-btn.active {
+            background: white;
+            color: #4b0b72;
+            font-weight: bold;
+        }
+
+        .policy-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .policy-header p {
+            font-size: 17px;
+            opacity: 0.9;
+        }
+
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .policy-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px 50px;
+        }
+
+
+        /* =========================
+           POLICY CARD
+        ========================= */
+
+        .policy-card {
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow:
+                0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .policy-card h2 {
+            color: #4b0b72;
+            font-size: 26px;
+            margin-bottom: 18px;
+        }
+
+        .policy-card h3 {
+            color: #333;
+            font-size: 19px;
+            margin-top: 22px;
+            margin-bottom: 8px;
+        }
+
+        .policy-card p {
+            color: #555;
+            margin-bottom: 14px;
+        }
+
+        .policy-card ul {
+            padding-left: 22px;
+            margin-top: 10px;
+        }
+
+        .policy-card li {
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+
+        /* =========================
+           IMPORTANT BOX
+        ========================= */
+
+        .important-box {
+            background: #f4eafd;
+            border-left: 5px solid #4b0b72;
+            padding: 18px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .important-box strong {
+            color: #4b0b72;
+        }
+
+
+        /* =========================
+           BACK BUTTON
+        ========================= */
+
+        .back-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 24px;
+            background: #4b0b72;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            background: #350650;
+        }
+
+
+        /* =========================
+           LANGUAGE
+        ========================= */
+
+        .hindi-content {
+            display: none;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .policy-header {
+                padding: 75px 15px 40px;
+            }
+
+            .language-switcher {
+                top: 15px;
+                right: 15px;
+            }
+
+            .language-btn {
+                padding: 6px 10px;
+                font-size: 13px;
+            }
+
+            .policy-header h1 {
+                font-size: 27px;
+            }
+
+            .policy-header p {
+                font-size: 15px;
+            }
+
+            .policy-container {
+                margin-top: 25px;
+                padding: 0 12px 35px;
+            }
+
+            .policy-card {
+                padding: 22px 18px;
+                border-radius: 14px;
+            }
+
+            .policy-card h2 {
+                font-size: 22px;
+            }
+
+            .policy-card h3 {
+                font-size: 17px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <section class="policy-header">
+
+        <div class="language-switcher">
+
+            <button
+                class="language-btn active"
+                id="englishBtn"
+                onclick="showEnglish()"
+            >
+                English
+            </button>
+
+            <button
+                class="language-btn"
+                id="hindiBtn"
+                onclick="showHindi()"
+            >
+                हिंदी
+            </button>
+
+        </div>
+
+
+        <div class="english-content">
+
+            <h1>
+                Return, Refund & Cancellation
+            </h1>
+
+            <p>
+                Please read our policy carefully before placing an order.
+            </p>
+
+        </div>
+
+
+        <div class="hindi-content">
+
+            <h1>
+                रिटर्न, रिफंड और कैंसिलेशन
+            </h1>
+
+            <p>
+                ऑर्डर देने से पहले कृपया हमारी नीति को ध्यानपूर्वक पढ़ें।
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         ENGLISH CONTENT
+    ====================================== -->
+
+    <main
+        class="policy-container english-content"
+    >
+
+
+        <!-- =========================
+             1. CANCELLATION
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                1. Cancellation Policy
+            </h2>
+
+            <p>
+                Customers may request cancellation of an order
+                within 24 hours of placing the order.
+            </p>
+
+            <p>
+                Cancellation requests are subject to the current
+                processing stage of the order. Once an order has
+                moved to an advanced processing, packing or shipping
+                stage, cancellation may not be possible.
+            </p>
+
+            <div class="important-box">
+
+                <strong>Important:</strong>
+
+                Please submit your cancellation request as soon
+                as possible after placing the order.
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             2. PRODUCT UNAVAILABILITY
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                2. Product Unavailability
+            </h2>
+
+            <p>
+                In some cases, a product may become unavailable
+                after an order has been placed.
+            </p>
+
+            <p>
+                If the product is unavailable, BESTTIVE may cancel
+                the order. If payment has already been made, the
+                eligible refund amount will be processed according
+                to our Refund Policy.
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================
+             3. RETURN POLICY
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                3. Return Policy
+            </h2>
+
+            <p>
+                Customers may request a return within
+                <strong>7 days from the date of delivery</strong>.
+            </p>
+
+            <p>
+                Returns may be requested in the following situations:
+            </p>
+
+            <ul>
+
+                <li>
+                    Wrong product delivered.
+                </li>
+
+                <li>
+                    Wrong size or colour delivered despite the customer
+                    selecting the correct option while placing the order.
+                </li>
+
+                <li>
+                    Product received in a damaged condition.
+                </li>
+
+                <li>
+                    Wrong size or colour selected by the customer,
+                    subject to product eligibility and approval.
+                </li>
+
+            </ul>
+
+
+            <p>
+                All return requests are subject to verification
+                and approval by BESTTIVE.
+            </p>
+
+
+            <!-- POINT 1 -->
+
+            <h3>
+                Verification Proof
+            </h3>
+
+            <p>
+                For damaged, incorrect or disputed products,
+                customers may be required to provide clear photos
+                or an unboxing video for verification.
+            </p>
+
+
+            <!-- POINT 2 -->
+
+            <h3>
+                Product Return Condition
+            </h3>
+
+            <p>
+                To be eligible for a return, the product should be
+                returned in its original condition and should not be
+                used, altered or intentionally damaged. Original
+                packaging, tags, accessories and other included items
+                should also be returned, where applicable.
+            </p>
+
+
+            <!-- SHIPPING -->
+
+            <div class="important-box">
+
+                <strong>
+                    Return Shipping Charges:
+                </strong>
+
+                <br><br>
+
+                If the return is requested due to a customer-side
+                reason, such as selecting the wrong size, wrong
+                colour or a change of preference, the customer will
+                be responsible for the applicable return shipping
+                charges.
+
+                <br><br>
+
+                However, if BESTTIVE has delivered a wrong product,
+                wrong size or colour despite the customer's correct
+                order, or if the product is received damaged,
+                BESTTIVE will bear the applicable return shipping
+                charges after verification and approval of the
+                return request.
+
+            </div>
+
+
+            <!-- POINT 4 -->
+
+            <h3>
+                How to Request a Return
+            </h3>
+
+            <p>
+                Customers may contact BESTTIVE Customer Support
+                through the available contact options on the website
+                to request cancellation, return or refund assistance.
+                The customer may be asked to provide order details
+                and supporting information for verification.
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================
+             4. REFUND POLICY
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                4. Refund Policy
+            </h2>
+
+            <p>
+                Refunds may be applicable in the following situations:
+            </p>
+
+            <ul>
+
+                <li>
+                    The ordered product is unavailable and the order
+                    is cancelled.
+                </li>
+
+                <li>
+                    A paid order cancellation has been successfully
+                    approved.
+                </li>
+
+                <li>
+                    An eligible return request has been successfully
+                    approved and completed according to the applicable
+                    return process.
+                </li>
+
+            </ul>
+
+
+            <!-- POINT 3 -->
+
+            <h3>
+                When Will the Refund Be Initiated?
+            </h3>
+
+            <p>
+                For approved returns, the refund will normally be
+                initiated after the returned product is received
+                and verified, where applicable.
+            </p>
+
+            <p>
+                Submitting a return request or receiving return
+                approval does not necessarily mean that the refund
+                will be credited immediately.
+            </p>
+
+
+            <h3>
+                Refund Processing Time
+            </h3>
+
+            <p>
+                Once a refund is approved and initiated, it may take
+                approximately
+                <strong>5–7 business days</strong>
+                for the amount to be processed.
+            </p>
+
+            <p>
+                The actual time for the amount to reflect in the
+                customer's account may depend on the bank, payment
+                provider or original payment method.
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================
+             5. NON-RETURNABLE PRODUCTS
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                5. Non-Returnable Products
+            </h2>
+
+            <p>
+                Certain products may not be eligible for return due
+                to hygiene, safety, personalised, customised or
+                product-specific reasons.
+            </p>
+
+
+            <h3>
+                Examples of Products That May Be Non-Returnable
+            </h3>
+
+            <ul>
+
+                <li>
+                    Personalised or customised products, such as
+                    name jewellery, customised gifts or products
+                    specially made according to a customer's request.
+                </li>
+
+                <li>
+                    Products that have been used, worn, altered or
+                    damaged after delivery by the customer.
+                </li>
+
+                <li>
+                    Hygiene-sensitive products where the original
+                    seal or packaging has been opened, where
+                    applicable.
+                </li>
+
+                <li>
+                    Products clearly marked as
+                    <strong>"Non-Returnable"</strong> or
+                    <strong>"Final Sale"</strong> on the relevant
+                    product page, where applicable.
+                </li>
+
+            </ul>
+
+
+            <div class="important-box">
+
+                <strong>Important Exception:</strong>
+
+                A product being marked as non-returnable does not
+                automatically remove a customer's right to report
+                a genuine issue. If a wrong product is delivered,
+                the product is received damaged, or there is another
+                verified issue caused by BESTTIVE, the customer may
+                contact Customer Support for verification and
+                appropriate assistance.
+
+            </div>
+
+
+            <p>
+                Any applicable return restriction will be clearly
+                communicated on the relevant product page wherever
+                possible. BESTTIVE may determine return eligibility
+                based on the product category, product condition and
+                the circumstances of the request.
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================
+             6. IMPORTANT INFORMATION
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                6. Important Information
+            </h2>
+
+            <ul>
+
+                <li>
+                    All cancellation, return and refund requests
+                    may be subject to verification.
+                </li>
+
+                <li>
+                    BESTTIVE reserves the right to approve or reject
+                    requests that do not meet the applicable policy
+                    conditions.
+                </li>
+
+                <li>
+                    Refund eligibility may depend on the specific
+                    circumstances of the order.
+                </li>
+
+                <li>
+                    Processing times may vary depending on payment
+                    providers and banking systems.
+                </li>
+
+            </ul>
+
+            <a
+                href="/"
+                class="back-button"
+            >
+                ← Continue Shopping
+            </a>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================
+         HINDI CONTENT
+    ====================================== -->
+
+    <main
+        class="policy-container hindi-content"
+    >
+
+
+        <!-- =========================
+             1. CANCELLATION
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                1. कैंसिलेशन पॉलिसी
+            </h2>
+
+            <p>
+                ग्राहक ऑर्डर देने के 24 घंटे के भीतर अपना ऑर्डर
+                कैंसिल करने का अनुरोध कर सकते हैं।
+            </p>
+
+            <p>
+                कैंसिलेशन अनुरोध ऑर्डर की वर्तमान प्रोसेसिंग स्थिति
+                पर निर्भर करेगा। यदि ऑर्डर प्रोसेसिंग, पैकिंग या
+                शिपिंग स्टेज में पहुंच चुका है, तो कैंसिलेशन संभव
+                नहीं हो सकता।
+            </p>
+
+            <div class="important-box">
+
+                <strong>महत्वपूर्ण:</strong>
+
+                ऑर्डर कैंसिल करने का अनुरोध ऑर्डर देने के बाद
+                जितनी जल्दी हो सके करें।
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             2. PRODUCT UNAVAILABILITY
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                2. प्रोडक्ट उपलब्ध न होने की स्थिति
+            </h2>
+
+            <p>
+                कुछ मामलों में ऑर्डर देने के बाद प्रोडक्ट उपलब्ध
+                नहीं रह सकता है।
+            </p>
+
+            <p>
+                ऐसी स्थिति में BESTTIVE ऑर्डर को कैंसिल कर सकता है।
+                यदि ग्राहक ने पहले से भुगतान किया है, तो योग्य
+                रिफंड राशि हमारी रिफंड पॉलिसी के अनुसार प्रोसेस
+                की जाएगी।
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================
+             3. RETURN POLICY
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                3. रिटर्न पॉलिसी
+            </h2>
+
+            <p>
+                ग्राहक डिलीवरी की तारीख से
+                <strong>7 दिनों के भीतर</strong>
+                रिटर्न का अनुरोध कर सकते हैं।
+            </p>
+
+            <p>
+                निम्नलिखित परिस्थितियों में रिटर्न का अनुरोध
+                किया जा सकता है:
+            </p>
+
+            <ul>
+
+                <li>
+                    गलत प्रोडक्ट डिलीवर होने पर।
+                </li>
+
+                <li>
+                    ग्राहक द्वारा सही विकल्प चुनने के बावजूद गलत
+                    साइज या रंग डिलीवर होने पर।
+                </li>
+
+                <li>
+                    प्रोडक्ट डैमेज अवस्था में प्राप्त होने पर।
+                </li>
+
+                <li>
+                    ग्राहक द्वारा गलत साइज या रंग चुनने पर,
+                    प्रोडक्ट की पात्रता और BESTTIVE की स्वीकृति
+                    के अनुसार।
+                </li>
+
+            </ul>
+
+
+            <p>
+                सभी रिटर्न अनुरोध BESTTIVE द्वारा जांच और
+                स्वीकृति के बाद स्वीकार किए जाएंगे।
+            </p>
+
+
+            <!-- POINT 1 -->
+
+            <h3>
+                जांच के लिए प्रमाण
+            </h3>
+
+            <p>
+                डैमेज, गलत या विवादित प्रोडक्ट के मामले में
+                जांच के लिए ग्राहक से स्पष्ट फोटो या अनबॉक्सिंग
+                वीडियो मांगा जा सकता है।
+            </p>
+
+
+            <!-- POINT 2 -->
+
+            <h3>
+                प्रोडक्ट की रिटर्न स्थिति
+            </h3>
+
+            <p>
+                रिटर्न के लिए प्रोडक्ट अपनी मूल स्थिति में होना
+                चाहिए और उसे उपयोग, परिवर्तन या जानबूझकर डैमेज
+                नहीं किया गया होना चाहिए। जहां लागू हो, वहां
+                मूल पैकेजिंग, टैग, एक्सेसरीज और अन्य शामिल वस्तुएं
+                भी वापस करनी होंगी।
+            </p>
+
+
+            <!-- SHIPPING -->
+
+            <div class="important-box">
+
+                <strong>
+                    रिटर्न शिपिंग शुल्क:
+                </strong>
+
+                <br><br>
+
+                यदि ग्राहक की तरफ से गलती हुई है, जैसे गलत साइज,
+                गलत रंग चुनना या पसंद बदल जाना, तो लागू रिटर्न
+                शिपिंग शुल्क ग्राहक को देना होगा।
+
+                <br><br>
+
+                हालांकि, यदि BESTTIVE द्वारा गलत प्रोडक्ट,
+                ग्राहक के सही ऑर्डर के बावजूद गलत साइज या रंग
+                भेजा गया है, या प्रोडक्ट डैमेज अवस्था में प्राप्त
+                होता है, तो जांच और रिटर्न अनुरोध की स्वीकृति के
+                बाद लागू रिटर्न शिपिंग शुल्क BESTTIVE द्वारा
+                वहन किया जाएगा।
+
+            </div>
+
+
+            <!-- POINT 4 -->
+
+            <h3>
+                रिटर्न अनुरोध कैसे करें
+            </h3>
+
+            <p>
+                ग्राहक कैंसिलेशन, रिटर्न या रिफंड से संबंधित
+                सहायता के लिए वेबसाइट पर उपलब्ध संपर्क विकल्पों
+                के माध्यम से BESTTIVE Customer Support से संपर्क
+                कर सकते हैं। जांच के लिए ग्राहक से ऑर्डर की
+                जानकारी और आवश्यक प्रमाण मांगे जा सकते हैं।
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================
+             4. REFUND POLICY
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                4. रिफंड पॉलिसी
+            </h2>
+
+            <p>
+                निम्नलिखित परिस्थितियों में रिफंड लागू हो सकता है:
+            </p>
+
+            <ul>
+
+                <li>
+                    ऑर्डर किया गया प्रोडक्ट उपलब्ध न होने पर
+                    ऑर्डर कैंसिल किया गया हो।
+                </li>
+
+                <li>
+                    भुगतान किए गए ऑर्डर का कैंसिलेशन सफलतापूर्वक
+                    स्वीकृत हो गया हो।
+                </li>
+
+                <li>
+                    पात्र रिटर्न अनुरोध सफलतापूर्वक स्वीकृत और
+                    लागू रिटर्न प्रक्रिया के अनुसार पूरा हो गया हो।
+                </li>
+
+            </ul>
+
+
+            <!-- POINT 3 -->
+
+            <h3>
+                रिफंड कब शुरू किया जाएगा?
+            </h3>
+
+            <p>
+                स्वीकृत रिटर्न के मामले में, जहां लागू हो, रिटर्न
+                किया गया प्रोडक्ट प्राप्त और सत्यापित होने के बाद
+                रिफंड सामान्यतः शुरू किया जाएगा।
+            </p>
+
+            <p>
+                केवल रिटर्न अनुरोध भेजने या रिटर्न स्वीकृत होने
+                का मतलब यह नहीं है कि रिफंड तुरंत ग्राहक के खाते
+                में आ जाएगा।
+            </p>
+
+
+            <h3>
+                रिफंड प्रोसेसिंग समय
+            </h3>
+
+            <p>
+                रिफंड स्वीकृत और शुरू होने के बाद राशि को प्रोसेस
+                होने में लगभग
+                <strong>5–7 कार्यदिवस</strong>
+                लग सकते हैं।
+            </p>
+
+            <p>
+                ग्राहक के खाते में राशि दिखाई देने का समय बैंक,
+                पेमेंट प्रोवाइडर या मूल पेमेंट माध्यम पर निर्भर
+                कर सकता है।
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================
+             5. NON-RETURNABLE PRODUCTS
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                5. रिटर्न के लिए पात्र न होने वाले प्रोडक्ट
+            </h2>
+
+            <p>
+                कुछ प्रोडक्ट स्वच्छता, सुरक्षा, व्यक्तिगत
+                आवश्यकता, कस्टमाइजेशन या प्रोडक्ट की विशेष
+                प्रकृति के कारण रिटर्न के लिए पात्र नहीं हो सकते।
+            </p>
+
+
+            <h3>
+                ऐसे प्रोडक्ट के उदाहरण
+            </h3>
+
+            <ul>
+
+                <li>
+                    व्यक्तिगत या कस्टमाइज किए गए प्रोडक्ट, जैसे
+                    नाम वाली ज्वेलरी, कस्टमाइज गिफ्ट या ग्राहक के
+                    विशेष अनुरोध के अनुसार बनाए गए प्रोडक्ट।
+                </li>
+
+                <li>
+                    ऐसे प्रोडक्ट जिन्हें ग्राहक द्वारा डिलीवरी के
+                    बाद उपयोग किया गया हो, पहना गया हो, बदला गया
+                    हो या डैमेज किया गया हो।
+                </li>
+
+                <li>
+                    स्वच्छता से संबंधित ऐसे प्रोडक्ट जिनकी मूल
+                    सील या पैकेजिंग खोली जा चुकी हो, जहां लागू हो।
+                </li>
+
+                <li>
+                    ऐसे प्रोडक्ट जिन्हें संबंधित प्रोडक्ट पेज पर
+                    स्पष्ट रूप से
+                    <strong>"Non-Returnable"</strong>
+                    या
+                    <strong>"Final Sale"</strong>
+                    लिखा गया हो, जहां लागू हो।
+                </li>
+
+            </ul>
+
+
+            <div class="important-box">
+
+                <strong>महत्वपूर्ण अपवाद:</strong>
+
+                किसी प्रोडक्ट को Non-Returnable लिखने का मतलब यह
+                नहीं है कि ग्राहक किसी वास्तविक समस्या की शिकायत
+                नहीं कर सकता। यदि गलत प्रोडक्ट डिलीवर हुआ है,
+                प्रोडक्ट डैमेज अवस्था में मिला है, या BESTTIVE की
+                तरफ से कोई अन्य सत्यापित गलती हुई है, तो ग्राहक
+                जांच और उचित सहायता के लिए Customer Support से
+                संपर्क कर सकता है।
+
+            </div>
+
+
+            <p>
+                जहां संभव होगा, किसी भी रिटर्न प्रतिबंध की जानकारी
+                संबंधित प्रोडक्ट पेज पर स्पष्ट रूप से दी जाएगी।
+                BESTTIVE प्रोडक्ट की श्रेणी, प्रोडक्ट की स्थिति और
+                अनुरोध की परिस्थितियों के आधार पर रिटर्न की
+                पात्रता निर्धारित कर सकता है।
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================
+             6. IMPORTANT INFORMATION
+        ========================= -->
+
+        <section class="policy-card">
+
+            <h2>
+                6. महत्वपूर्ण जानकारी
+            </h2>
+
+            <ul>
+
+                <li>
+                    सभी कैंसिलेशन, रिटर्न और रिफंड अनुरोधों की
+                    जांच की जा सकती है।
+                </li>
+
+                <li>
+                    BESTTIVE उन अनुरोधों को स्वीकार या अस्वीकार
+                    करने का अधिकार रखता है जो लागू पॉलिसी की
+                    शर्तों को पूरा नहीं करते।
+                </li>
+
+                <li>
+                    रिफंड की पात्रता ऑर्डर की परिस्थितियों पर
+                    निर्भर कर सकती है।
+                </li>
+
+                <li>
+                    पेमेंट प्रोवाइडर और बैंकिंग सिस्टम के कारण
+                    प्रोसेसिंग समय अलग हो सकता है।
+                </li>
+
+            </ul>
+
+            <a
+                href="/"
+                class="back-button"
+            >
+                ← शॉपिंग जारी रखें
+            </a>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================
+         LANGUAGE SCRIPT
+    ========================= -->
+
+    <script>
+
+        function showEnglish() {
+
+            document
+                .querySelectorAll(".english-content")
+                .forEach(function(element) {
+
+                    element.style.display = "block";
+
+                });
+
+
+            document
+                .querySelectorAll(".hindi-content")
+                .forEach(function(element) {
+
+                    element.style.display = "none";
+
+                });
+
+
+            document
+                .getElementById("englishBtn")
+                .classList.add("active");
+
+
+            document
+                .getElementById("hindiBtn")
+                .classList.remove("active");
+
+        }
+
+
+
+        function showHindi() {
+
+            document
+                .querySelectorAll(".english-content")
+                .forEach(function(element) {
+
+                    element.style.display = "none";
+
+                });
+
+
+            document
+                .querySelectorAll(".hindi-content")
+                .forEach(function(element) {
+
+                    element.style.display = "block";
+
+                });
+
+
+            document
+                .getElementById("hindiBtn")
+                .classList.add("active");
+
+
+            document
+                .getElementById("englishBtn")
+                .classList.remove("active");
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

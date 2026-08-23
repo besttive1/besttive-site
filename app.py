@@ -113,6 +113,11 @@ def test_shiprocket():
     else:
         return "Shiprocket Connection Failed. Check terminal."
 
+@app.route("/return-refund-cancellation")
+def return_refund_cancellation():
+    return render_template(
+        "return_refund_cancellation.html"
+    )
 
 # 🔥 HOME PAGE (ONLY ONCE)
 @app.route("/")
