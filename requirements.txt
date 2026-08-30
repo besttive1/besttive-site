@@ -9,3 +9,4 @@ reportlab
 Flask-Migrate
 python-dotenv
 resend
+pywebpush

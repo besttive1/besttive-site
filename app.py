@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, session, flash
-import os, random, datetime
+from flask import Flask, render_template, request, redirect, session, flash, jsonify, send_from_directory
+import os, random, datetime, json
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -10,8 +10,12 @@ from flask_migrate import Migrate
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from pywebpush import webpush, WebPushException
 from dotenv import load_dotenv
-load_dotenv()
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"), override=False)
+
 from reportlab.platypus import (
     SimpleDocTemplate,
     Paragraph,
@@ -38,8 +42,19 @@ PAYU_KEY = "BGGPVO"
 PAYU_SALT = "Oh9axP7ltLTylwzSf7EU4iDQ4U2gxbT"
 PAYU_URL = "https://secure.payu.in/_payment"
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+database_url = (
+    os.environ.get("DATABASE_URL")
+    or os.environ.get("DB_URL")
+    or os.environ.get("POSTGRES_URL")
+)
+
+if database_url:
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["VAPID_PUBLIC_KEY"] = os.environ.get("VAPID_PUBLIC_KEY", "")
+app.config["VAPID_PRIVATE_KEY"] = os.environ.get("VAPID_PRIVATE_KEY", "")
+app.config["VAPID_SUBJECT"] = os.environ.get("VAPID_SUBJECT", "mailto:admin@besttive.com")
 
 cloudinary.config(
     cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
@@ -1072,7 +1087,8 @@ def admin_notifications():
 
     return render_template(
         "admin_notifications.html",
-        notifications=notifications
+        notifications=notifications,
+        vapid_public_key=app.config.get("VAPID_PUBLIC_KEY", "")
     )
 
 @app.route("/admin/notification/<int:id>")
@@ -1101,6 +1117,48 @@ def view_notification(id):
     )
 
     return redirect(target_url)
+
+@app.route("/service-worker.js")
+def service_worker():
+    return send_from_directory(
+        os.path.join(app.root_path, "static"),
+        "sw.js",
+        mimetype="application/javascript"
+    )
+
+@app.route("/admin/push/subscribe", methods=["POST"])
+def admin_push_subscribe():
+    if not session.get("admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json(silent=True) or {}
+    endpoint = (data.get("endpoint") or "").strip()
+    keys = data.get("keys") or {}
+    p256dh = (keys.get("p256dh") or "").strip()
+    auth = (keys.get("auth") or "").strip()
+
+    if not endpoint or not p256dh or not auth:
+        return jsonify({"error": "Missing push subscription data."}), 400
+
+    save_push_subscription(endpoint, p256dh, auth, request.user_agent or "")
+
+    return jsonify({"status": "subscribed"})
+
+@app.route("/admin/push/unsubscribe", methods=["POST"])
+def admin_push_unsubscribe():
+    if not session.get("admin"):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json(silent=True) or {}
+    endpoint = (data.get("endpoint") or "").strip()
+
+    if endpoint:
+        subscription = PushSubscription.query.filter_by(endpoint=endpoint).first()
+        if subscription:
+            subscription.is_active = False
+            db.session.commit()
+
+    return jsonify({"status": "unsubscribed"})
 
 # DB (SQLite)
 
@@ -1503,6 +1561,101 @@ class Notification(db.Model):
     )
 
 
+class PushSubscription(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    endpoint = db.Column(db.String(500), unique=True, nullable=False)
+    p256dh = db.Column(db.String(255), nullable=False)
+    auth = db.Column(db.String(255), nullable=False)
+    user_agent = db.Column(db.String(255), default="")
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    last_seen_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+
+def get_notification_target_url(notification_type):
+    redirect_map = {
+        "order": "/admin/orders",
+        "payment": "/admin/payment",
+        "order_status": "/admin/orders",
+        "complaint": "/admin/complaints",
+        "refund": "/admin/refunds",
+        "inventory": "/admin/inventory",
+        "general": "/admin/notifications"
+    }
+    return redirect_map.get(notification_type, "/admin/notifications")
+
+
+def save_push_subscription(endpoint, p256dh, auth, user_agent=""):
+    if not endpoint or not p256dh or not auth:
+        return None
+
+    subscription = PushSubscription.query.filter_by(endpoint=endpoint).first()
+
+    if subscription:
+        subscription.p256dh = p256dh
+        subscription.auth = auth
+        subscription.user_agent = user_agent
+        subscription.is_active = True
+        subscription.last_seen_at = datetime.datetime.utcnow()
+        db.session.commit()
+        return subscription
+
+    subscription = PushSubscription(
+        endpoint=endpoint,
+        p256dh=p256dh,
+        auth=auth,
+        user_agent=user_agent,
+        is_active=True,
+        last_seen_at=datetime.datetime.utcnow()
+    )
+    db.session.add(subscription)
+    db.session.commit()
+    return subscription
+
+
+def send_push_notification_to_admins(notification):
+    if not app.config.get("VAPID_PRIVATE_KEY"):
+        return 0
+
+    subscriptions = PushSubscription.query.filter_by(is_active=True).all()
+    if not subscriptions:
+        return 0
+
+    payload = {
+        "title": notification.title,
+        "body": notification.message,
+        "tag": notification.notification_type,
+        "url": f"/admin/notification/{notification.id}"
+    }
+
+    sent_count = 0
+    for subscription in subscriptions:
+        try:
+            webpush(
+                subscription_info={
+                    "endpoint": subscription.endpoint,
+                    "keys": {
+                        "p256dh": subscription.p256dh,
+                        "auth": subscription.auth
+                    }
+                },
+                data=json.dumps(payload),
+                vapid_private_key=app.config["VAPID_PRIVATE_KEY"],
+                vapid_claims={
+                    "sub": app.config.get("VAPID_SUBJECT", "mailto:admin@besttive.com")
+                }
+            )
+            subscription.last_seen_at = datetime.datetime.utcnow()
+            sent_count += 1
+        except Exception:
+            subscription.is_active = False
+        finally:
+            db.session.add(subscription)
+
+    db.session.commit()
+    return sent_count
+
+
 def create_admin_notification(title, message, notification_type="general"):
     """Create one admin notification per unique event payload."""
     title = (title or "").strip()
@@ -1528,6 +1681,7 @@ def create_admin_notification(title, message, notification_type="general"):
 
     db.session.add(notification)
     db.session.commit()
+    send_push_notification_to_admins(notification)
 
     return notification
 
@@ -2092,6 +2246,10 @@ def admin_dashboard():
         .all()
     )
 
+    unread_notifications = Notification.query.filter_by(
+        is_read=False
+    ).count()
+
     return render_template(
         "admin_dashboard.html",
 
@@ -2107,7 +2265,9 @@ def admin_dashboard():
 
         pending_orders=pending_orders,
 
-        recent_orders=recent_orders
+        recent_orders=recent_orders,
+        unread_notifications=unread_notifications,
+        vapid_public_key=app.config.get("VAPID_PUBLIC_KEY", "")
     )
 
 # ==================================================

@@ -77,6 +77,35 @@
             background: #4b0082;
         }
 
+        .notification-badge {
+            display: inline-block;
+            min-width: 20px;
+            padding: 2px 7px;
+            margin-left: 8px;
+            border-radius: 999px;
+            background: #ff5a5f;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .notification-toggle-btn {
+            width: calc(100% - 30px);
+            margin: 10px 15px 0;
+            padding: 12px 14px;
+            border: 1px solid #7b3db8;
+            border-radius: 10px;
+            background: #4b0082;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .notification-toggle-btn:hover {
+            background: #5a0fa5;
+        }
 
         /* =========================
            MAIN CONTENT
@@ -613,7 +642,14 @@
 
     <a href="/admin/notifications">
     🔔 Notifications
+    {% if unread_notifications %}
+        <span class="notification-badge">{{ unread_notifications }}</span>
+    {% endif %}
     </a>
+
+    <button id="enableNotificationsBtn" class="notification-toggle-btn" type="button">
+        🔔 Enable Notifications
+    </button>
 
     <a href="/">
         🌐 Website
@@ -986,6 +1022,84 @@ function toggleSidebar() {
 
     overlay.classList.toggle("active");
 
+}
+
+function urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const normalized = (base64String + padding)
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+    const raw = window.atob(normalized);
+    const output = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; ++i) {
+        output[i] = raw.charCodeAt(i);
+    }
+    return output;
+}
+
+async function enableBrowserNotifications() {
+    if (!('Notification' in window)) {
+        alert('This browser does not support web notifications.');
+        return;
+    }
+
+    if (Notification.permission === 'denied') {
+        alert('Browser notification permission was denied. Please enable it in your browser settings for BESTTIVE.');
+        return;
+    }
+
+    if (Notification.permission === 'default') {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            return;
+        }
+    }
+
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        alert('Push notifications are not supported in this browser.');
+        return;
+    }
+
+    const vapidPublicKey = '{{ vapid_public_key }}';
+    if (!vapidPublicKey) {
+        console.error('VAPID_PUBLIC_KEY is empty. Push notifications are not configured.');
+        alert('Browser push is not configured in this local environment yet.');
+        return;
+    }
+
+    try {
+        const registration = await navigator.serviceWorker.register('/service-worker.js');
+        await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+        });
+
+        console.log('Push subscription created successfully:', subscription.endpoint);
+
+        await fetch('/admin/push/subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(subscription.toJSON())
+        });
+
+        const button = document.getElementById('enableNotificationsBtn');
+        if (button) {
+            button.textContent = '✅ Notifications Enabled';
+            button.disabled = true;
+        }
+    } catch (error) {
+        console.error('Push subscription failed:', error);
+        alert('Failed to enable browser notifications. Please check browser support or permission settings.');
+    }
+}
+
+const enableButton = document.getElementById('enableNotificationsBtn');
+if (enableButton) {
+    enableButton.addEventListener('click', enableBrowserNotifications);
 }
 
 </script>
