@@ -649,9 +649,13 @@ def qr_payment_success():
 
     assign_tracking_id(new_order)
 
-    # =========================
-    # DECREASE PRODUCT STOCK
-    # =========================
+    db.session.commit()
+
+    create_admin_notification(
+        "New Customer Order",
+        f"New order #{new_order.id} for '{new_order.product_name}' was placed by {user.name or 'a customer'}.",
+        "order"
+    )
 
     previous_stock = product.stock
     product.stock -= 1
@@ -672,6 +676,7 @@ def qr_payment_success():
     db.session.add(inventory_history)
 
     db.session.commit()
+    create_stock_notification(product)
 
     # =========================
     # PAYMENT SUCCESS PAGE
@@ -786,6 +791,12 @@ def payment_success():
 
         db.session.commit()
 
+        if cart_items:
+            for item in cart_items:
+                product = Product.query.get(item.product_id)
+                if product:
+                    create_stock_notification(product)
+
         return render_template(
             "payment_success.html",
             customer_name=customer_name,
@@ -864,6 +875,14 @@ def payment_success():
 
     assign_tracking_id(new_order)
 
+    db.session.commit()
+
+    create_admin_notification(
+        "New Customer Order",
+        f"New order #{new_order.id} for '{new_order.product_name}' was placed by {customer_name or 'a customer'}.",
+        "order"
+    )
+
     # =========================
     # DECREASE PRODUCT STOCK
     # =========================
@@ -880,6 +899,7 @@ def payment_success():
 
     db.session.add(inventory_history)
     db.session.commit()
+    create_stock_notification(product)
 
     return render_template(
         "payment_success.html",
@@ -970,6 +990,12 @@ def contact():
 
         db.session.commit()
 
+        create_admin_notification(
+            "New Customer Complaint",
+            f"New customer message from {name} ({email}): {message[:180]}",
+            "complaint"
+        )
+
         return render_template(
             "contact.html",
             success="Your message has been sent successfully!"
@@ -1029,6 +1055,53 @@ def delete_complaints():
     db.session.commit()
 
     return redirect("/admin/complaints")
+
+# ==========================================
+# ADMIN NOTIFICATIONS
+# ==========================================
+
+@app.route("/admin/notifications")
+def admin_notifications():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    notifications = Notification.query.order_by(
+        Notification.id.desc()
+    ).all()
+
+    return render_template(
+        "admin_notifications.html",
+        notifications=notifications
+    )
+
+@app.route("/admin/notification/<int:id>")
+def view_notification(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    notification = Notification.query.get_or_404(id)
+    notification.is_read = True
+    db.session.commit()
+
+    redirect_map = {
+        "order": "/admin/orders",
+        "payment": "/admin/payment",
+        "order_status": "/admin/orders",
+        "complaint": "/admin/complaints",
+        "refund": "/admin/refunds",
+        "inventory": "/admin/inventory",
+        "general": "/admin/notifications"
+    }
+
+    target_url = redirect_map.get(
+        notification.notification_type,
+        "/admin/notifications"
+    )
+
+    return redirect(target_url)
+
 # DB (SQLite)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -1392,7 +1465,95 @@ class ContactMessage(db.Model):
     email = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(20), default="")
     message = db.Column(db.Text, nullable=False)
-    
+
+# ==========================================
+# ADMIN NOTIFICATIONS
+# ==========================================
+
+class Notification(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    title = db.Column(
+        db.String(200),
+        nullable=False
+    )
+
+    message = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    notification_type = db.Column(
+        db.String(50),
+        default="general"
+    )
+
+    is_read = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.utcnow
+    )
+
+
+def create_admin_notification(title, message, notification_type="general"):
+    """Create one admin notification per unique event payload."""
+    title = (title or "").strip()
+    message = (message or "").strip()
+
+    if not title or not message:
+        return None
+
+    existing_notification = Notification.query.filter_by(
+        title=title,
+        message=message,
+        notification_type=notification_type
+    ).first()
+
+    if existing_notification:
+        return existing_notification
+
+    notification = Notification(
+        title=title,
+        message=message,
+        notification_type=notification_type
+    )
+
+    db.session.add(notification)
+    db.session.commit()
+
+    return notification
+
+
+def create_stock_notification(product):
+    """Create alerts only when inventory crosses low-stock or out-of-stock thresholds."""
+    if product is None:
+        return None
+
+    if product.stock <= 0:
+        return create_admin_notification(
+            "Out of Stock",
+            f"Product '{product.name}' is out of stock.",
+            "inventory"
+        )
+
+    if product.stock <= 3:
+        return create_admin_notification(
+            "Low Stock",
+            f"Product '{product.name}' is running low: only {product.stock} left in stock.",
+            "inventory"
+        )
+
+    return None
+
+
 class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(500), nullable=False)
@@ -2678,6 +2839,8 @@ def edit_product(id):
 
             db.session.add(inventory_history)
 
+        db.session.commit()
+        create_stock_notification(product)
 
         # ==========================================
         # CATEGORY + SUBCATEGORY
@@ -2885,7 +3048,6 @@ def update_refund_status(order_id):
 
        order.refund_status = refund_status
 
-        # Processing start time
     if refund_status == "Processing":
 
         if order.refund_processing_at is None:
@@ -2920,8 +3082,13 @@ def update_refund_status(order_id):
         )
 
     db.session.commit()
-    
-    
+
+    create_admin_notification(
+        "Refund Status Updated",
+        f"Refund status for order #{order.id} is now {order.refund_status}.",
+        "refund"
+    )
+
     return redirect("/admin/refunds")
 
 # ==================================================
@@ -3028,6 +3195,12 @@ def update_order_status(id):
         # Save all changes
         db.session.commit()
 
+        create_admin_notification(
+            "Order Status Updated",
+            f"Order #{order.id} status changed to {new_status}.",
+            "order_status"
+        )
+
         flash("Order Status Updated Successfully!")
 
 
@@ -3073,6 +3246,12 @@ def update_payment_status(id):
         flash("Payment marked as Pending.")
 
     db.session.commit()
+
+    create_admin_notification(
+        "Payment Status Updated",
+        f"Payment status for order #{order.id} is now {payment_status}.",
+        "payment"
+    )
 
     return redirect(request.referrer or "/admin/payment")
     
@@ -3250,6 +3429,12 @@ def cancel_order(order_id):
         # =========================
 
         db.session.commit()
+
+        create_admin_notification(
+            "Order Status Updated",
+            f"Order #{order.id} status changed to Cancelled.",
+            "order_status"
+        )
 
 
     # =========================

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Notifications | BESTTIVE</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            margin: 0;
+            color: #4b0082;
+            font-size: 28px;
+        }
+
+        .back {
+            text-decoration: none;
+            color: #4b0082;
+            font-weight: bold;
+        }
+
+        .notification-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .notification-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            border-left: 4px solid #4b0082;
+            transition: transform 0.15s ease;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-1px);
+        }
+
+        .notification-card.unread {
+            background: #faf7ff;
+        }
+
+        .notification-title {
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .notification-message {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .notification-time {
+            margin-top: 10px;
+            color: #888;
+            font-size: 12px;
+        }
+
+        .unread-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 3px 7px;
+            border-radius: 10px;
+            background: #4b0082;
+            color: white;
+            font-size: 10px;
+        }
+
+        .empty {
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 12px;
+            color: #777;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                width: 94%;
+                margin: 25px auto;
+            }
+
+            .header {
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+
+            .notification-card {
+                padding: 16px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <div class="header">
+
+        <h1>
+            🔔 Notifications
+        </h1>
+
+        <a href="/admin/dashboard"
+           class="back">
+            ← Dashboard
+        </a>
+
+    </div>
+
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+            <a href="{{ url_for('view_notification', id=notification.id) }}"
+               class="notification-link">
+
+                <div class="notification-card
+                    {% if not notification.is_read %}
+                        unread
+                    {% endif %}
+                ">
+
+                    <div class="notification-title">
+
+                        {{ notification.title }}
+
+                        {% if not notification.is_read %}
+
+                            <span class="unread-badge">
+                                NEW
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="notification-message">
+
+                        {{ notification.message }}
+
+                    </div>
+
+
+                    <div class="notification-time">
+
+                        {{ notification.created_at }}
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+
+            🔔 No notifications yet.
+
+        </div>
+
+    {% endif %}
+
+
+</div>
+
+</body>
+
+</html>
