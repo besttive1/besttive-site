@@ -19,27 +19,31 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            background: #f5f6fa;
             color: #222;
         }
 
         .container {
             width: 92%;
-            max-width: 900px;
-            margin: 40px auto;
+            max-width: 1000px;
+            margin: 35px auto;
         }
+
+        /* =========================
+           HEADER
+           ========================= */
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
+            margin-bottom: 22px;
         }
 
         h1 {
             margin: 0;
             color: #4b0082;
-            font-size: 28px;
+            font-size: 30px;
         }
 
         .back {
@@ -48,43 +52,137 @@
             font-weight: bold;
         }
 
-        .notification-link {
-            display: block;
-            text-decoration: none;
-            color: inherit;
+        /* =========================
+           TOOLBAR
+           ========================= */
+
+        .toolbar {
+            background: white;
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+            box-shadow: 0 4px 16px rgba(0,0,0,.07);
         }
+
+        .select-all-box {
+            display: none;
+            align-items: center;
+            gap: 9px;
+            margin-right: auto;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .select-all-box input,
+        .notification-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #4b0082;
+        }
+
+        /* =========================
+           DELETE BUTTON
+           ========================= */
+
+        .delete-btn {
+            border: none;
+            border-radius: 9px;
+            padding: 10px 18px;
+            background: #4b0082;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #4b0082;
+            transform: translateY(-1px);
+        }
+
+        .delete-btn:disabled {
+            background: #4b0082;
+            color: white;
+            opacity: .45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* =========================
+           DELETE MODE
+           ========================= */
+
+        .delete-mode .select-all-box {
+            display: flex;
+        }
+
+        .delete-mode .notification-checkbox {
+            display: block;
+        }
+
+        /* =========================
+           NOTIFICATION CARD
+           ========================= */
 
         .notification-card {
             background: white;
-            padding: 20px;
-            border-radius: 12px;
+            padding: 19px;
+            border-radius: 14px;
             margin-bottom: 14px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 16px rgba(0,0,0,.07);
             border-left: 4px solid #4b0082;
-            transition: transform 0.15s ease;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            transition: .18s ease;
         }
 
         .notification-card:hover {
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,.10);
         }
 
         .notification-card.unread {
             background: #faf7ff;
         }
 
+        .notification-checkbox {
+            display: none;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .notification-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
         .notification-title {
             font-size: 17px;
             font-weight: bold;
             margin-bottom: 7px;
+            color: #171717;
         }
 
         .notification-message {
             color: #555;
             line-height: 1.5;
+            font-size: 15px;
         }
 
         .notification-time {
-            margin-top: 10px;
+            margin-top: 11px;
             color: #888;
             font-size: 12px;
         }
@@ -92,39 +190,86 @@
         .unread-badge {
             display: inline-block;
             margin-left: 8px;
-            padding: 3px 7px;
-            border-radius: 10px;
+            padding: 3px 8px;
+            border-radius: 20px;
             background: #4b0082;
             color: white;
             font-size: 10px;
+            vertical-align: middle;
         }
+
+        /* =========================
+           EMPTY
+           ========================= */
 
         .empty {
             background: white;
-            padding: 40px;
+            padding: 55px 20px;
             text-align: center;
-            border-radius: 12px;
+            border-radius: 14px;
             color: #777;
+            box-shadow: 0 4px 16px rgba(0,0,0,.06);
         }
+
+        .empty-icon {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            font-size: 17px;
+        }
+
+        /* =========================
+           MOBILE
+           ========================= */
 
         @media (max-width: 600px) {
 
             .container {
                 width: 94%;
-                margin: 25px auto;
+                max-width: 1000px;
+                margin: 22px auto;
             }
 
             .header {
-                align-items: flex-start;
-                gap: 15px;
+                align-items: center;
+                gap: 12px;
             }
 
             h1 {
                 font-size: 23px;
             }
 
+            .back {
+                font-size: 13px;
+                white-space: nowrap;
+            }
+
+            .toolbar {
+                padding: 12px 14px;
+            }
+
+            .delete-btn {
+                padding: 9px 14px;
+                font-size: 13px;
+            }
+
             .notification-card {
-                padding: 16px;
+                padding: 15px;
+                gap: 11px;
+            }
+
+            .notification-title {
+                font-size: 15px;
+            }
+
+            .notification-message {
+                font-size: 14px;
+            }
+
+            .notification-time {
+                font-size: 11px;
             }
 
         }
@@ -136,8 +281,13 @@
 
 <body>
 
-<div class="container">
 
+<div class="container" id="notificationContainer">
+
+
+    <!-- =========================
+         HEADER
+         ========================= -->
 
     <div class="header">
 
@@ -155,28 +305,129 @@
 
     {% if notifications %}
 
+
+    <!-- =========================
+         DELETE FORM
+         ========================= -->
+
+    <form
+        id="notificationForm"
+        action="/admin/delete-notifications"
+        method="POST"
+    >
+
+
+        <div class="toolbar">
+
+
+            <!-- SELECT ALL -->
+
+            <label
+                class="select-all-box"
+                id="selectAllBox"
+            >
+
+                <input
+                    type="checkbox"
+                    id="selectAll"
+                >
+
+                <span>Select All</span>
+
+            </label>
+
+
+            <!-- DELETE -->
+
+            <button
+                type="button"
+                id="deleteBtn"
+                class="delete-btn"
+            >
+                Delete
+            </button>
+
+
+        </div>
+
+
+        <!-- =========================
+             NOTIFICATIONS
+             ========================= -->
+
         {% for notification in notifications %}
 
-            <a href="{{ url_for('view_notification', id=notification.id) }}"
-               class="notification-link">
 
-                <div class="notification-card
+        <div class="notification-card
                     {% if not notification.is_read %}
-                        unread
-                    {% endif %}
-                ">
+                    unread
+                    {% endif %}">
+
+
+            <!-- CHECKBOX -->
+
+            <input
+                type="checkbox"
+                class="notification-checkbox"
+                name="notification_ids"
+                value="{{ notification.id }}"
+            >
+
+
+            <div class="notification-content">
+
+
+                <a
+                    href="{{ url_for('view_notification', id=notification.id) }}"
+                    class="notification-link"
+                >
+
 
                     <div class="notification-title">
 
-                        {{ notification.title }}
 
-                        {% if not notification.is_read %}
+                        {% if notification.notification_type == "order" %}
 
-                            <span class="unread-badge">
-                                NEW
-                            </span>
+                            🛒
+
+                        {% elif notification.notification_type == "order_status" %}
+
+                            📦
+
+                        {% elif notification.notification_type == "payment" %}
+
+                            💳
+
+                        {% elif notification.notification_type == "refund" %}
+
+                            💰
+
+                        {% elif notification.notification_type == "inventory" %}
+
+                            📦
+
+                        {% elif notification.notification_type == "complaint" %}
+
+                            ⚠️
+
+                        {% else %}
+
+                            🔔
 
                         {% endif %}
+
+
+                        {{ notification.title }}
+
+
+                        {% if notification.is_new %}
+
+                        <span class="unread-badge">
+                            NEW
+                        </span>
+
+                        {% endif %}
+
 
                     </div>
 
@@ -190,28 +441,265 @@
 
                     <div class="notification-time">
 
-                        {{ notification.created_at }}
+
+                        {% if notification.display_created_at %}
+
+                            {{ notification.display_created_at.strftime("%d %b %Y, %I:%M %p") }}
+                            IST
+
+                        {% else %}
+
+                            Time unavailable
+
+                        {% endif %}
+
 
                     </div>
 
-                </div>
 
-            </a>
+                </a>
+
+
+            </div>
+
+
+        </div>
+
 
         {% endfor %}
 
+
+    </form>
+
+
     {% else %}
 
-        <div class="empty">
 
-            🔔 No notifications yet.
+    <!-- =========================
+         EMPTY
+         ========================= -->
 
+    <div class="empty">
+
+        <div class="empty-icon">
+            🔔
         </div>
+
+        <div class="empty-text">
+            No notifications yet.
+        </div>
+
+    </div>
+
 
     {% endif %}
 
 
 </div>
+
+
+<!-- =========================
+     JAVASCRIPT
+     ========================= -->
+
+<script>
+
+    const container =
+        document.getElementById("notificationContainer");
+
+    const form =
+        document.getElementById("notificationForm");
+
+    const deleteBtn =
+        document.getElementById("deleteBtn");
+
+    const selectAll =
+        document.getElementById("selectAll");
+
+    const checkboxes =
+        document.querySelectorAll(".notification-checkbox");
+
+
+    let deleteMode = false;
+
+
+    /* =========================
+       START DELETE MODE
+       ========================= */
+
+    deleteBtn.addEventListener("click", function () {
+
+
+        /* First click:
+           Open delete mode
+        */
+
+        if (!deleteMode) {
+
+            deleteMode = true;
+
+            container.classList.add("delete-mode");
+
+            selectAll.checked = false;
+
+            deleteBtn.type = "submit";
+
+            deleteBtn.disabled = true;
+
+            return;
+
+        }
+
+
+        /* If already in delete mode
+           and nothing selected
+        */
+
+        const checked =
+            document.querySelectorAll(
+                ".notification-checkbox:checked"
+            ).length;
+
+
+        if (checked === 0) {
+
+            return;
+
+        }
+
+    });
+
+
+    /* =========================
+       SELECT ALL
+       ========================= */
+
+    if (selectAll) {
+
+        selectAll.addEventListener("change", function () {
+
+
+            checkboxes.forEach(function (checkbox) {
+
+                checkbox.checked =
+                    selectAll.checked;
+
+            });
+
+
+            updateDeleteButton();
+
+        });
+
+    }
+
+
+    /* =========================
+       INDIVIDUAL CHECKBOX
+       ========================= */
+
+    checkboxes.forEach(function (checkbox) {
+
+
+        checkbox.addEventListener("change", function () {
+
+
+            const checkedCount =
+                document.querySelectorAll(
+                    ".notification-checkbox:checked"
+                ).length;
+
+
+            if (
+                checkedCount === checkboxes.length &&
+                checkboxes.length > 0
+            ) {
+
+                selectAll.checked = true;
+
+            } else {
+
+                selectAll.checked = false;
+
+            }
+
+
+            updateDeleteButton();
+
+        });
+
+    });
+
+
+    /* =========================
+       UPDATE DELETE BUTTON
+       ========================= */
+
+    function updateDeleteButton() {
+
+
+        if (!deleteMode) {
+
+            return;
+
+        }
+
+
+        const checked =
+            document.querySelectorAll(
+                ".notification-checkbox:checked"
+            ).length;
+
+
+        deleteBtn.disabled =
+            checked === 0;
+
+    }
+
+
+    /* =========================
+       CONFIRM DELETE
+       ========================= */
+
+    if (form) {
+
+        form.addEventListener("submit", function (event) {
+
+
+            const checked =
+                document.querySelectorAll(
+                    ".notification-checkbox:checked"
+                ).length;
+
+
+            if (checked === 0) {
+
+                event.preventDefault();
+
+                return;
+
+            }
+
+
+            const confirmed = confirm(
+                "Are you sure you want to delete " +
+                checked +
+                " selected notification(s)?"
+            );
+
+
+            if (!confirmed) {
+
+                event.preventDefault();
+
+            }
+
+        });
+
+    }
+
+</script>
+
 
 </body>
 

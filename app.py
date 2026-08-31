@@ -1085,11 +1085,52 @@ def admin_notifications():
         Notification.id.desc()
     ).all()
 
+    now_utc = datetime.datetime.utcnow()
+
+    for notification in notifications:
+
+        if notification.created_at:
+
+            age = now_utc - notification.created_at
+
+            notification.is_new = age <= datetime.timedelta(hours=24)
+
+            notification.display_created_at = (
+                notification.created_at
+                + datetime.timedelta(hours=5, minutes=30)
+            )
+
+        else:
+
+            notification.is_new = False
+            notification.display_created_at = None
+
     return render_template(
         "admin_notifications.html",
         notifications=notifications,
         vapid_public_key=app.config.get("VAPID_PUBLIC_KEY", "")
     )
+
+@app.route("/admin/delete-notifications", methods=["POST"])
+def delete_notifications():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    notification_ids = request.form.getlist("notification_ids")
+
+    if notification_ids:
+
+        notifications = Notification.query.filter(
+            Notification.id.in_(notification_ids)
+        ).all()
+
+        for notification in notifications:
+            db.session.delete(notification)
+
+        db.session.commit()
+
+    return redirect("/admin/notifications")
 
 @app.route("/admin/notification/<int:id>")
 def view_notification(id):
