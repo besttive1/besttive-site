@@ -91,20 +91,15 @@
             vertical-align: middle;
         }
 
-        .notification-toggle-btn {
-            width: calc(100% - 30px);
-            margin: 10px 15px 0;
-            padding: 12px 14px;
-            border: 1px solid #7b3db8;
-            border-radius: 10px;
-            background: #4b0082;
-            color: white;
-            font-weight: 600;
+        .notification-bell {
+            display: inline-block;
             cursor: pointer;
+            margin-right: 4px;
+            transition: transform 0.15s ease;
         }
 
-        .notification-toggle-btn:hover {
-            background: #5a0fa5;
+        .notification-bell:hover {
+            transform: scale(1.15);
         }
 
         /* =========================
@@ -641,15 +636,25 @@
     </a>
 
     <a href="/admin/notifications">
-    🔔 Notifications
-    {% if unread_notifications %}
-        <span class="notification-badge">{{ unread_notifications }}</span>
-    {% endif %}
-    </a>
 
-    <button id="enableNotificationsBtn" class="notification-toggle-btn" type="button">
-        🔔 Enable Notifications
-    </button>
+    <span
+        id="notificationBell"
+        class="notification-bell"
+        onclick="toggleBrowserNotifications(event)"
+        title="Enable Notifications"
+    >
+        🔔
+    </span>
+
+    Notifications
+
+    {% if unread_notifications %}
+        <span class="notification-badge">
+            {{ unread_notifications }}
+        </span>
+    {% endif %}
+
+    </a>
 
     <a href="/">
         🌐 Website
@@ -1038,68 +1043,274 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 async function enableBrowserNotifications() {
+
     if (!('Notification' in window)) {
         alert('This browser does not support web notifications.');
         return;
     }
 
     if (Notification.permission === 'denied') {
-        alert('Browser notification permission was denied. Please enable it in your browser settings for BESTTIVE.');
+        alert(
+            'Browser notification permission was denied. ' +
+            'Please enable it in your browser settings for BESTTIVE.'
+        );
         return;
     }
 
     if (Notification.permission === 'default') {
-        const permission = await Notification.requestPermission();
+
+        const permission =
+            await Notification.requestPermission();
+
         if (permission !== 'granted') {
             return;
         }
     }
 
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        alert('Push notifications are not supported in this browser.');
+    if (
+        !('serviceWorker' in navigator) ||
+        !('PushManager' in window)
+    ) {
+        alert(
+            'Push notifications are not supported in this browser.'
+        );
         return;
     }
 
-    const vapidPublicKey = '{{ vapid_public_key }}';
+    const vapidPublicKey =
+        '{{ vapid_public_key }}';
+
     if (!vapidPublicKey) {
-        console.error('VAPID_PUBLIC_KEY is empty. Push notifications are not configured.');
-        alert('Browser push is not configured in this local environment yet.');
+
+        console.error(
+            'VAPID_PUBLIC_KEY is empty.'
+        );
+
+        alert(
+            'Browser push is not configured.'
+        );
+
         return;
     }
 
     try {
-        const registration = await navigator.serviceWorker.register('/service-worker.js');
+
+        const registration =
+            await navigator.serviceWorker.register(
+                '/service-worker.js'
+            );
+
         await navigator.serviceWorker.ready;
-        const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
-        });
 
-        console.log('Push subscription created successfully:', subscription.endpoint);
 
-        await fetch('/admin/push/subscribe', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(subscription.toJSON())
-        });
+        let subscription =
+            await registration.pushManager.getSubscription();
 
-        const button = document.getElementById('enableNotificationsBtn');
-        if (button) {
-            button.textContent = '✅ Notifications Enabled';
-            button.disabled = true;
+
+        /* =========================
+           CREATE SUBSCRIPTION
+           ========================= */
+
+        if (!subscription) {
+
+            subscription =
+                await registration.pushManager.subscribe({
+
+                    userVisibleOnly: true,
+
+                    applicationServerKey:
+                        urlBase64ToUint8Array(
+                            vapidPublicKey
+                        )
+                });
         }
+
+
+        /* =========================
+           SAVE SUBSCRIPTION
+           ========================= */
+
+        await fetch(
+            '/admin/push/subscribe',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type':
+                        'application/json',
+
+                    'X-Requested-With':
+                        'XMLHttpRequest'
+                },
+
+                body:
+                    JSON.stringify(
+                        subscription.toJSON()
+                    )
+            }
+        );
+
+
+        updateNotificationBell(true);
+
+
+        console.log(
+            'Push notifications enabled.'
+        );
+
+
     } catch (error) {
-        console.error('Push subscription failed:', error);
-        alert('Failed to enable browser notifications. Please check browser support or permission settings.');
+
+        console.error(
+            'Push subscription failed:',
+            error
+        );
+
+        alert(
+            'Failed to enable browser notifications.'
+        );
     }
 }
 
-const enableButton = document.getElementById('enableNotificationsBtn');
-if (enableButton) {
-    enableButton.addEventListener('click', enableBrowserNotifications);
+async function disableBrowserNotifications() {
+
+    try {
+
+        const registration =
+            await navigator.serviceWorker.ready;
+
+
+        const subscription =
+            await registration.pushManager.getSubscription();
+
+
+        if (!subscription) {
+
+            updateNotificationBell(false);
+
+            return;
+        }
+
+
+        const endpoint =
+            subscription.endpoint;
+
+
+        /* =========================
+           REMOVE FROM SERVER
+           ========================= */
+
+        await fetch(
+            '/admin/push/unsubscribe',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type':
+                        'application/json',
+
+                    'X-Requested-With':
+                        'XMLHttpRequest'
+                },
+
+                body: JSON.stringify({
+                    endpoint: endpoint
+                })
+            }
+        );
+
+
+        /* =========================
+           UNSUBSCRIBE BROWSER
+           ========================= */
+
+        await subscription.unsubscribe();
+
+
+        updateNotificationBell(false);
+
+
+        console.log(
+            'Push notifications disabled.'
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            'Push unsubscribe failed:',
+            error
+        );
+
+        alert(
+            'Failed to disable notifications.'
+        );
+    }
+}
+
+async function toggleBrowserNotifications(event) {
+
+    event.preventDefault();
+    event.stopPropagation();
+
+
+    const bell =
+        document.getElementById(
+            'notificationBell'
+        );
+
+
+    if (!bell) {
+        return;
+    }
+
+
+    const registration =
+        await navigator.serviceWorker.ready;
+
+
+    const subscription =
+        await registration.pushManager.getSubscription();
+
+
+    if (subscription) {
+
+        await disableBrowserNotifications();
+
+    } else {
+
+        await enableBrowserNotifications();
+
+    }
+}
+
+function updateNotificationBell(enabled) {
+
+    const bell =
+        document.getElementById(
+            'notificationBell'
+        );
+
+
+    if (!bell) {
+        return;
+    }
+
+
+    if (enabled) {
+
+        bell.textContent = '🔔';
+
+        bell.title =
+            'Notifications enabled — click to disable';
+
+    } else {
+
+        bell.textContent = '🔕';
+
+        bell.title =
+            'Notifications disabled — click to enable';
+    }
 }
 
 </script>

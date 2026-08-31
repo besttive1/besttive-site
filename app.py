@@ -1185,21 +1185,23 @@ def admin_push_subscribe():
 
     return jsonify({"status": "subscribed"})
 
+
 @app.route("/admin/push/unsubscribe", methods=["POST"])
 def admin_push_unsubscribe():
     if not session.get("admin"):
-        return jsonify({"error": "Unauthorized"}), 401
+        return {"success": False}, 401
 
     data = request.get_json(silent=True) or {}
-    endpoint = (data.get("endpoint") or "").strip()
-
+    endpoint = data.get("endpoint")
     if endpoint:
-        subscription = PushSubscription.query.filter_by(endpoint=endpoint).first()
-        if subscription:
-            subscription.is_active = False
-            db.session.commit()
 
-    return jsonify({"status": "unsubscribed"})
+        subscription = PushSubscription.query.filter_by(
+            endpoint=endpoint
+        ).first()
+        if subscription:
+            db.session.delete(subscription)
+            db.session.commit()
+    return {"success": True}
 
 # DB (SQLite)
 

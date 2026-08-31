@@ -23,6 +23,10 @@
             color: #222;
         }
 
+        /* =========================
+           MAIN CONTAINER
+           ========================= */
+
         .container {
             width: 92%;
             max-width: 1000px;
@@ -61,24 +65,29 @@
             border-radius: 14px;
             padding: 14px 18px;
             margin-bottom: 18px;
+
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 15px;
+
             box-shadow: 0 4px 16px rgba(0,0,0,.07);
         }
 
+        /* Hidden until Delete mode */
+
         .select-all-box {
             display: none;
+
             align-items: center;
             gap: 9px;
+
             margin-right: auto;
+
             font-weight: 600;
             cursor: pointer;
         }
 
-        .select-all-box input,
-        .notification-checkbox {
+        .select-all-box input {
             width: 18px;
             height: 18px;
             cursor: pointer;
@@ -92,11 +101,17 @@
         .delete-btn {
             border: none;
             border-radius: 9px;
-            padding: 10px 18px;
+
+            padding: 10px 20px;
+
             background: #4b0082;
             color: white;
+
+            font-size: 14px;
             font-weight: bold;
+
             cursor: pointer;
+
             transition: .2s ease;
         }
 
@@ -109,6 +124,7 @@
             background: #4b0082;
             color: white;
             opacity: .45;
+
             cursor: not-allowed;
             transform: none;
         }
@@ -131,31 +147,60 @@
 
         .notification-card {
             background: white;
+
             padding: 19px;
+
             border-radius: 14px;
+
             margin-bottom: 14px;
-            box-shadow: 0 4px 16px rgba(0,0,0,.07);
+
+            box-shadow:
+                0 4px 16px rgba(0,0,0,.07);
+
             border-left: 4px solid #4b0082;
+
             display: flex;
+
             gap: 14px;
+
             align-items: flex-start;
+
             transition: .18s ease;
         }
 
         .notification-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 7px 20px rgba(0,0,0,.10);
+
+            box-shadow:
+                0 7px 20px rgba(0,0,0,.10);
         }
 
         .notification-card.unread {
             background: #faf7ff;
         }
 
+        /* =========================
+           CHECKBOX
+           ========================= */
+
         .notification-checkbox {
             display: none;
+
+            width: 18px;
+            height: 18px;
+
             flex-shrink: 0;
+
             margin-top: 4px;
+
+            cursor: pointer;
+
+            accent-color: #4b0082;
         }
+
+        /* =========================
+           CONTENT
+           ========================= */
 
         .notification-content {
             flex: 1;
@@ -163,38 +208,56 @@
         }
 
         .notification-link {
+            display: block;
+
             text-decoration: none;
             color: inherit;
-            display: block;
         }
 
         .notification-title {
             font-size: 17px;
             font-weight: bold;
+
             margin-bottom: 7px;
+
             color: #171717;
         }
 
         .notification-message {
             color: #555;
+
             line-height: 1.5;
+
             font-size: 15px;
         }
 
         .notification-time {
             margin-top: 11px;
+
             color: #888;
+
             font-size: 12px;
         }
 
+        /* =========================
+           NEW BADGE
+           ========================= */
+
         .unread-badge {
             display: inline-block;
+
             margin-left: 8px;
+
             padding: 3px 8px;
+
             border-radius: 20px;
+
             background: #4b0082;
+
             color: white;
+
             font-size: 10px;
+
             vertical-align: middle;
         }
 
@@ -204,11 +267,17 @@
 
         .empty {
             background: white;
+
             padding: 55px 20px;
+
             text-align: center;
+
             border-radius: 14px;
+
             color: #777;
-            box-shadow: 0 4px 16px rgba(0,0,0,.06);
+
+            box-shadow:
+                0 4px 16px rgba(0,0,0,.06);
         }
 
         .empty-icon {
@@ -251,7 +320,7 @@
             }
 
             .delete-btn {
-                padding: 9px 14px;
+                padding: 9px 15px;
                 font-size: 13px;
             }
 
@@ -317,10 +386,15 @@
     >
 
 
+        <!-- =========================
+             TOOLBAR
+             ========================= -->
+
         <div class="toolbar">
 
 
-            <!-- SELECT ALL -->
+            <!-- SELECT ALL
+                 Hidden initially -->
 
             <label
                 class="select-all-box"
@@ -364,7 +438,8 @@
                     {% endif %}">
 
 
-            <!-- CHECKBOX -->
+            <!-- INDIVIDUAL CHECKBOX
+                 Hidden initially -->
 
             <input
                 type="checkbox"
@@ -382,6 +457,8 @@
                     class="notification-link"
                 >
 
+
+                    <!-- TITLE -->
 
                     <div class="notification-title">
 
@@ -432,6 +509,8 @@
                     </div>
 
 
+                    <!-- MESSAGE -->
+
                     <div class="notification-message">
 
                         {{ notification.message }}
@@ -439,8 +518,9 @@
                     </div>
 
 
-                    <div class="notification-time">
+                    <!-- TIME -->
 
+                    <div class="notification-time">
 
                         {% if notification.display_created_at %}
 
@@ -452,7 +532,6 @@
                             Time unavailable
 
                         {% endif %}
-
 
                     </div>
 
@@ -524,15 +603,16 @@
 
 
     /* =========================
-       START DELETE MODE
+       DELETE BUTTON
        ========================= */
 
     deleteBtn.addEventListener("click", function () {
 
 
-        /* First click:
-           Open delete mode
-        */
+        /* =========================
+           FIRST CLICK
+           OPEN DELETE MODE
+           ========================= */
 
         if (!deleteMode) {
 
@@ -547,13 +627,12 @@
             deleteBtn.disabled = true;
 
             return;
-
         }
 
 
-        /* If already in delete mode
-           and nothing selected
-        */
+        /* =========================
+           DELETE MODE
+           ========================= */
 
         const checked =
             document.querySelectorAll(
@@ -632,7 +711,7 @@
 
 
     /* =========================
-       UPDATE DELETE BUTTON
+       DELETE BUTTON STATE
        ========================= */
 
     function updateDeleteButton() {
