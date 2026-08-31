@@ -3290,6 +3290,11 @@ def update_order_status(id):
     # Get new status
     new_status = request.form.get("status")
 
+    # Customer-cancelled orders are permanently locked
+    if order.status == "Cancelled":
+        flash("Cancelled orders cannot be changed.")
+        return redirect("/admin/orders")
+
     # Current India date & time
     india_time = (
         datetime.datetime.now(

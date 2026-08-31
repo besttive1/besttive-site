@@ -967,7 +967,8 @@
 
                             <select
                                 name="status"
-                                class="form-select"
+                                class="form-select {% if order.status == 'Cancelled' %}cancelled-status{% endif %}"
+                                {% if order.status == "Cancelled" %}disabled{% endif %}
                             >
 
 
