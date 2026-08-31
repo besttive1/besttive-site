@@ -1,130 +1,710 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Payment</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>BESTTIVE | Secure Payment</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f6f7fb;
+            font-family: Arial, sans-serif;
+            color: #25113d;
+        }
+
+        /* =========================
+           HEADER
+           ========================= */
+
+        .payment-header {
+            background: linear-gradient(135deg, #ec1764, #c90058);
+            color: white;
+            padding: 18px 20px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0,0,0,.12);
+        }
+
+        .payment-header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .payment-header p {
+            margin: 6px 0 0;
+            font-size: 13px;
+            opacity: .95;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+           ========================= */
+
+        .payment-container {
+            width: 100%;
+            max-width: 1050px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .page-title h2 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .page-title p {
+            margin-top: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* =========================
+           GRID
+           ========================= */
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        /* =========================
+           CARD
+           ========================= */
+
+        .payment-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 6px 22px rgba(0,0,0,.07);
+        }
+
+        .card-title {
+            margin: 0 0 18px;
+            font-size: 20px;
+        }
+
+        /* =========================
+           ORDER SUMMARY
+           ========================= */
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 11px 0;
+            border-bottom: 1px solid #eeeeee;
+            font-size: 14px;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #666;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .total-row {
+            margin-top: 8px;
+            padding-top: 17px;
+            border-top: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .total-label {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .total-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ec1764;
+        }
+
+        /* =========================
+           ADDRESS
+           ========================= */
+
+        .address-card {
+            margin-top: 22px;
+        }
+
+        .address-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .address-text {
+            color: #555;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .phone {
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .change-address {
+            display: inline-block;
+            margin-top: 13px;
+            color: #6a1b9a;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .change-address:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================
+           PAYMENT OPTIONS
+           ========================= */
+
+        .payment-option {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 6px 22px rgba(0,0,0,.07);
+        }
+
+        .option-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .option-title {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .recommended {
+            background: #e8f7ee;
+            color: #168542;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .option-description {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        /* =========================
+           PAY BUTTON
+           ========================= */
+
+        .payu-button {
+            width: 100%;
+            padding: 15px 18px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .payu-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(13,110,253,.25);
+        }
+
+        /* =========================
+           QR PAYMENT
+           ========================= */
+
+        .qr-card {
+            margin-top: 22px;
+            text-align: center;
+        }
+
+        .qr-wrapper {
+            display: inline-block;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin: 8px 0 15px;
+        }
+
+        .qr-wrapper img {
+            display: block;
+            width: 190px;
+            height: 190px;
+            object-fit: contain;
+        }
+
+        .upi-id {
+            font-size: 14px;
+            margin: 7px 0;
+        }
+
+        .qr-amount {
+            font-size: 15px;
+            margin: 8px 0 18px;
+        }
+
+        .qr-button {
+            width: 100%;
+            padding: 14px 18px;
+            background: #159447;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .qr-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(21,148,71,.22);
+        }
+
+        /* =========================
+           SECURITY NOTE
+           ========================= */
+
+        .security-note {
+            text-align: center;
+            margin-top: 28px;
+            color: #777;
+            font-size: 12px;
+        }
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 768px) {
+
+            .payment-header {
+                padding: 15px;
+            }
+
+            .payment-header h1 {
+                font-size: 22px;
+            }
+
+            .payment-container {
+                margin: 22px auto;
+                padding: 0 13px;
+            }
+
+            .page-title {
+                margin-bottom: 20px;
+            }
+
+            .page-title h2 {
+                font-size: 23px;
+            }
+
+            .checkout-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .payment-card,
+            .payment-option {
+                padding: 18px;
+                border-radius: 13px;
+            }
+
+            .card-title {
+                font-size: 18px;
+            }
+
+            .summary-row {
+                font-size: 13px;
+            }
+
+            .total-label {
+                font-size: 16px;
+            }
+
+            .total-value {
+                font-size: 20px;
+            }
+
+            .option-header {
+                align-items: flex-start;
+            }
+
+            .option-title {
+                font-size: 17px;
+            }
+
+            .recommended {
+                font-size: 10px;
+                padding: 5px 8px;
+            }
+
+            .qr-wrapper img {
+                width: 175px;
+                height: 175px;
+            }
+
+            .payu-button,
+            .qr-button {
+                font-size: 15px;
+                padding: 14px;
+            }
+        }
+
+        @media (max-width: 400px) {
+
+            .payment-container {
+                padding: 0 10px;
+            }
+
+            .payment-card,
+            .payment-option {
+                padding: 15px;
+            }
+
+            .summary-row {
+                font-size: 12px;
+            }
+
+            .total-value {
+                font-size: 18px;
+            }
+
+            .qr-wrapper img {
+                width: 160px;
+                height: 160px;
+            }
+        }
+
+    </style>
+
 </head>
+
 <body>
 
-<header>Secure Payment 💳</header>
+<header class="payment-header">
 
-<div style="text-align:center; padding:20px;">
+    <h1>🔒 Secure Payment 💳</h1>
 
-    <h2>Choose Payment Method</h2>
+    <p>Safe & secure checkout with BESTTIVE</p>
 
-    <p><b>Product:</b> {{ name }}</p>
+</header>
 
-    <p>
-        <b>Product Price:</b>
-        ₹{{ price }}
-    </p>
 
-    <p>
-        <b>GST ({{ gst_rate }}%):</b>
-        ₹{{ gst_amount }}
-    </p>
+<main class="payment-container">
 
-    <p>
-        <b>Shipping Charge:</b>
-        ₹{{ shipping_charge }}
-    </p>
+    <div class="page-title">
 
-    <p>
-        <b>Total Payable:</b>
-        <strong>₹{{ final_amount }}</strong>
-    </p>
+        <h2>Choose Payment Method</h2>
 
-    <hr>
-    {% if user %}
-
-    <hr>
-
-    <div style="
-        max-width:500px;
-        margin:20px auto;
-        padding:18px;
-        border:1px solid #ddd;
-        border-radius:10px;
-        text-align:left;
-    ">
-
-        <h3>📦 Delivery Address</h3>
-
-        <p>
-            <b>{{ user.name }}</b>
-        </p>
-        <p>
-            {{ user.address }}
-        </p>
-        <p>
-            {{ user.city }}, {{ user.state }}
-            - {{ user.pincode }}
-        </p>
-        <p>
-            <b>Phone:</b> {{ user.phone }}
-        </p>
-
-        <a href="/profile">
-            Change Address
-        </a>
+        <p>Review your order and select your preferred payment option.</p>
 
     </div>
 
-    {% endif %}
-    
-    <h3>Option 1 - Pay with PayU (Recommended)</h3>
 
-    <form action="/payu-payment" method="POST">
-        <input type="hidden" name="product_name" value="{{ name }}">
-        <input type="hidden" name="amount" value="{{ price }}">
+    <div class="checkout-grid">
 
-        <button type="submit"
-         style="padding:12px 25px;background:#0d6efd;color:white;border:none;border-radius:8px;font-size:18px;">
-             Pay ₹{{ final_amount }} with PayU
-        </button>
-    </form>
 
-    <br><br>
+        <!-- =========================
+             LEFT SIDE
+             ========================= -->
 
-    <hr>
+        <div>
 
-    <h3>Option 2 - Scan QR & Pay</h3>
 
-    <img src="{{ url_for('static', filename='images/qr.jpeg') }}"
-         width="180">
+            <!-- ORDER SUMMARY -->
 
-    <p>
-    <b>UPI ID:</b> besttive.business@slc
-</p>
+            <div class="payment-card">
 
-<p>
-    <b>Amount to Pay:</b>
-    <strong>₹{{ final_amount }}</strong>
-</p>
+                <h3 class="card-title">
+                    🧾 Order Summary
+                </h3>
 
-<form action="/qr-payment-success" method="POST">
+                <div class="summary-row">
 
-    <input type="hidden"
-           name="product_name"
-           value="{{ name }}">
+                    <span class="summary-label">
+                        Product
+                    </span>
 
-    <input type="hidden"
-           name="amount"
-           value="{{ final_amount }}">
+                    <span class="summary-value">
+                        {{ name }}
+                    </span>
 
-    <button
-        type="submit"
-        style="padding:10px 20px;
-               background:green;
-               color:white;
-               border:none;
-               border-radius:8px;">
-        I Have Paid ₹{{ final_amount }}
-    </button>
+                </div>
 
-</form>
 
-</div>
+                <div class="summary-row">
+
+                    <span class="summary-label">
+                        Product Price
+                    </span>
+
+                    <span class="summary-value">
+                        ₹{{ price }}
+                    </span>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span class="summary-label">
+                        GST ({{ gst_rate }}%)
+                    </span>
+
+                    <span class="summary-value">
+                        ₹{{ gst_amount }}
+                    </span>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span class="summary-label">
+                        Shipping Charge
+                    </span>
+
+                    <span class="summary-value">
+                        ₹{{ shipping_charge }}
+                    </span>
+
+                </div>
+
+
+                <div class="total-row">
+
+                    <span class="total-label">
+                        Total Payable
+                    </span>
+
+                    <span class="total-value">
+                        ₹{{ final_amount }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- DELIVERY ADDRESS -->
+
+            {% if user %}
+
+            <div class="payment-card address-card">
+
+                <h3 class="card-title">
+                    📦 Delivery Address
+                </h3>
+
+                <div class="address-name">
+                    {{ user.name }}
+                </div>
+
+                <div class="address-text">
+
+                    {{ user.address }}<br>
+
+                    {{ user.city }}, {{ user.state }}
+                    - {{ user.pincode }}
+
+                </div>
+
+                <div class="phone">
+                    📞 {{ user.phone }}
+                </div>
+
+                <a href="/profile"
+                   class="change-address">
+                    Change Address →
+                </a>
+
+            </div>
+
+            {% endif %}
+
+
+        </div>
+
+
+        <!-- =========================
+             RIGHT SIDE
+             ========================= -->
+
+        <div>
+
+
+            <!-- PAYU -->
+
+            <div class="payment-option">
+
+                <div class="option-header">
+
+                    <h3 class="option-title">
+                        💳 Pay with PayU
+                    </h3>
+
+                    <span class="recommended">
+                        RECOMMENDED
+                    </span>
+
+                </div>
+
+                <div class="option-description">
+
+                    Fast and secure online payment.
+
+                </div>
+
+
+                <form action="/payu-payment"
+                      method="POST">
+
+                    <input type="hidden"
+                           name="product_name"
+                           value="{{ name }}">
+
+                    <input type="hidden"
+                           name="amount"
+                           value="{{ price }}">
+
+
+                    <button type="submit"
+                            class="payu-button">
+
+                        🔒 Pay ₹{{ final_amount }} Securely
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- QR -->
+
+            <div class="payment-option qr-card">
+
+                <div class="option-header">
+
+                    <h3 class="option-title">
+                        📱 Scan QR & Pay
+                    </h3>
+
+                </div>
+
+                <div class="option-description">
+
+                    Scan the QR code using any supported UPI app.
+
+                </div>
+
+
+                <div class="qr-wrapper">
+
+                    <img
+                        src="{{ url_for('static', filename='images/qr.jpeg') }}"
+                        alt="BESTTIVE UPI QR Code"
+                    >
+
+                </div>
+
+
+                <div class="upi-id">
+
+                    <b>UPI ID:</b>
+                    besttive.business@slc
+
+                </div>
+
+
+                <div class="qr-amount">
+
+                    <b>Amount to Pay:</b>
+                    ₹{{ final_amount }}
+
+                </div>
+
+
+                <form action="/qr-payment-success"
+                      method="POST">
+
+                    <input type="hidden"
+                           name="product_name"
+                           value="{{ name }}">
+
+                    <input type="hidden"
+                           name="amount"
+                           value="{{ final_amount }}">
+
+
+                    <button
+                        type="submit"
+                        class="qr-button">
+
+                        ✓ I Have Paid ₹{{ final_amount }}
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <div class="security-note">
+
+        🔐 Your payment details are processed securely.
+
+    </div>
+
+</main>
 
 </body>
 </html>
