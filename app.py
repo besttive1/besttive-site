@@ -164,6 +164,34 @@ def home():
     sort = request.args.get("sort")
     query = Product.query
 
+    # =========================
+    # ACTIVE MASTER CATEGORIES
+    # =========================
+
+    active_master_categories = (
+        MasterCategory.query
+        .filter_by(active=True)
+        .order_by(
+            MasterCategory.position.asc(),
+            MasterCategory.id.asc()
+        )
+        .all()
+    )
+
+    active_category_names = [
+        c.name for c in active_master_categories
+    ]
+
+    # Customer website par sirf ACTIVE
+    # master categories ke products dikhenge
+    if active_category_names:
+        query = query.filter(
+            Product.category.in_(active_category_names)
+        )
+    else:
+        query = query.filter(
+            Product.id == -1
+        )
     banners = Banner.query.filter_by(
         active=True
     ).order_by(
@@ -251,10 +279,11 @@ def home():
         subcategory=subcategory,
         subcategories=subcategories,
         min_price=min_price,
-        max_price=max_price,
+        max_price=max_price,    
         sort=sort,
         banners=banners,
-        wishlist_product_ids=wishlist_product_ids
+        wishlist_product_ids=wishlist_product_ids,
+        master_categories=active_master_categories,
     )
 
 @app.route("/add-to-cart/<int:id>")
@@ -1403,31 +1432,7 @@ TAX_MAPPING = {
             "gst": 5
         }
     },
-
-
-    # =========================
-    # WATCHES
-    # =========================
-
-    "Watches": {
-
-        "Men Watches": {
-            "hsn": "9102",
-            "gst": 18
-        },
-
-        "Women Watches": {
-            "hsn": "9102",
-            "gst": 18
-        },
-
-        "Kids Watches": {
-            "hsn": "9102",
-            "gst": 18
-        }
-    },
-
-
+    
     # =========================
     # ELECTRONICS
     # =========================
@@ -1750,6 +1755,45 @@ def create_stock_notification(product):
 
     return None
 
+# ==========================================
+# MASTER CATEGORY MANAGEMENT
+# ==========================================
+
+class MasterCategory(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    name = db.Column(
+        db.String(100),
+        unique=True,
+        nullable=False
+    )
+
+    icon = db.Column(
+        db.String(20),
+        default="📂",
+        nullable=False
+    )
+
+    active = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
+    position = db.Column(
+        db.Integer,
+        default=1,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.utcnow
+    )
 
 class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -2637,6 +2681,105 @@ def admin_pending_payments():
         orders=pending_orders
     )
 
+# ==========================================
+# MASTER CATEGORY MANAGEMENT
+# ==========================================
+
+@app.route("/admin/master-categories")
+def admin_master_categories():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    categories = (
+        MasterCategory.query
+        .order_by(MasterCategory.position.asc(), MasterCategory.id.asc())
+        .all()
+    )
+
+    return render_template(
+        "admin_master_categories.html",
+        categories=categories
+    )
+
+# ==========================================
+# MASTER CATEGORY - ADD
+# ==========================================
+
+@app.route("/admin/master-categories/add", methods=["POST"])
+def add_master_category():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    name = request.form.get("name", "").strip()
+    icon = request.form.get("icon", "📂").strip()
+    position = request.form.get("position", "1").strip()
+
+    if not name:
+        flash("Category name is required.")
+        return redirect("/admin/master-categories")
+
+    # Prevent duplicate category names
+    existing = MasterCategory.query.filter_by(
+        name=name
+    ).first()
+
+    if existing:
+        flash("This category already exists.")
+        return redirect("/admin/master-categories")
+
+    try:
+        position = int(position)
+
+        if position < 1:
+            position = 1
+
+    except ValueError:
+        position = (
+            MasterCategory.query.count() + 1
+        )
+
+    category = MasterCategory(
+        name=name,
+        icon=icon or "📂",
+        position=position,
+        active=True
+    )
+
+    db.session.add(category)
+    db.session.commit()
+
+    flash("Category added successfully!")
+
+    return redirect("/admin/master-categories")
+
+
+# ==========================================
+# MASTER CATEGORY - SHOW / HIDE
+# ==========================================
+
+@app.route(
+    "/admin/master-categories/<int:id>/toggle",
+    methods=["POST"]
+)
+def toggle_master_category(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    category = MasterCategory.query.get_or_404(id)
+
+    category.active = not category.active
+
+    db.session.commit()
+
+    flash(
+        f"Category {'enabled' if category.active else 'disabled'} successfully!"
+    )
+
+    return redirect("/admin/master-categories")
+
 # =========================
 # ADMIN BANNER MANAGEMENT
 # =========================
@@ -2946,8 +3089,25 @@ def admin_add_product():
 
         return redirect("/admin/dashboard")
 
+
+    # ==========================================
+    # ACTIVE MASTER CATEGORIES
+    # ==========================================
+
+    master_categories = (
+        MasterCategory.query
+        .filter_by(active=True)
+        .order_by(
+            MasterCategory.position.asc(),
+            MasterCategory.id.asc()
+        )
+        .all()
+    )
+
+
     return render_template(
-        "add_product.html"
+        "add_product.html",
+        master_categories=master_categories
     )
 
 @app.route("/admin/products")
@@ -3063,61 +3223,30 @@ def edit_product(id):
         product.subcategory = subcategory
 
 
-        # ==========================================
-        # AUTO HSN + GST
-        # ==========================================
-
-        tax_details = get_tax_details(
-            category,
-            subcategory
-        )
-
-        product.hsn_code = tax_details["hsn"]
-
-        product.gst_rate = float(
-            tax_details["gst"]
-        )
-
-
-        # ==========================================
-        # IMAGE UPDATE
-        # ==========================================
-
-        image = request.files.get("image")
-
-        if image and image.filename != "":
-
-            upload_result = cloudinary.uploader.upload(
-                image
-            )
-
-            product.image = upload_result[
-                "secure_url"
-            ]
-
-
-        # ==========================================
-        # SAVE EVERYTHING
-        # ==========================================
-
-        db.session.commit()
-
-
-        flash(
-            f"Product Updated Successfully! "
-            f"HSN: {product.hsn_code or 'Not assigned'} | "
-            f"GST: {product.gst_rate:g}%"
-        )
-
-
         return redirect(
             "/admin/products"
         )
 
 
+    # ==========================================
+    # ACTIVE MASTER CATEGORIES
+    # ==========================================
+
+    master_categories = (
+        MasterCategory.query
+        .filter_by(active=True)
+        .order_by(
+            MasterCategory.position.asc(),
+            MasterCategory.id.asc()
+        )
+        .all()
+    )
+
+
     return render_template(
         "edit_product.html",
-        product=product
+        product=product,
+        master_categories=master_categories
     )
 
 # =========================

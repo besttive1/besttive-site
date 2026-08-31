@@ -328,37 +328,11 @@
                 Select Category
             </option>
 
-            <option value="Clothes">
-                Clothes
-            </option>
-
-            <option value="Toys">
-                Toys
-            </option>
-
-            <option value="Jewellery">
-                Jewellery
-            </option>
-
-            <option value="Beauty">
-                Beauty
-            </option>
-
-            <option value="Shoes">
-                Shoes
-            </option>
-
-            <option value="Watches">
-                Watches
-            </option>
-
-            <option value="Electronics">
-                Electronics
-            </option>
-
-            <option value="Home">
-                Home
-            </option>
+            {% for master_category in master_categories %}
+                <option value="{{ master_category.name }}">
+                    {{ master_category.name }}
+                </option>
+            {% endfor %}
 
         </select>
 
@@ -660,13 +634,7 @@ const subcategoryOptions = {
         "Kids Shoes",
         "Sports Shoes"
     ],
-
-    "Watches": [
-        "Men Watches",
-        "Women Watches",
-        "Kids Watches"
-    ],
-
+    
     "Electronics": [
         "Mobile",
         "Earbuds",
@@ -812,28 +780,7 @@ const taxMapping = {
         }
 
     },
-
-
-    "Watches": {
-
-        "Men Watches": {
-            hsn: "9102",
-            gst: "18%"
-        },
-
-        "Women Watches": {
-            hsn: "9102",
-            gst: "18%"
-        },
-
-        "Kids Watches": {
-            hsn: "9102",
-            gst: "18%"
-        }
-
-    },
-
-
+ 
     "Electronics": {
 
         "Mobile": {

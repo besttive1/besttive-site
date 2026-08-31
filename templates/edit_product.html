@@ -484,48 +484,18 @@
                 Select Category
             </option>
 
-            <option value="Clothes"
-                {% if product.category == "Clothes" %}selected{% endif %}>
-                Clothes
-            </option>
+            {% for master_category in master_categories %}
 
-            <option value="Toys"
-                {% if product.category == "Toys" %}selected{% endif %}>
-                Toys
-            </option>
+                <option
+                    value="{{ master_category.name }}"
+                    {% if product.category == master_category.name %}selected{% endif %}
+                >
+                    {{ master_category.name }}
+                </option>
 
-            <option value="Jewellery"
-                {% if product.category == "Jewellery" %}selected{% endif %}>
-                Jewellery
-            </option>
-
-            <option value="Beauty"
-                {% if product.category == "Beauty" %}selected{% endif %}>
-                Beauty
-            </option>
-
-            <option value="Shoes"
-                {% if product.category == "Shoes" %}selected{% endif %}>
-                Shoes
-            </option>
-
-            <option value="Watches"
-                {% if product.category == "Watches" %}selected{% endif %}>
-                Watches
-            </option>
-
-            <option value="Electronics"
-                {% if product.category == "Electronics" %}selected{% endif %}>
-                Electronics
-            </option>
-
-            <option value="Home"
-                {% if product.category == "Home" %}selected{% endif %}>
-                Home
-            </option>
+            {% endfor %}
 
         </select>
-
 
         <!-- SUBCATEGORY -->
 
@@ -716,29 +686,7 @@ const subcategoryOptions = {
         "Kids Shoes",
         "Sports Shoes"
     ],
-
-    "Watches": [
-        "Men Watches",
-        "Women Watches",
-        "Kids Watches"
-    ],
-
-    "Electronics": [
-        "Mobile",
-        "Earbuds",
-        "Speakers",
-        "Accessories"
-    ],
-
-    "Home": [
-        "Decor",
-        "Kitchen",
-        "Storage"
-    ]
-
-};
-
-
+    
 /* ==========================================
    TAX MAPPING
    ========================================== */
@@ -864,26 +812,7 @@ const taxMapping = {
         }
 
     },
-
-    "Watches": {
-
-        "Men Watches": {
-            hsn: "9102",
-            gst: "18%"
-        },
-
-        "Women Watches": {
-            hsn: "9102",
-            gst: "18%"
-        },
-
-        "Kids Watches": {
-            hsn: "9102",
-            gst: "18%"
-        }
-
-    },
-
+  
     "Electronics": {
 
         "Mobile": {
