@@ -245,22 +245,37 @@ def home():
 
     products = query.all()
     
-    # Get subcategories automatically from database
+        # =========================
+    # ACTIVE SUBCATEGORIES
+    # =========================
+
     subcategories = []
 
     if category:
-        subcategories = (
-            db.session.query(Product.subcategory)
-            .filter(
-                Product.category == category,
-                Product.subcategory.isnot(None),
-                Product.subcategory != ""
-            )
-            .distinct()
-            .all()
 
+        active_master_category = (
+            MasterCategory.query
+            .filter_by(
+                name=category,
+                active=True
+            )
+            .first()
         )
-        subcategories = [item[0] for item in subcategories]
+
+        if active_master_category:
+
+            subcategories = (
+                SubCategory.query
+                .filter_by(
+                    master_category_id=active_master_category.id,
+                    active=True
+                )
+                .order_by(
+                    SubCategory.position.asc(),
+                    SubCategory.id.asc()
+                )
+                .all()
+            )
 
     wishlist_product_ids = []
     
@@ -1795,6 +1810,41 @@ class MasterCategory(db.Model):
         default=datetime.datetime.utcnow
     )
 
+class SubCategory(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    master_category_id = db.Column(
+        db.Integer,
+        db.ForeignKey("master_category.id"),
+        nullable=False
+    )
+
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    active = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
+    position = db.Column(
+        db.Integer,
+        default=1,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.utcnow
+    )
+
 class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     image = db.Column(db.String(500), nullable=False)
@@ -2693,13 +2743,27 @@ def admin_master_categories():
 
     categories = (
         MasterCategory.query
-        .order_by(MasterCategory.position.asc(), MasterCategory.id.asc())
+        .order_by(
+            MasterCategory.position.asc(),
+            MasterCategory.id.asc()
+        )
+        .all()
+    )
+
+    subcategories = (
+        SubCategory.query
+        .order_by(
+            SubCategory.master_category_id.asc(),
+            SubCategory.position.asc(),
+            SubCategory.id.asc()
+        )
         .all()
     )
 
     return render_template(
         "admin_master_categories.html",
-        categories=categories
+        categories=categories,
+        subcategories=subcategories
     )
 
 # ==========================================
@@ -2776,6 +2840,194 @@ def toggle_master_category(id):
 
     flash(
         f"Category {'enabled' if category.active else 'disabled'} successfully!"
+    )
+
+    return redirect("/admin/master-categories")
+
+# ==========================================
+# MASTER CATEGORY - EDIT
+# ==========================================
+
+@app.route(
+    "/admin/master-categories/<int:id>/edit",
+    methods=["POST"]
+)
+def edit_master_category(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    category = MasterCategory.query.get_or_404(id)
+
+    name = request.form.get("name", "").strip()
+    icon = request.form.get("icon", "📂").strip()
+    position = request.form.get("position", "1").strip()
+
+    if not name:
+        flash("Category name is required.")
+        return redirect("/admin/master-categories")
+
+    existing = (
+        MasterCategory.query
+        .filter(
+            MasterCategory.name == name,
+            MasterCategory.id != id
+        )
+        .first()
+    )
+
+    if existing:
+        flash("This category already exists.")
+        return redirect("/admin/master-categories")
+
+    try:
+        position = max(1, int(position))
+    except ValueError:
+        position = category.position
+
+    category.name = name
+    category.icon = icon or "📂"
+    category.position = position
+
+    db.session.commit()
+
+    flash("Category updated successfully!")
+
+    return redirect("/admin/master-categories")
+
+
+# ==========================================
+# SUBCATEGORY - ADD
+# ==========================================
+
+@app.route(
+    "/admin/master-categories/<int:category_id>/subcategories/add",
+    methods=["POST"]
+)
+def add_subcategory(category_id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    category = MasterCategory.query.get_or_404(category_id)
+
+    name = request.form.get("name", "").strip()
+    position = request.form.get("position", "1").strip()
+
+    if not name:
+        flash("Subcategory name is required.")
+        return redirect("/admin/master-categories")
+
+    existing = (
+        SubCategory.query
+        .filter_by(
+            master_category_id=category.id,
+            name=name
+        )
+        .first()
+    )
+
+    if existing:
+        flash("This subcategory already exists.")
+        return redirect("/admin/master-categories")
+
+    try:
+        position = max(1, int(position))
+    except ValueError:
+        position = (
+            SubCategory.query
+            .filter_by(master_category_id=category.id)
+            .count() + 1
+        )
+
+    subcategory = SubCategory(
+        master_category_id=category.id,
+        name=name,
+        position=position,
+        active=True
+    )
+
+    db.session.add(subcategory)
+    db.session.commit()
+
+    flash("Subcategory added successfully!")
+
+    return redirect("/admin/master-categories")
+
+
+# ==========================================
+# SUBCATEGORY - EDIT
+# ==========================================
+
+@app.route(
+    "/admin/subcategories/<int:id>/edit",
+    methods=["POST"]
+)
+def edit_subcategory(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    subcategory = SubCategory.query.get_or_404(id)
+
+    name = request.form.get("name", "").strip()
+    position = request.form.get("position", "1").strip()
+
+    if not name:
+        flash("Subcategory name is required.")
+        return redirect("/admin/master-categories")
+
+    existing = (
+        SubCategory.query
+        .filter(
+            SubCategory.master_category_id == subcategory.master_category_id,
+            SubCategory.name == name,
+            SubCategory.id != id
+        )
+        .first()
+    )
+
+    if existing:
+        flash("This subcategory already exists.")
+        return redirect("/admin/master-categories")
+
+    try:
+        position = max(1, int(position))
+    except ValueError:
+        position = subcategory.position
+
+    subcategory.name = name
+    subcategory.position = position
+
+    db.session.commit()
+
+    flash("Subcategory updated successfully!")
+
+    return redirect("/admin/master-categories")
+
+
+# ==========================================
+# SUBCATEGORY - SHOW / HIDE
+# ==========================================
+
+@app.route(
+    "/admin/subcategories/<int:id>/toggle",
+    methods=["POST"]
+)
+def toggle_subcategory(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    subcategory = SubCategory.query.get_or_404(id)
+
+    subcategory.active = not subcategory.active
+
+    db.session.commit()
+
+    flash(
+        f"Subcategory "
+        f"{'enabled' if subcategory.active else 'disabled'} successfully!"
     )
 
     return redirect("/admin/master-categories")
@@ -3090,8 +3342,8 @@ def admin_add_product():
         return redirect("/admin/dashboard")
 
 
-    # ==========================================
-    # ACTIVE MASTER CATEGORIES
+        # ==========================================
+    # ACTIVE MASTER CATEGORIES + SUBCATEGORIES
     # ==========================================
 
     master_categories = (
@@ -3104,10 +3356,20 @@ def admin_add_product():
         .all()
     )
 
+    subcategories = (
+        SubCategory.query
+        .filter_by(active=True)
+        .order_by(
+            SubCategory.position.asc(),
+            SubCategory.id.asc()
+        )
+        .all()
+    )
 
     return render_template(
         "add_product.html",
-        master_categories=master_categories
+        master_categories=master_categories,
+        subcategories=subcategories
     )
 
 @app.route("/admin/products")
@@ -3158,7 +3420,10 @@ def edit_product(id):
         # BASIC PRODUCT DETAILS
         # ==========================================
 
-        product.name = request.form.get("name", "").strip()
+        product.name = request.form.get(
+            "name",
+            ""
+        ).strip()
 
         product.price = int(
             request.form.get("price") or 0
@@ -3174,16 +3439,17 @@ def edit_product(id):
         # ==========================================
 
         previous_stock = product.stock
+
         new_stock = int(
             request.form.get("stock") or 0
         )
 
         product.stock = new_stock
-        
-        # Calculate stock difference
-        stock_difference = new_stock - previous_stock
 
-        # Save history only if stock changed
+        stock_difference = (
+            new_stock - previous_stock
+        )
+
         if stock_difference != 0:
 
             if stock_difference > 0:
@@ -3194,16 +3460,13 @@ def edit_product(id):
             inventory_history = InventoryMovement(
                 product_id=product.id,
                 movement_type=movement_type,
-                quantity=(stock_difference),
+                quantity=stock_difference,
                 previous_stock=previous_stock,
                 new_stock=new_stock,
                 note="Manual stock update from Admin"
             )
 
             db.session.add(inventory_history)
-
-        db.session.commit()
-        create_stock_notification(product)
 
         # ==========================================
         # CATEGORY + SUBCATEGORY
@@ -3212,21 +3475,32 @@ def edit_product(id):
         category = request.form.get(
             "category",
             ""
-        )
+        ).strip()
 
         subcategory = request.form.get(
             "subcategory",
             ""
-        )
+        ).strip()
 
         product.category = category
         product.subcategory = subcategory
 
+        # ==========================================
+        # SAVE EVERYTHING
+        # ==========================================
+
+        db.session.commit()
+
+        # Stock notification after successful save
+        create_stock_notification(product)
+
+        flash(
+            "Product updated successfully!"
+        )
 
         return redirect(
             "/admin/products"
         )
-
 
     # ==========================================
     # ACTIVE MASTER CATEGORIES
@@ -3242,11 +3516,28 @@ def edit_product(id):
         .all()
     )
 
+    # ==========================================
+    # ALL SUBCATEGORIES
+    #
+    # JS active/inactive status ke according
+    # dropdown control karega.
+    # ==========================================
+
+    subcategories = (
+        SubCategory.query
+        .order_by(
+            SubCategory.master_category_id.asc(),
+            SubCategory.position.asc(),
+            SubCategory.id.asc()
+        )
+        .all()
+    )
 
     return render_template(
         "edit_product.html",
         product=product,
-        master_categories=master_categories
+        master_categories=master_categories,
+        subcategories=subcategories
     )
 
 # =========================

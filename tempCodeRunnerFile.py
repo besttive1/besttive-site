@@ -1,2 +1,2 @@
-return render_template(
-    
+
+        MasterCategory.query

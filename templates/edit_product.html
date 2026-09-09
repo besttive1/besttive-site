@@ -181,7 +181,6 @@
             color: #4b0082;
 
             font-weight: 700;
-
         }
 
 
@@ -488,7 +487,10 @@
 
                 <option
                     value="{{ master_category.name }}"
-                    {% if product.category == master_category.name %}selected{% endif %}
+                    data-category-id="{{ master_category.id }}"
+                    {% if product.category == master_category.name %}
+                        selected
+                    {% endif %}
                 >
                     {{ master_category.name }}
                 </option>
@@ -496,6 +498,7 @@
             {% endfor %}
 
         </select>
+
 
         <!-- SUBCATEGORY -->
 
@@ -515,6 +518,12 @@
             </option>
 
         </select>
+
+        <input
+            type="hidden"
+            id="current-subcategory"
+            value="{{ product.subcategory|e }}"
+        >
 
 
         <!-- HSN + GST -->
@@ -644,49 +653,31 @@
 </div>
 
 
+<script type="application/json" id="subcategory-data">
+[
+    {% for sub in subcategories %}
+    {
+        "id": {{ sub.id }},
+        "master_category_id": {{ sub.master_category_id }},
+        "name": {{ sub.name|tojson }},
+        "active": {{ 'true' if sub.active else 'false' }},
+        "position": {{ sub.position }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+]
+</script>
+
+
 <script>
 
-/* ==========================================
-   SUBCATEGORY OPTIONS
-   ========================================== */
+const subcategories = JSON.parse(
+    document.getElementById("subcategory-data").textContent
+);
 
-const subcategoryOptions = {
+const currentSubcategory =
+    document.getElementById("current-subcategory").value;
 
-    "Clothes": [
-        "Jeans",
-        "Shirts",
-        "T-Shirts",
-        "Dresses",
-        "Sarees"
-    ],
 
-    "Toys": [
-        "Cars",
-        "Dolls",
-        "Educational Toys",
-        "Remote Control"
-    ],
-
-    "Jewellery": [
-        "Bangles",
-        "Earrings",
-        "Necklace",
-        "Rings"
-    ],
-
-    "Beauty": [
-        "Makeup",
-        "Skincare",
-        "Hair Care"
-    ],
-
-    "Shoes": [
-        "Men Shoes",
-        "Women Shoes",
-        "Kids Shoes",
-        "Sports Shoes"
-    ],
-    
 /* ==========================================
    TAX MAPPING
    ========================================== */
@@ -722,6 +713,7 @@ const taxMapping = {
 
     },
 
+
     "Toys": {
 
         "Cars": {
@@ -745,6 +737,7 @@ const taxMapping = {
         }
 
     },
+
 
     "Jewellery": {
 
@@ -770,6 +763,7 @@ const taxMapping = {
 
     },
 
+
     "Beauty": {
 
         "Makeup": {
@@ -788,6 +782,7 @@ const taxMapping = {
         }
 
     },
+
 
     "Shoes": {
 
@@ -812,7 +807,8 @@ const taxMapping = {
         }
 
     },
-  
+
+
     "Electronics": {
 
         "Mobile": {
@@ -837,6 +833,7 @@ const taxMapping = {
 
     },
 
+
     "Home": {
 
         "Decor": {
@@ -854,54 +851,137 @@ const taxMapping = {
             gst: "18%"
         }
 
+    },
+
+
+    "Home Decor": {
+
+        "candles": {
+            hsn: "3406",
+            gst: "18%"
+        },
+
+        "AMIT": {
+            hsn: "3926",
+            gst: "18%"
+        }
+
     }
 
 };
 
 
 /* ==========================================
-   LOAD SUBCATEGORY
+   CATEGORY → SUBCATEGORY
    ========================================== */
 
 function updateSubcategories() {
 
-    const category =
-        document.getElementById("category").value;
+    const categorySelect =
+        document.getElementById("category");
 
-    const subcategory =
+    const subcategorySelect =
         document.getElementById("subcategory");
 
+    const categoryName =
+        categorySelect.value;
 
-    const currentSubcategory =
-        "{{ product.subcategory }}";
+
+    const selectedCategory =
+        categorySelect.options[
+            categorySelect.selectedIndex
+        ];
 
 
-    subcategory.innerHTML =
+    const categoryId =
+        selectedCategory
+            ? selectedCategory.dataset.categoryId
+            : "";
+
+
+    subcategorySelect.innerHTML =
         '<option value="">Select Subcategory</option>';
 
 
-    if (subcategoryOptions[category]) {
+    if (!categoryId) {
 
-        subcategoryOptions[category].forEach(function(item) {
+        updateTaxDetails();
 
-            const option =
-                document.createElement("option");
-
-            option.value = item;
-
-            option.textContent = item;
-
-
-            if (item === currentSubcategory) {
-                option.selected = true;
-            }
-
-
-            subcategory.appendChild(option);
-
-        });
-
+        return;
     }
+
+
+    /*
+     * Database se subcategories aa rahi hain.
+     *
+     * ACTIVE subcategories normally show hongi.
+     *
+     * Agar current product ki subcategory OFF hai,
+     * to usko edit karne ke liye "(OFF)" ke saath
+     * temporarily show rakhenge.
+     */
+
+    const matchingSubcategories =
+        subcategories
+            .filter(function(item) {
+
+                return String(item.master_category_id) ===
+                       String(categoryId);
+
+            })
+            .sort(function(a, b) {
+
+                return Number(a.position) -
+                       Number(b.position) ||
+
+                       Number(a.id) -
+                       Number(b.id);
+
+            });
+
+
+    matchingSubcategories.forEach(function(item) {
+
+        /*
+         * OFF subcategory ko hide karo,
+         * lekin current product wali OFF subcategory
+         * ko edit karne ke liye show karo.
+         */
+
+        if (
+            !item.active &&
+            item.name !== currentSubcategory
+        ) {
+
+            return;
+        }
+
+
+        const option =
+            document.createElement("option");
+
+
+        option.value =
+            item.name;
+
+
+        option.textContent =
+            item.name +
+            (!item.active ? " (OFF)" : "");
+
+
+        if (
+            item.name === currentSubcategory
+        ) {
+
+            option.selected = true;
+
+        }
+
+
+        subcategorySelect.appendChild(option);
+
+    });
 
 
     updateTaxDetails();
@@ -918,6 +998,7 @@ function updateTaxDetails() {
     const category =
         document.getElementById("category").value;
 
+
     const subcategory =
         document.getElementById("subcategory").value;
 
@@ -929,8 +1010,10 @@ function updateTaxDetails() {
     const hsnInput =
         document.getElementById("hsn_code");
 
+
     const gstInput =
         document.getElementById("gst_rate");
+
 
     const gstDisplay =
         document.getElementById("gst_display");
@@ -941,11 +1024,28 @@ function updateTaxDetails() {
         hsnInput.value =
             tax.hsn;
 
+
         gstInput.value =
             tax.gst.replace("%", "");
 
+
         gstDisplay.value =
             tax.gst;
+
+    }
+
+    else {
+
+        hsnInput.value =
+            "";
+
+
+        gstInput.value =
+            "0";
+
+
+        gstDisplay.value =
+            "";
 
     }
 

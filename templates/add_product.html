@@ -329,7 +329,10 @@
             </option>
 
             {% for master_category in master_categories %}
-                <option value="{{ master_category.name }}">
+                <option
+                    value="{{ master_category.name }}"
+                    data-category-id="{{ master_category.id }}"
+                >
                     {{ master_category.name }}
                 </option>
             {% endfor %}
@@ -591,286 +594,143 @@
 
 </div>
 
+<!-- DATABASE SUBCATEGORIES DATA -->
+
+<select id="subcategory-data" hidden>
+
+    {% for sub in subcategories %}
+
+        <option
+            value="{{ sub.name }}"
+            data-id="{{ sub.id }}"
+            data-category-id="{{ sub.master_category_id }}"
+            data-position="{{ sub.position }}"
+        >
+            {{ sub.name }}
+        </option>
+
+    {% endfor %}
+
+</select>
 
 <script>
+
+/* ==========================================
+   DATABASE SUBCATEGORIES
+   ========================================== */
+
+const subcategoryData = document.getElementById("subcategory-data");
+
 
 /* ==========================================
    CATEGORY → SUBCATEGORY
    ========================================== */
 
-const subcategoryOptions = {
-
-    "Clothes": [
-        "Jeans",
-        "Shirts",
-        "T-Shirts",
-        "Dresses",
-        "Sarees"
-    ],
-
-    "Toys": [
-        "Cars",
-        "Dolls",
-        "Educational Toys",
-        "Remote Control"
-    ],
-
-    "Jewellery": [
-        "Bangles",
-        "Earrings",
-        "Necklace",
-        "Rings"
-    ],
-
-    "Beauty": [
-        "Makeup",
-        "Skincare",
-        "Hair Care"
-    ],
-
-    "Shoes": [
-        "Men Shoes",
-        "Women Shoes",
-        "Kids Shoes",
-        "Sports Shoes"
-    ],
-    
-    "Electronics": [
-        "Mobile",
-        "Earbuds",
-        "Speakers",
-        "Accessories"
-    ],
-
-    "Home": [
-        "Decor",
-        "Kitchen",
-        "Storage"
-    ]
-
-};
-
-
-/* ==========================================
-   HSN + GST MAPPING
-   ========================================== */
-
-const taxMapping = {
-
-    "Clothes": {
-
-        "Jeans": {
-            hsn: "6203",
-            gst: "5%"
-        },
-
-        "Shirts": {
-            hsn: "6205",
-            gst: "5%"
-        },
-
-        "T-Shirts": {
-            hsn: "6109",
-            gst: "5%"
-        },
-
-        "Dresses": {
-            hsn: "6204",
-            gst: "5%"
-        },
-
-        "Sarees": {
-            hsn: "5208",
-            gst: "5%"
-        }
-
-    },
-
-
-    "Toys": {
-
-        "Cars": {
-            hsn: "9503",
-            gst: "12%"
-        },
-
-        "Dolls": {
-            hsn: "9503",
-            gst: "12%"
-        },
-
-        "Educational Toys": {
-            hsn: "9503",
-            gst: "12%"
-        },
-
-        "Remote Control": {
-            hsn: "9503",
-            gst: "12%"
-        }
-
-    },
-
-
-    "Jewellery": {
-
-        "Bangles": {
-            hsn: "7117",
-            gst: "3%"
-        },
-
-        "Earrings": {
-            hsn: "7117",
-            gst: "3%"
-        },
-
-        "Necklace": {
-            hsn: "7117",
-            gst: "3%"
-        },
-
-        "Rings": {
-            hsn: "7117",
-            gst: "3%"
-        }
-
-    },
-
-
-    "Beauty": {
-
-        "Makeup": {
-            hsn: "3304",
-            gst: "18%"
-        },
-
-        "Skincare": {
-            hsn: "3304",
-            gst: "18%"
-        },
-
-        "Hair Care": {
-            hsn: "3305",
-            gst: "18%"
-        }
-
-    },
-
-
-    "Shoes": {
-
-        "Men Shoes": {
-            hsn: "6403",
-            gst: "5%"
-        },
-
-        "Women Shoes": {
-            hsn: "6403",
-            gst: "5%"
-        },
-
-        "Kids Shoes": {
-            hsn: "6403",
-            gst: "5%"
-        },
-
-        "Sports Shoes": {
-            hsn: "6404",
-            gst: "5%"
-        }
-
-    },
- 
-    "Electronics": {
-
-        "Mobile": {
-            hsn: "8517",
-            gst: "18%"
-        },
-
-        "Earbuds": {
-            hsn: "8518",
-            gst: "18%"
-        },
-
-        "Speakers": {
-            hsn: "8518",
-            gst: "18%"
-        },
-
-        "Accessories": {
-            hsn: "8517",
-            gst: "18%"
-        }
-
-    },
-
-
-    "Home": {
-
-        "Decor": {
-            hsn: "3926",
-            gst: "18%"
-        },
-
-        "Kitchen": {
-            hsn: "3924",
-            gst: "18%"
-        },
-
-        "Storage": {
-            hsn: "3924",
-            gst: "18%"
-        }
-
-    }
-
-};
-
-
-/* ==========================================
-   UPDATE SUBCATEGORIES
-   ========================================== */
-
 function updateSubcategories() {
 
-    const category =
-        document.getElementById("category").value;
+    const categorySelect =
+        document.getElementById("category");
 
     const subcategory =
         document.getElementById("subcategory");
+
+    const categoryId =
+        categorySelect.options[
+            categorySelect.selectedIndex
+        ]?.dataset.categoryId;
 
 
     subcategory.innerHTML =
         '<option value="">Select Subcategory</option>';
 
 
-    if (subcategoryOptions[category]) {
-
-        subcategoryOptions[category].forEach(function(item) {
-
-            const option =
-                document.createElement("option");
-
-            option.value = item;
-
-            option.textContent = item;
-
-            subcategory.appendChild(option);
-
-        });
-
+    if (!categoryId) {
+        resetTaxDetails();
+        return;
     }
 
 
-    /* Reset tax */
+    if (subcategoryData) {
 
-    document.getElementById("hsn_code").value = "";
+        const options =
+            subcategoryData.querySelectorAll(
+                "option"
+            );
 
-    document.getElementById("gst_rate").value = "0";
 
-    document.getElementById("gst_display").value = "";
+        Array.from(options)
+            .filter(function(option) {
 
+                return String(
+                    option.dataset.categoryId
+                ) === String(categoryId);
+
+            })
+            .sort(function(a, b) {
+
+                const positionA =
+                    Number(a.dataset.position || 0);
+
+                const positionB =
+                    Number(b.dataset.position || 0);
+
+                return positionA - positionB ||
+                       Number(a.dataset.id || 0) -
+                       Number(b.dataset.id || 0);
+
+            })
+            .forEach(function(option) {
+
+                const newOption =
+                    document.createElement("option");
+
+                newOption.value =
+                    option.value;
+
+                newOption.textContent =
+                    option.textContent;
+
+                subcategory.appendChild(
+                    newOption
+                );
+
+            });
+    }
+
+
+    resetTaxDetails();
+}
+
+
+/* ==========================================
+   RESET TAX
+   ========================================== */
+
+function resetTaxDetails() {
+
+    const hsnInput =
+        document.getElementById("hsn_code");
+
+    const gstInput =
+        document.getElementById("gst_rate");
+
+    const gstDisplay =
+        document.getElementById("gst_display");
+
+
+    if (hsnInput) {
+        hsnInput.value = "";
+    }
+
+
+    if (gstInput) {
+        gstInput.value = "0";
+    }
+
+
+    if (gstDisplay) {
+        gstDisplay.value = "";
+    }
 }
 
 
@@ -903,25 +763,43 @@ function updateTaxDetails() {
 
     if (tax) {
 
-        hsnInput.value = tax.hsn;
+        if (hsnInput) {
+            hsnInput.value = tax.hsn;
+        }
 
-        gstInput.value =
-            tax.gst.replace("%", "");
+        if (gstInput) {
+            gstInput.value =
+                tax.gst.replace("%", "");
+        }
 
-        gstDisplay.value =
-            tax.gst;
+        if (gstDisplay) {
+            gstDisplay.value =
+                tax.gst;
+        }
 
     } else {
 
-        hsnInput.value = "";
+        if (hsnInput) {
+            hsnInput.value = "";
+        }
 
-        gstInput.value = "0";
+        if (gstInput) {
+            gstInput.value = "0";
+        }
 
-        gstDisplay.value = "";
+        if (gstDisplay) {
+            gstDisplay.value = "";
+        }
 
     }
 
 }
+
+
+/* ==========================================
+   PACKAGING PROFILES
+   ========================================== */
+
 function updatePackagingDetails() {
 
     const packagingProfiles = {
@@ -964,11 +842,18 @@ function updatePackagingDetails() {
     };
 
 
-    const selectedProfile =
+    const profile =
         document.getElementById(
             "packaging_profile"
-        ).value;
+        );
 
+    if (!profile) {
+        return;
+    }
+
+
+    const selectedProfile =
+        profile.value;
 
     const details =
         packagingProfiles[selectedProfile];
@@ -990,6 +875,22 @@ function updatePackagingDetails() {
 
         document.getElementById(
             "package_height_display"
+        ).value = "";
+
+        document.getElementById(
+            "package_weight"
+        ).value = "";
+
+        document.getElementById(
+            "package_length"
+        ).value = "";
+
+        document.getElementById(
+            "package_breadth"
+        ).value = "";
+
+        document.getElementById(
+            "package_height"
         ).value = "";
 
         return;
@@ -1035,6 +936,11 @@ function updatePackagingDetails() {
 
 }
 
+
+/* ==========================================
+   MANUAL PACKAGE SYNC
+   ========================================== */
+
 function syncPackageDetails() {
 
     document.getElementById(
@@ -1044,6 +950,7 @@ function syncPackageDetails() {
             "package_weight_display"
         ).value;
 
+
     document.getElementById(
         "package_length"
     ).value =
@@ -1051,12 +958,14 @@ function syncPackageDetails() {
             "package_length_display"
         ).value;
 
+
     document.getElementById(
         "package_breadth"
     ).value =
         document.getElementById(
             "package_breadth_display"
         ).value;
+
 
     document.getElementById(
         "package_height"
@@ -1066,6 +975,22 @@ function syncPackageDetails() {
         ).value;
 
 }
+
+
+/* ==========================================
+   INITIAL LOAD
+   ========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        updateSubcategories();
+
+        updatePackagingDetails();
+
+    }
+);
 
 </script>
 

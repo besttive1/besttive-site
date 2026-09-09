@@ -156,9 +156,9 @@
 
         {% for sub in subcategories %}
 
-            <a href="/?category={{ category }}&subcategory={{ sub }}"
+            <a href="/?category={{ category }}&subcategory={{ sub.name }}"
                class="filter-option">
-                {{ sub }}
+                {{ sub.name }}
             </a>
 
         {% endfor %}
@@ -249,7 +249,7 @@
                 <a href="/?category={{ category }}&subcategory={{ sub }}"
                    class="filter-option">
 
-                    {{ sub }}
+                     {{ sub.name }}
 
                 </a>
 
@@ -436,20 +436,21 @@
 
     {% if banners %}
 
-        <div class="hero-dots">
+    <div class="hero-dots">
 
-            {% for banner in banners %}
+        {% for banner in banners %}
 
-                <span
-                    onclick="showHeroSlide({{ loop.index0 }})"
-                    class="hero-dot {% if loop.first %}active{% endif %}"
-                ></span>
+            <span
+                class="hero-dot{% if loop.first %} active{% endif %}"
+                data-slide-index="{{ loop.index0 }}"
+                onclick="showHeroSlide(Number(this.dataset.slideIndex))">
+            </span>
 
-            {% endfor %}
+        {% endfor %}
 
-        </div>
+    </div>
 
-    {% endif %}
+{% endif %}
 
 </div>
 
