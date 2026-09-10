@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash, jsonify, send_from_directory
+﻿from flask import Flask, render_template, request, redirect, session, flash, jsonify, send_from_directory
 import os, random, datetime, json
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -1290,7 +1290,8 @@ class Product(db.Model):
     stock = db.Column(db.Integer, default=0)
     category = db.Column(db.String(100), default="")
     subcategory = db.Column(db.String(100), default="")
-    
+    section = db.Column(db.String(100), default="")
+
     gst_rate = db.Column(
     db.Float,
     default=0
@@ -1820,6 +1821,41 @@ class SubCategory(db.Model):
     master_category_id = db.Column(
         db.Integer,
         db.ForeignKey("master_category.id"),
+        nullable=False
+    )
+
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    active = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
+    position = db.Column(
+        db.Integer,
+        default=1,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.utcnow
+    )
+
+class Section(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    subcategory_id = db.Column(
+        db.Integer,
+        db.ForeignKey("sub_category.id"),
         nullable=False
     )
 
@@ -2760,10 +2796,21 @@ def admin_master_categories():
         .all()
     )
 
+    sections = (
+        Section.query
+        .order_by(
+            Section.subcategory_id.asc(),
+            Section.position.asc(),
+            Section.id.asc()
+        )
+        .all()
+    )
+
     return render_template(
         "admin_master_categories.html",
         categories=categories,
-        subcategories=subcategories
+        subcategories=subcategories,
+        sections=sections
     )
 
 # ==========================================
@@ -2954,6 +3001,123 @@ def add_subcategory(category_id):
 
     return redirect("/admin/master-categories")
 
+@app.route(
+    "/admin/subcategories/<int:subcategory_id>/sections/add",
+    methods=["POST"]
+)
+def add_section(subcategory_id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    subcategory = SubCategory.query.get_or_404(subcategory_id)
+
+    name = request.form.get("name", "").strip()
+    position = request.form.get("position", "1").strip()
+
+    if not name:
+        flash("Section name is required.")
+        return redirect("/admin/master-categories")
+
+    existing = (
+        Section.query
+        .filter_by(
+            subcategory_id=subcategory.id,
+            name=name
+        )
+        .first()
+    )
+
+    if existing:
+        flash("This section already exists.")
+        return redirect("/admin/master-categories")
+
+    try:
+        position = max(1, int(position))
+    except ValueError:
+        position = (
+            Section.query
+            .filter_by(subcategory_id=subcategory.id)
+            .count() + 1
+        )
+
+    section = Section(
+        subcategory_id=subcategory.id,
+        name=name,
+        position=position,
+        active=True
+    )
+
+    db.session.add(section)
+    db.session.commit()
+
+    flash("Section added successfully!")
+
+    return redirect("/admin/master-categories")
+
+@app.route(
+    "/admin/sections/<int:id>/edit",
+    methods=["POST"]
+)
+def edit_section(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    section = Section.query.get_or_404(id)
+
+    name = request.form.get("name", "").strip()
+    position = request.form.get("position", "1").strip()
+
+    if not name:
+        flash("Section name is required.")
+        return redirect("/admin/master-categories")
+
+    existing = (
+        Section.query
+        .filter(
+            Section.subcategory_id == section.subcategory_id,
+            Section.name == name,
+            Section.id != section.id
+        )
+        .first()
+    )
+
+    if existing:
+        flash("This section already exists.")
+        return redirect("/admin/master-categories")
+
+    try:
+        position = max(1, int(position))
+    except ValueError:
+        position = section.position
+
+    section.name = name
+    section.position = position
+
+    db.session.commit()
+
+    flash("Section updated successfully!")
+
+    return redirect("/admin/master-categories")
+
+
+@app.route(
+    "/admin/sections/<int:id>/toggle",
+    methods=["POST"]
+)
+def toggle_section(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    section = Section.query.get_or_404(id)
+
+    section.active = not section.active
+
+    db.session.commit()
+
+    return redirect("/admin/master-categories")
 
 # ==========================================
 # SUBCATEGORY - EDIT
@@ -3221,6 +3385,7 @@ def admin_add_product():
         stock = request.form.get("stock")
         category = request.form.get("category")
         subcategory = request.form.get("subcategory")
+        section = request.form.get("section")
         packaging_profile = request.form.get("packaging_profile")
 
         # ==========================================
@@ -3293,7 +3458,8 @@ def admin_add_product():
 
             category=category,
             subcategory=subcategory,
-                        
+            section=section,
+
             # Automatically assigned
             hsn_code=hsn_code,
             gst_rate=float(gst_rate),
@@ -3366,10 +3532,21 @@ def admin_add_product():
         .all()
     )
 
+    sections = (
+        Section.query
+        .order_by(
+            Section.subcategory_id.asc(),
+            Section.position.asc(),
+            Section.id.asc()
+        )
+        .all()
+    )
+
     return render_template(
         "add_product.html",
         master_categories=master_categories,
-        subcategories=subcategories
+        subcategories=subcategories,
+        sections=sections
     )
 
 @app.route("/admin/products")

@@ -317,43 +317,72 @@
 
         <!-- CATEGORY -->
 
-        <p>Category</p>
+<p>Category</p>
 
-        <select name="category"
-                id="category"
-                required
-                onchange="updateSubcategories()">
+<select name="category"
+        id="category"
+        required
+        onchange="updateSubcategories()">
 
-            <option value="">
-                Select Category
-            </option>
+    <option value="">
+        Select Category
+    </option>
 
-            {% for master_category in master_categories %}
-                <option
-                    value="{{ master_category.name }}"
-                    data-category-id="{{ master_category.id }}"
-                >
-                    {{ master_category.name }}
-                </option>
-            {% endfor %}
+    {% for master_category in master_categories %}
 
-        </select>
+        <option
+            value="{{ master_category.name }}"
+            data-category-id="{{ master_category.id }}"
+        >
+            {{ master_category.name }}
+        </option>
+
+    {% endfor %}
+
+</select>
 
 
-        <!-- SUBCATEGORY -->
+<!-- SUBCATEGORY -->
 
-        <p>Subcategory</p>
+<p>Subcategory</p>
 
-        <select name="subcategory"
-                id="subcategory"
-                required
-                onchange="updateTaxDetails()">
+<select name="subcategory"
+        id="subcategory"
+        required
+        onchange="updateSections(); updateTaxDetails()">
 
-            <option value="">
-                Select Subcategory
-            </option>
+    <option value="">
+        Select Subcategory
+    </option>
 
-        </select>
+</select>
+
+
+<!-- SECTION -->
+
+<p>Section</p>
+
+<select name="section"
+        id="section"
+        required>
+
+    <option value="">
+        Select Section
+    </option>
+
+    {% for section_item in sections %}
+
+        <option
+            value="{{ section_item.name }}"
+            data-subcategory-id="{{ section_item.subcategory_id }}"
+            data-position="{{ section_item.position }}"
+        >
+            {{ section_item.name }}
+        </option>
+
+    {% endfor %}
+
+</select>
 
         <!-- AUTO HSN + GST -->
 
@@ -613,6 +642,24 @@
 
 </select>
 
+<!-- DATABASE SECTIONS DATA -->
+
+<select id="section-data" hidden>
+
+    {% for section_item in sections %}
+
+        <option
+            value="{{ section_item.name }}"
+            data-subcategory-id="{{ section_item.subcategory_id }}"
+            data-position="{{ section_item.position }}"
+        >
+            {{ section_item.name }}
+        </option>
+
+    {% endfor %}
+
+</select>
+
 <script>
 
 /* ==========================================
@@ -623,60 +670,48 @@ const subcategoryData = document.getElementById("subcategory-data");
 
 
 /* ==========================================
-   CATEGORY → SUBCATEGORY
+   CATEGORY → SUBCATEGORY → SECTION
    ========================================== */
 
 function updateSubcategories() {
 
-    const categorySelect =
-        document.getElementById("category");
+    const categorySelect = document.getElementById("category");
+    const subcategory = document.getElementById("subcategory");
+    const sectionSelect = document.getElementById("section");
 
-    const subcategory =
-        document.getElementById("subcategory");
+    const selectedOption =
+        categorySelect.options[categorySelect.selectedIndex];
 
     const categoryId =
-        categorySelect.options[
-            categorySelect.selectedIndex
-        ]?.dataset.categoryId;
-
+        selectedOption?.dataset.categoryId;
 
     subcategory.innerHTML =
         '<option value="">Select Subcategory</option>';
 
+    sectionSelect.innerHTML =
+        '<option value="">Select Section</option>';
 
     if (!categoryId) {
         resetTaxDetails();
         return;
     }
 
-
     if (subcategoryData) {
 
         const options =
-            subcategoryData.querySelectorAll(
-                "option"
-            );
-
+            subcategoryData.querySelectorAll("option");
 
         Array.from(options)
             .filter(function(option) {
 
-                return String(
-                    option.dataset.categoryId
-                ) === String(categoryId);
+                return String(option.dataset.categoryId) ===
+                       String(categoryId);
 
             })
             .sort(function(a, b) {
 
-                const positionA =
-                    Number(a.dataset.position || 0);
-
-                const positionB =
-                    Number(b.dataset.position || 0);
-
-                return positionA - positionB ||
-                       Number(a.dataset.id || 0) -
-                       Number(b.dataset.id || 0);
+                return Number(a.dataset.position || 0) -
+                       Number(b.dataset.position || 0);
 
             })
             .forEach(function(option) {
@@ -684,21 +719,87 @@ function updateSubcategories() {
                 const newOption =
                     document.createElement("option");
 
-                newOption.value =
-                    option.value;
+                newOption.value = option.value;
+                newOption.textContent = option.textContent.trim();
 
-                newOption.textContent =
-                    option.textContent;
+                newOption.dataset.subcategoryId =
+                    option.dataset.id;
 
-                subcategory.appendChild(
-                    newOption
-                );
+                subcategory.appendChild(newOption);
 
             });
     }
 
-
     resetTaxDetails();
+}
+
+
+function updateSections() {
+
+    const subcategory =
+        document.getElementById("subcategory");
+
+    const sectionSelect =
+        document.getElementById("section");
+
+    const sectionData =
+        document.getElementById("section-data");
+
+    const selectedOption =
+        subcategory.options[
+            subcategory.selectedIndex
+        ];
+
+    const subcategoryId =
+        selectedOption?.dataset.subcategoryId;
+
+
+    sectionSelect.innerHTML =
+        '<option value="">Select Section</option>';
+
+
+    if (!subcategoryId || !sectionData) {
+        return;
+    }
+
+
+    const options =
+        sectionData.querySelectorAll("option");
+
+
+    Array.from(options)
+        .filter(function(option) {
+
+            return String(
+                option.dataset.subcategoryId
+            ) === String(subcategoryId);
+
+        })
+        .sort(function(a, b) {
+
+            return Number(a.dataset.position || 0) -
+                   Number(b.dataset.position || 0);
+
+        })
+        .forEach(function(option) {
+
+            const newOption =
+                document.createElement("option");
+
+            newOption.value =
+                option.value;
+
+            newOption.textContent =
+                option.textContent.trim();
+
+            newOption.dataset.subcategoryId =
+                option.dataset.subcategoryId;
+
+            sectionSelect.appendChild(
+                newOption
+            );
+
+        });
 }
 
 
@@ -748,7 +849,9 @@ function updateTaxDetails() {
 
 
     const tax =
-        taxMapping[category]?.[subcategory];
+        (typeof taxMapping !== "undefined")
+            ? taxMapping[category]?.[subcategory]
+            : null;
 
 
     const hsnInput =
