@@ -121,279 +121,794 @@
 
 <!-- CATEGORY PAGE -->
 {% if category %}
-<!-- MOBILE FILTER & SORT BUTTONS -->
 
-<div class="mobile-filter-buttons">
-    <button type="button" onclick="openMobileFilters()"> 
-        🔽 FILTER
-    </button>
-    <button type="button" onclick="openMobileSort()"> 
-        ↕️ SORT
-    </button>
-</div>
+<div class="category-page-wrapper">
 
-<div class="category-layout">
+    <!-- MOBILE FILTER + SORT -->
+    <div class="mobile-filter-buttons">
 
-<!-- MOBILE FILTER DRAWER -->
-
-<div id="mobileFilterDrawer" class="mobile-filter-drawer">
-    <div class="mobile-filter-header">
-        <h3>Filters</h3>
-        <button type="button" onclick="closeMobileFilters()">
-            ✕
+        <button type="button"
+                onclick="openMobileFilters()">
+            🔽 FILTER
         </button>
-    </div>
 
-    <!-- SUBCATEGORY -->
-
-    <div class="mobile-filter-section">
-
-        <h4>SUBCATEGORY</h4>
-        <a href="/?category={{ category }}"
-           class="filter-option">
-            All
-        </a>
-
-        {% for sub in subcategories %}
-
-            <a href="/?category={{ category }}&subcategory={{ sub.name }}"
-               class="filter-option">
-                {{ sub.name }}
-            </a>
-
-        {% endfor %}
-
-    </div>
-    <hr>
-
-    <!-- PRICE -->
-
-    <div class="mobile-filter-section">
-        <h4>PRICE</h4>
-        <form action="/" method="GET">
-            <input type="hidden"
-                   name="category"
-                   value="{{ category }}">
-
-            {% if subcategory %}
-                <input type="hidden"
-                       name="subcategory"
-                       value="{{ subcategory }}">
-
-            {% endif %}
-
-            <input type="number"
-                   name="min_price"
-                   placeholder="Min Price"
-                   value="{{ min_price or '' }}">
-
-            <input type="number"
-                   name="max_price"
-                   placeholder="Max Price"
-                   value="{{ max_price or '' }}">
-
-            <button type="submit">
-                Apply Filter
-            </button>
-        </form>
-    </div>
-</div>
-
-<!-- MOBILE SORT DRAWER -->
-
-<div id="mobileSortDrawer" class="mobile-sort-drawer">
-    <div class="mobile-filter-header">
-        <h3>Sort By</h3>
-        <button type="button" onclick="closeMobileSort()">
-            ✕
+        <button type="button"
+                onclick="openMobileSort()">
+            ↕️ SORT
         </button>
+
     </div>
 
-    <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=newest">
-        Newest
-    </a>
 
-    <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=low">
-        Price: Low to High
-    </a>
+    <div class="category-layout">
 
-    <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=high">
-        Price: High to Low
-    </a>
 
-</div>
+        <!-- =========================================
+             MOBILE FILTER DRAWER
+             ========================================= -->
 
-    <!-- LEFT FILTER SIDEBAR -->
-    <aside class="filter-sidebar">
-        <div class="filter-title">
-            <h3>Filters</h3>
-            <a href="/?category={{ category }}">
-                CLEAR ALL
-            </a>
-        </div>
-        <hr>
+        <div id="mobileFilterDrawer"
+             class="mobile-filter-drawer">
 
-        <!-- SUBCATEGORY -->
+            <div class="mobile-filter-header">
 
-        <div class="filter-section">
-            <h4>SUBCATEGORY</h4>
-            <a href="/?category={{ category }}"
-               class="filter-option">
+                <h3>Filters</h3>
 
-                All
+                <button type="button"
+                        onclick="closeMobileFilters()">
+                    ✕
+                </button>
 
-            </a>
+            </div>
 
-            {% for sub in subcategories %}
 
-                <a href="/?category={{ category }}&subcategory={{ sub }}"
+            <!-- SUBCATEGORY -->
+
+            <div class="mobile-filter-section">
+
+                <h4>SUBCATEGORY</h4>
+
+
+                <a href="/?category={{ category|urlencode }}"
                    class="filter-option">
 
-                     {{ sub.name }}
+                    All
 
                 </a>
 
-            {% endfor %}
 
-        </div>
-        <hr>
+                {% for sub in subcategories %}
 
-        <!-- PRICE -->
-        <div class="filter-section">
-            <h4>PRICE</h4>
-            <form action="/" method="GET">
-                <input type="hidden"
-                       name="category"
-                       value="{{ category }}">
+                    <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}"
+                       class="filter-option">
 
-                {% if subcategory %}
+                        {{ sub.name }}
+
+                    </a>
+
+
+                    {% if subcategory == sub.name %}
+
+                        <div class="section-filter-list">
+
+                            <h5>SECTION</h5>
+
+
+                            <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}"
+                               class="filter-option">
+
+                                All Sections
+
+                            </a>
+
+
+                            {% for section_item in sections %}
+
+                                {% if section_item.subcategory_id == sub.id %}
+
+                                    <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}&section={{ section_item.name|urlencode }}"
+                                       class="filter-option section-option">
+
+                                        {{ section_item.name }}
+
+                                    </a>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- PRICE -->
+
+            <div class="mobile-filter-section">
+
+                <h4>PRICE</h4>
+
+                <form action="/"
+                      method="GET">
 
                     <input type="hidden"
-                           name="subcategory"
-                           value="{{ subcategory }}">
-
-                {% endif %}
+                           name="category"
+                           value="{{ category }}">
 
 
-                <input type="number"
-                       name="min_price"
-                       placeholder="Min Price"
-                       value="{{ min_price or '' }}">
+                    {% if subcategory %}
 
-                <input type="number"
-                       name="max_price"
-                       placeholder="Max Price"
-                       value="{{ max_price or '' }}">
+                        <input type="hidden"
+                               name="subcategory"
+                               value="{{ subcategory }}">
 
-                <button type="submit">
-                    Apply
-                </button>
-            </form>
+                    {% endif %}
+
+
+                    {% if section %}
+
+                        <input type="hidden"
+                               name="section"
+                               value="{{ section }}">
+
+                    {% endif %}
+
+
+                    <input type="number"
+                           name="min_price"
+                           placeholder="Min Price"
+                           value="{{ min_price or '' }}">
+
+
+                    <input type="number"
+                           name="max_price"
+                           placeholder="Max Price"
+                           value="{{ max_price or '' }}">
+
+
+                    <button type="submit">
+
+                        Apply Filter
+
+                    </button>
+
+                </form>
+
+            </div>
+
         </div>
-        <hr>
 
-        <!-- SORT -->
 
-        <div class="filter-section">
 
-            <h4>SORT BY</h4>
+        <!-- =========================================
+             MOBILE SORT
+             ========================================= -->
 
-            <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=newest"
-               class="filter-option">
+        <div id="mobileSortDrawer"
+             class="mobile-sort-drawer">
+
+            <div class="mobile-filter-header">
+
+                <h3>Sort By</h3>
+
+                <button type="button"
+                        onclick="closeMobileSort()">
+
+                    ✕
+
+                </button>
+
+            </div>
+
+
+            <a href="/?category={{ category|urlencode }}{% if subcategory %}&subcategory={{ subcategory|urlencode }}{% endif %}{% if section %}&section={{ section|urlencode }}{% endif %}&sort=newest">
 
                 Newest
+
             </a>
 
-            <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=low"
-               class="filter-option">
+
+            <a href="/?category={{ category|urlencode }}{% if subcategory %}&subcategory={{ subcategory|urlencode }}{% endif %}{% if section %}&section={{ section|urlencode }}{% endif %}&sort=low">
 
                 Price: Low to High
 
             </a>
 
-            <a href="/?category={{ category }}{% if subcategory %}&subcategory={{ subcategory }}{% endif %}&sort=high"
-               class="filter-option">
+
+            <a href="/?category={{ category|urlencode }}{% if subcategory %}&subcategory={{ subcategory|urlencode }}{% endif %}{% if section %}&section={{ section|urlencode }}{% endif %}&sort=high">
 
                 Price: High to Low
 
             </a>
-        </div>
-    </aside>
 
-
-    <!-- RIGHT SIDE PRODUCTS -->
-
-    <main class="category-products">
-        <div class="category-heading">
-            <h2>
-                {{ category }}
-            </h2>
-            {% if subcategory %}
-                <p>
-                    {{ subcategory }}
-                </p>
-            {% endif %}
-
-            <span>
-                {{ products|length }} Products
-            </span>
         </div>
 
-        <!-- PRODUCTS -->
 
-        <div class="products">
-            {% for product in products %}
-                <div class="card">
-                    
-                    <a href="/product/{{ product.id }}">
 
-                        <img src="{{ product.image }}">
+        <!-- =========================================
+             DESKTOP FILTER SIDEBAR
+             ========================================= -->
+
+        <aside class="filter-sidebar">
+
+            <div class="filter-title">
+
+                <h3>Filters</h3>
+
+                <a href="/?category={{ category|urlencode }}">
+
+                    CLEAR ALL
+
+                </a>
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- SUBCATEGORY -->
+
+            <div class="filter-section">
+
+                <h4>SUBCATEGORY</h4>
+
+
+                <a href="/?category={{ category|urlencode }}"
+                   class="filter-option">
+
+                    All
+
+                </a>
+
+
+                {% for sub in subcategories %}
+
+                    <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}"
+                       class="filter-option">
+
+                        {{ sub.name }}
 
                     </a>
 
-                    <h3>
 
-                        <a href="/product/{{ product.id }}"
-                           style="text-decoration:none;color:black;">
-                            {{ product.name }}
-                        </a>
-                    </h3>
+                    {% if subcategory == sub.name %}
 
-                    <p class="product-description">
-                        {{ product.description }}
-                    </p>
-                    
-                    <p>
-                        ₹{{ product.price }}
-                    </p>
+                        <div class="section-filter-list">
 
-                    <div class="product-actions">
-                    {% if product.stock > 0 %}
+                            <h5>SECTION</h5>
 
-                        <a href="/add-to-cart/{{ product.id }}">
-                            <button>
-                                🛒 Add to Cart
-                            </button>
-                        </a>
 
-                        <a href="/payment/{{ product.name }}/{{ product.price }}">
-                            <button>
-                                Buy Now
-                            </button>
-                        </a>
-                    {% else %}
+                            <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}"
+                               class="filter-option">
 
-                            <button disabled class="out-of-stock-btn">
-                                Out of Stock
-                            </button>
+                                All Sections
+
+                            </a>
+
+
+                            {% for section_item in sections %}
+
+                                {% if section_item.subcategory_id == sub.id %}
+
+                                    <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}&section={{ section_item.name|urlencode }}"
+                                       class="filter-option section-option">
+
+                                        {{ section_item.name }}
+
+                                    </a>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
                     {% endif %}
-                    
-                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- PRICE -->
+
+            <div class="filter-section">
+
+                <h4>PRICE</h4>
+
+
+                <form action="/"
+                      method="GET">
+
+                    <input type="hidden"
+                           name="category"
+                           value="{{ category }}">
+
+
+                    {% if subcategory %}
+
+                        <input type="hidden"
+                               name="subcategory"
+                               value="{{ subcategory }}">
+
+                    {% endif %}
+
+
+                    {% if section %}
+
+                        <input type="hidden"
+                               name="section"
+                               value="{{ section }}">
+
+                    {% endif %}
+
+
+                    <input type="number"
+                           name="min_price"
+                           placeholder="Min Price"
+                           value="{{ min_price or '' }}">
+
+
+                    <input type="number"
+                           name="max_price"
+                           placeholder="Max Price"
+                           value="{{ max_price or '' }}">
+
+
+                    <button type="submit">
+
+                        Apply
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- SORT -->
+
+            <div class="filter-section">
+
+                <h4>SORT BY</h4>
+
+
+                <a href="/?category={{ category|urlencode }}{% if subcategory %}&subcategory={{ subcategory|urlencode }}{% endif %}{% if section %}&section={{ section|urlencode }}{% endif %}&sort=newest"
+                   class="filter-option">
+
+                    Newest
+
+                </a>
+
+
+                <a href="/?category={{ category|urlencode }}{% if subcategory %}&subcategory={{ subcategory|urlencode }}{% endif %}{% if section %}&section={{ section|urlencode }}{% endif %}&sort=low"
+                   class="filter-option">
+
+                    Price: Low to High
+
+                </a>
+
+
+                <a href="/?category={{ category|urlencode }}{% if subcategory %}&subcategory={{ subcategory|urlencode }}{% endif %}{% if section %}&section={{ section|urlencode }}{% endif %}&sort=high"
+                   class="filter-option">
+
+                    Price: High to Low
+
+                </a>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =========================================
+             RIGHT SIDE
+             ========================================= -->
+
+        <main class="category-products">
+
+
+            <!-- BREADCRUMB -->
+
+            <div class="category-breadcrumb">
+
+                <a href="/">Home</a>
+
+                <span>›</span>
+
+                <strong>{{ category }}</strong>
+
+
+                {% if subcategory %}
+
+                    <span>›</span>
+
+                    <strong>{{ subcategory }}</strong>
+
+                {% endif %}
+
+
+                {% if section %}
+
+                    <span>›</span>
+
+                    <strong>{{ section }}</strong>
+
+                {% endif %}
+
+            </div>
+
+
+
+            <!-- CATEGORY TITLE -->
+
+            <div class="category-heading">
+
+                <div>
+
+                    <h2>
+
+                        {% if section %}
+
+                            {{ section }}
+
+                        {% elif subcategory %}
+
+                            {{ subcategory }}
+
+                        {% else %}
+
+                            {{ category }}
+
+                        {% endif %}
+
+                    </h2>
+
+
+                    <p>
+
+                        {% if section %}
+
+                            Products in this section
+
+                        {% elif subcategory %}
+
+                            Explore sections and products
+
+                        {% else %}
+
+                            Explore subcategories and sections
+
+                        {% endif %}
+
+                    </p>
+
                 </div>
-            {% endfor %}
-        </div>
-    </main>
+
+
+                <span>
+
+                    {{ products|length }} Products
+
+                </span>
+
+            </div>
+
+
+
+            <!-- =========================================
+                 SUBCATEGORIES
+                 ========================================= -->
+
+            <section class="customer-subcategories">
+
+                <div class="customer-section-heading">
+
+                    <div>
+
+                        <span>SHOP BY</span>
+
+                        <h2>Subcategories</h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="subcategory-cards">
+
+                    {% for sub in subcategories %}
+
+                        <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}"
+                           class="customer-subcategory-card
+                           {% if subcategory == sub.name %}active{% endif %}">
+
+                            <div class="subcategory-icon">
+
+                                ✦
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+
+                                    {{ sub.name }}
+
+                                </strong>
+
+                                <small>
+
+                                    View Sections →
+
+                                </small>
+
+                            </div>
+
+                        </a>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================================
+                 SECTIONS
+                 ========================================= -->
+
+            {% if subcategory %}
+
+                {% for sub in subcategories %}
+
+                    {% if sub.name == subcategory %}
+
+                        <section class="customer-sections">
+
+                            <div class="customer-section-heading">
+
+                                <div>
+
+                                    <span>SHOP BY</span>
+
+                                    <h2>{{ sub.name }} Sections</h2>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="section-cards">
+
+
+                                <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}"
+                                   class="customer-section-card">
+
+                                    <strong>
+
+                                        All {{ sub.name }}
+
+                                    </strong>
+
+                                    <small>
+
+                                        View All Products →
+
+                                    </small>
+
+                                </a>
+
+
+                                {% for section_item in sections %}
+
+                                    {% if section_item.subcategory_id == sub.id %}
+
+                                        <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}&section={{ section_item.name|urlencode }}"
+                                           class="customer-section-card
+                                           {% if section == section_item.name %}active{% endif %}">
+
+                                            <strong>
+
+                                                {{ section_item.name }}
+
+                                            </strong>
+
+                                            <small>
+
+                                                Shop Products →
+
+                                            </small>
+
+                                        </a>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </div>
+
+                        </section>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 PRODUCTS
+                 ========================================= -->
+
+            {% if products|length > 0 %}
+
+                <div class="products">
+
+                    {% for product in products %}
+
+                        <div class="card">
+
+
+                            <div class="product-image-box">
+
+                                <a href="/product/{{ product.id }}">
+
+                                    <img src="{{ product.image }}"
+                                         alt="{{ product.name }}">
+
+                                </a>
+
+
+                                <button type="button"
+                                        class="wishlist-icon {% if product.id in wishlist_product_ids %}active{% endif %}"
+                                        data-product-id="{{ product.id }}"
+                                        onclick="toggleWishlist(this, this.dataset.productId)">
+
+                                    <span class="heart-icon">
+
+                                        {% if product.id in wishlist_product_ids %}
+
+                                            ♥
+
+                                        {% else %}
+
+                                            ♡
+
+                                        {% endif %}
+
+                                    </span>
+
+
+                                    <span class="wishlist-symbol">
+
+                                        {% if product.id in wishlist_product_ids %}
+
+                                            −
+
+                                        {% else %}
+
+                                            +
+
+                                        {% endif %}
+
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+
+                            <h3>
+
+                                <a href="/product/{{ product.id }}"
+                                   style="text-decoration:none;color:black;">
+
+                                    {{ product.name }}
+
+                                </a>
+
+                            </h3>
+
+
+                            <p class="product-description">
+
+                                {{ product.description }}
+
+                            </p>
+
+
+                            <p>
+
+                                ₹{{ product.price }}
+
+                            </p>
+
+
+                            <div class="product-actions">
+
+                                {% if product.stock > 0 %}
+
+                                    <a href="/add-to-cart/{{ product.id }}">
+
+                                        <button>
+
+                                            🛒 Add to Cart
+
+                                        </button>
+
+                                    </a>
+
+
+                                    <a href="/payment/{{ product.name }}/{{ product.price }}">
+
+                                        <button>
+
+                                            Buy Now
+
+                                        </button>
+
+                                    </a>
+
+                                {% else %}
+
+                                    <button disabled
+                                            class="out-of-stock-btn">
+
+                                        Out of Stock
+
+                                    </button>
+
+                                {% endif %}
+
+                            </div>
+
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div style="text-align:center;padding:50px 20px;">
+
+                    <h2>No Products Found 😔</h2>
+
+                    <p>
+
+                        Try another subcategory or section.
+
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </main>
+
+    </div>
+
 </div>
+
 
 {% else %}
 
@@ -470,6 +985,141 @@
 
 {% endif %}
 
+<!-- ==========================================
+     SECTION-WISE PRODUCTS
+     ========================================== -->
+
+{% if sections %}
+
+    {% for section in sections %}
+
+        {% set section_items = section_products.get(section.id, []) %}
+
+        {% if section_items %}
+
+            <section class="home-section">
+
+                <div class="home-section-header">
+
+                    <h2>
+                        {{ section.name }}
+                    </h2>
+
+                    <a href="/?category={{ category }}&subcategory={{ subcategory }}"
+                       class="view-all-section">
+                        View All
+                    </a>
+
+                </div>
+
+
+                <div class="products">
+
+                    {% for product in section_items %}
+
+                        <div class="card">
+
+                            <div class="product-image-box">
+
+                                <a href="/product/{{ product.id }}">
+
+                                    <img src="{{ product.image }}"
+                                         alt="{{ product.name }}">
+
+                                </a>
+
+                                <button
+                                    type="button"
+                                    class="wishlist-icon {% if product.id in wishlist_product_ids %}active{% endif %}"
+                                    data-product-id="{{ product.id }}"
+                                    onclick="toggleWishlist(this, this.dataset.productId)"
+                                >
+
+                                    <span class="heart-icon">
+
+                                        {% if product.id in wishlist_product_ids %}
+                                            ♥
+                                        {% else %}
+                                            ♡
+                                        {% endif %}
+
+                                    </span>
+
+                                    <span class="wishlist-symbol">
+
+                                        {% if product.id in wishlist_product_ids %}
+                                            −
+                                        {% else %}
+                                            +
+                                        {% endif %}
+
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+
+                            <h3>
+
+                                <a href="/product/{{ product.id }}"
+                                   style="text-decoration:none;color:black;">
+
+                                    {{ product.name }}
+
+                                </a>
+
+                            </h3>
+
+
+                            <p class="product-description">
+                                {{ product.description }}
+                            </p>
+
+
+                            <p>
+                                ₹{{ product.price }}
+                            </p>
+
+
+                            <div class="product-actions">
+
+                                {% if product.stock > 0 %}
+
+                                    <a href="/payment/{{ product.name }}/{{ product.price }}">
+
+                                        <button class="buy-now-full">
+                                            🛒 Buy Now
+                                        </button>
+
+                                    </a>
+
+                                {% else %}
+
+                                    <button
+                                        class="buy-now-full out-of-stock-btn"
+                                        disabled
+                                    >
+                                        Out of Stock
+                                    </button>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+    {% endfor %}
+
+{% endif %}
 
 <div class="products">
 

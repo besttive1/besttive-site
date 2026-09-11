@@ -153,16 +153,17 @@ def terms_conditions():
     )
 
 # 🔥 HOME PAGE (ONLY ONCE)
+# 🔥 HOME PAGE (ONLY ONCE)
 @app.route("/")
 def home():
 
     search = request.args.get("search")
     category = request.args.get("category")
     subcategory = request.args.get("subcategory")
+    section = request.args.get("section")
     min_price = request.args.get("min_price", type=int)
     max_price = request.args.get("max_price", type=int)
     sort = request.args.get("sort")
-    query = Product.query
 
     # =========================
     # ACTIVE MASTER CATEGORIES
@@ -182,74 +183,24 @@ def home():
         c.name for c in active_master_categories
     ]
 
-    # Customer website par sirf ACTIVE
-    # master categories ke products dikhenge
-    if active_category_names:
-        query = query.filter(
-            Product.category.in_(active_category_names)
-        )
-    else:
-        query = query.filter(
-            Product.id == -1
-        )
-    banners = Banner.query.filter_by(
-        active=True
-    ).order_by(
-        Banner.position.asc()
-    ).all()
+    # =========================
+    # BANNERS
+    # =========================
 
-    # Search
-    if search:
-        query = query.filter(
-            Product.name.ilike(f"%{search}%")
-        )
+    banners = (
+        Banner.query
+        .filter_by(active=True)
+        .order_by(Banner.position.asc())
+        .all()
+    )
 
-    # Category filter
-    if category:
-        query = query.filter(
-            Product.category == category
-        )
-
-    # Subcategory filter
-    if subcategory:
-        query = query.filter(
-            Product.subcategory == subcategory
-        )
-
-    # Price filter
-    if min_price is not None:
-       query = query.filter(
-           Product.price >= min_price
-        )
-
-    if max_price is not None:
-       query = query.filter(
-           Product.price <= max_price
-        )
-
-    # Sorting
-    if sort == "low":
-       query = query.order_by(
-           Product.price.asc()
-            )
-
-    elif sort == "high":
-       query = query.order_by(
-           Product.price.desc()
-        )
-
-    elif sort == "newest":
-       query = query.order_by(
-           Product.id.desc()
-        )
-
-    products = query.all()
-    
-        # =========================
+    # =========================
     # ACTIVE SUBCATEGORIES
     # =========================
 
     subcategories = []
+
+    active_master_category = None
 
     if category:
 
@@ -277,28 +228,239 @@ def home():
                 .all()
             )
 
+    # =========================
+    # ACTIVE SECTIONS
+    # =========================
+
+    sections = (
+        Section.query
+        .filter_by(active=True)
+        .order_by(
+            Section.position.asc(),
+            Section.id.asc()
+        )
+        .all()
+    )
+
+    current_sections = []
+
+    if subcategory:
+        current_subcategory = (
+            SubCategory.query
+            .filter_by(
+                name=subcategory,
+                active=True
+            )
+            .first()
+        )
+
+        if current_subcategory:
+            current_sections = (
+                Section.query
+                .filter_by(
+                    subcategory_id=current_subcategory.id,
+                    active=True
+                )
+                .order_by(
+                    Section.position.asc(),
+                    Section.id.asc()
+                )
+                .all()
+            )
+
+    # =========================
+    # PRODUCT QUERY
+    # =========================
+
+    query = Product.query
+
+    # Only active master-category products
+    if active_category_names:
+
+        query = query.filter(
+            Product.category.in_(active_category_names)
+        )
+
+    else:
+
+        query = query.filter(
+            Product.id == -1
+        )
+
+    # =========================
+    # SEARCH
+    # =========================
+
+    if search:
+
+        query = query.filter(
+            Product.name.ilike(f"%{search}%")
+        )
+
+    # =========================
+    # CATEGORY
+    # =========================
+
+    if category:
+
+        query = query.filter(
+            Product.category == category
+        )
+
+    # =========================
+    # SUBCATEGORY
+    # =========================
+
+    if subcategory:
+
+        query = query.filter(
+            Product.subcategory == subcategory
+        )
+
+    # =========================
+    # SECTION
+    # =========================
+
+    if section:
+
+        query = query.filter(
+            Product.section == section
+        )
+
+    # =========================
+    # PRICE
+    # =========================
+
+    if min_price is not None:
+
+        query = query.filter(
+            Product.price >= min_price
+        )
+
+    if max_price is not None:
+
+        query = query.filter(
+            Product.price <= max_price
+        )
+
+    # =========================
+    # SORTING
+    # =========================
+
+    if sort == "low":
+
+        query = query.order_by(
+            Product.price.asc()
+        )
+
+    elif sort == "high":
+
+        query = query.order_by(
+            Product.price.desc()
+        )
+
+    elif sort == "newest":
+
+        query = query.order_by(
+            Product.id.desc()
+        )
+
+    else:
+
+        query = query.order_by(
+            Product.id.desc()
+        )
+
+    products = query.all()
+
+    # =========================
+    # SECTION-WISE PRODUCTS
+    # =========================
+
+    section_products = {}
+
+    for current_section in sections:
+
+        subcategory_obj = (
+            SubCategory.query
+            .filter_by(
+                id=current_section.subcategory_id,
+                active=True
+            )
+            .first()
+        )
+
+        if not subcategory_obj:
+
+            section_products[current_section.id] = []
+
+            continue
+
+        # Find master category of this subcategory
+        master_category_obj = (
+            MasterCategory.query
+            .filter_by(
+                id=subcategory_obj.master_category_id,
+                active=True
+            )
+            .first()
+        )
+
+        if not master_category_obj:
+
+            section_products[current_section.id] = []
+
+            continue
+
+        section_products[current_section.id] = (
+            Product.query
+            .filter(
+                Product.category == master_category_obj.name,
+                Product.subcategory == subcategory_obj.name,
+                Product.section == current_section.name
+            )
+            .order_by(
+                Product.id.desc()
+            )
+            .all()
+        )
+
+    # =========================
+    # WISHLIST
+    # =========================
+
     wishlist_product_ids = []
-    
+
     if session.get("user_id"):
-            wishlist_product_ids = [
-              item.product_id
-              for item in Wishlist.query.filter_by(
-                  user_id=session["user_id"]
-              ).all()
-            ]
+
+        wishlist_product_ids = [
+            item.product_id
+            for item in Wishlist.query.filter_by(
+                user_id=session["user_id"]
+            ).all()
+        ]
+
+    # =========================
+    # RENDER HOME
+    # =========================
+
     return render_template(
         "home.html",
         products=products,
         search=search,
         category=category,
         subcategory=subcategory,
+        section=section,
         subcategories=subcategories,
         min_price=min_price,
-        max_price=max_price,    
+        max_price=max_price,
         sort=sort,
         banners=banners,
         wishlist_product_ids=wishlist_product_ids,
         master_categories=active_master_categories,
+        current_sections=current_sections,
+        sections=sections,
+        section_products=section_products,
     )
 
 @app.route("/add-to-cart/<int:id>")
@@ -2806,11 +2968,18 @@ def admin_master_categories():
         .all()
     )
 
+    products = (
+        Product.query
+        .order_by(Product.id.desc())
+        .all()
+    )
+
     return render_template(
         "admin_master_categories.html",
         categories=categories,
         subcategories=subcategories,
-        sections=sections
+        sections=sections,
+        products=products
     )
 
 # ==========================================
@@ -3116,6 +3285,40 @@ def toggle_section(id):
     section.active = not section.active
 
     db.session.commit()
+
+    return redirect("/admin/master-categories")
+
+# ==========================================
+# ASSIGN PRODUCT TO SECTION
+# ==========================================
+
+@app.route(
+    "/admin/sections/<int:section_id>/products/add",
+    methods=["POST"]
+)
+def add_product_to_section(section_id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    section = Section.query.get_or_404(section_id)
+
+    product_id = request.form.get("product_id")
+
+    if not product_id:
+        flash("Please select a product.")
+        return redirect("/admin/master-categories")
+
+    product = Product.query.get_or_404(int(product_id))
+
+    # Product ko selected section mein assign karo
+    product.section = section.name
+
+    db.session.commit()
+
+    flash(
+        f"Product '{product.name}' added to section '{section.name}'."
+    )
 
     return redirect("/admin/master-categories")
 

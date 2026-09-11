@@ -357,7 +357,6 @@
 
 </select>
 
-
 <!-- SECTION -->
 
 <p>Section</p>
@@ -369,6 +368,17 @@
     <option value="">
         Select Section
     </option>
+
+</select>
+
+
+<!-- SECTION DATA
+     Isko JS source data ke liye use karega.
+     Ye visible dropdown nahi hai.
+-->
+
+<select id="section-data"
+        style="display:none;">
 
     {% for section_item in sections %}
 
@@ -675,64 +685,113 @@ const subcategoryData = document.getElementById("subcategory-data");
 
 function updateSubcategories() {
 
-    const categorySelect = document.getElementById("category");
-    const subcategory = document.getElementById("subcategory");
-    const sectionSelect = document.getElementById("section");
+    const categorySelect =
+        document.getElementById("category");
+
+    const subcategory =
+        document.getElementById("subcategory");
+
+    const sectionSelect =
+        document.getElementById("section");
 
     const selectedOption =
-        categorySelect.options[categorySelect.selectedIndex];
+        categorySelect.options[
+            categorySelect.selectedIndex
+        ];
 
     const categoryId =
         selectedOption?.dataset.categoryId;
 
+
+    /* Reset Subcategory */
+
     subcategory.innerHTML =
         '<option value="">Select Subcategory</option>';
 
+
+    /* Reset Section */
+
     sectionSelect.innerHTML =
         '<option value="">Select Section</option>';
+
 
     if (!categoryId) {
         resetTaxDetails();
         return;
     }
 
+
+    /* DATABASE SUBCATEGORIES */
+
     if (subcategoryData) {
 
         const options =
             subcategoryData.querySelectorAll("option");
 
+
         Array.from(options)
+
             .filter(function(option) {
 
-                return String(option.dataset.categoryId) ===
-                       String(categoryId);
+                return String(
+                    option.dataset.categoryId
+                ) === String(categoryId);
 
             })
+
+
             .sort(function(a, b) {
 
-                return Number(a.dataset.position || 0) -
-                       Number(b.dataset.position || 0);
+                const positionA =
+                    Number(a.dataset.position || 0);
+
+                const positionB =
+                    Number(b.dataset.position || 0);
+
+
+                return positionA - positionB ||
+
+                       Number(a.dataset.id || 0) -
+                       Number(b.dataset.id || 0);
 
             })
+
+
             .forEach(function(option) {
 
                 const newOption =
                     document.createElement("option");
 
-                newOption.value = option.value;
-                newOption.textContent = option.textContent.trim();
+
+                newOption.value =
+                    option.value;
+
+
+                newOption.textContent =
+                    option.textContent.trim();
+
 
                 newOption.dataset.subcategoryId =
                     option.dataset.id;
 
-                subcategory.appendChild(newOption);
+
+                subcategory.appendChild(
+                    newOption
+                );
 
             });
+
     }
 
+
     resetTaxDetails();
+
 }
 
+
+/* ==========================================
+   SUBCATEGORY → SECTION
+   ========================================== */
 
 function updateSections() {
 
@@ -745,14 +804,18 @@ function updateSections() {
     const sectionData =
         document.getElementById("section-data");
 
+
     const selectedOption =
         subcategory.options[
             subcategory.selectedIndex
         ];
 
+
     const subcategoryId =
         selectedOption?.dataset.subcategoryId;
 
+
+    /* Reset Section */
 
     sectionSelect.innerHTML =
         '<option value="">Select Section</option>';
@@ -768,6 +831,7 @@ function updateSections() {
 
 
     Array.from(options)
+
         .filter(function(option) {
 
             return String(
@@ -775,31 +839,45 @@ function updateSections() {
             ) === String(subcategoryId);
 
         })
+
+
         .sort(function(a, b) {
 
-            return Number(a.dataset.position || 0) -
-                   Number(b.dataset.position || 0);
+            const positionA =
+                Number(a.dataset.position || 0);
+
+            const positionB =
+                Number(b.dataset.position || 0);
+
+
+            return positionA - positionB ||
+
+                   Number(a.dataset.id || 0) -
+                   Number(b.dataset.id || 0);
 
         })
+
+
         .forEach(function(option) {
 
             const newOption =
                 document.createElement("option");
 
+
             newOption.value =
                 option.value;
+
 
             newOption.textContent =
                 option.textContent.trim();
 
-            newOption.dataset.subcategoryId =
-                option.dataset.subcategoryId;
 
             sectionSelect.appendChild(
                 newOption
             );
 
         });
+
 }
 
 

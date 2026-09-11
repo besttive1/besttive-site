@@ -2148,3 +2148,103 @@ background: #310058;
     transform: translateY(-1px);
 }
 
+/* =========================================
+   CUSTOMER SUBCATEGORY + SECTION CARDS
+   ========================================= */
+
+.customer-subcategories {
+    margin-top: 24px;
+}
+
+.customer-sections {
+    margin-top: 28px;
+}
+
+.customer-section-heading {
+    margin-bottom: 16px;
+}
+
+.customer-section-heading span {
+    display: block;
+    font-size: 12px;
+    color: #777;
+    font-weight: 600;
+    letter-spacing: .6px;
+    margin-bottom: 4px;
+}
+
+.customer-section-heading h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #111;
+}
+
+.subcategory-cards,
+.section-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.customer-subcategory-card,
+.customer-section-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 82px;
+    padding: 16px;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 14px;
+    text-decoration: none;
+    color: #111;
+    box-shadow: 0 3px 12px rgba(0,0,0,.06);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.customer-subcategory-card:hover,
+.customer-section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.10);
+}
+
+.customer-subcategory-card.active {
+    border-color: #2874f0;
+    box-shadow: 0 5px 16px rgba(40,116,240,.15);
+}
+
+.subcategory-icon {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #f1f5ff;
+    color: #2874f0;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.customer-subcategory-card strong,
+.customer-section-card strong {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+
+.customer-subcategory-card small,
+.customer-section-card small {
+    display: block;
+    font-size: 12px;
+    color: #777;
+}
+
+@media (max-width: 1100px) {
+    .subcategory-cards,
+    .section-cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

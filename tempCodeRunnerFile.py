@@ -1,2 +1,1 @@
-
-        MasterCategory.query
+ Section.position.asc(),
