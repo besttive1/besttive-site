@@ -510,7 +510,7 @@
             name="subcategory"
             id="subcategory"
             required
-            onchange="updateTaxDetails()"
+            onchange="updateSections(); updateTaxDetails()"
         >
 
             <option value="">
@@ -524,7 +524,27 @@
             id="current-subcategory"
             value="{{ product.subcategory|e }}"
         >
+        <!-- SECTION -->
 
+        <label>
+            Section
+        </label>
+
+        <select
+            name="section"
+            id="section"
+            required
+        >
+            <option value="">
+                Select Section
+            </option>
+        </select>
+
+        <input
+            type="hidden"
+            id="current-section"
+            value="{{ product.section|e }}"
+        >
 
         <!-- HSN + GST -->
 
@@ -667,6 +687,22 @@
 ]
 </script>
 
+<select id="section-data" style="display:none;">
+
+    {% for section_item in sections %}
+
+        <option
+            value="{{ section_item.name }}"
+            data-subcategory-id="{{ section_item.subcategory_id }}"
+            data-active="{{ 'true' if section_item.active else 'false' }}"
+            data-position="{{ section_item.position }}"
+        >
+            {{ section_item.name }}
+        </option>
+
+    {% endfor %}
+
+</select>
 
 <script>
 
@@ -872,6 +908,27 @@ const taxMapping = {
 
 
 /* ==========================================
+   SECTION DATA
+   ========================================== */
+
+const sectionData = Array.from(
+    document.querySelectorAll("#section-data option")
+).map(function(option) {
+
+    return {
+        name: option.value,
+        subcategory_id: option.dataset.subcategoryId,
+        active: option.dataset.active === "true",
+        position: option.dataset.position
+    };
+
+});
+
+const currentSection =
+    document.getElementById("current-section").value;
+
+
+/* ==========================================
    CATEGORY → SUBCATEGORY
    ========================================== */
 
@@ -883,15 +940,10 @@ function updateSubcategories() {
     const subcategorySelect =
         document.getElementById("subcategory");
 
-    const categoryName =
-        categorySelect.value;
-
-
     const selectedCategory =
         categorySelect.options[
             categorySelect.selectedIndex
         ];
-
 
     const categoryId =
         selectedCategory
@@ -906,20 +958,11 @@ function updateSubcategories() {
     if (!categoryId) {
 
         updateTaxDetails();
+        updateSections();
 
         return;
     }
 
-
-    /*
-     * Database se subcategories aa rahi hain.
-     *
-     * ACTIVE subcategories normally show hongi.
-     *
-     * Agar current product ki subcategory OFF hai,
-     * to usko edit karne ke liye "(OFF)" ke saath
-     * temporarily show rakhenge.
-     */
 
     const matchingSubcategories =
         subcategories
@@ -952,7 +995,6 @@ function updateSubcategories() {
             !item.active &&
             item.name !== currentSubcategory
         ) {
-
             return;
         }
 
@@ -985,6 +1027,106 @@ function updateSubcategories() {
 
 
     updateTaxDetails();
+    updateSections();
+
+}
+
+
+/* ==========================================
+   SUBCATEGORY → SECTION
+   ========================================== */
+
+function updateSections() {
+
+    const subcategorySelect =
+        document.getElementById("subcategory");
+
+    const sectionSelect =
+        document.getElementById("section");
+
+    const subcategoryName =
+        subcategorySelect.value;
+
+
+    sectionSelect.innerHTML =
+        '<option value="">Select Section</option>';
+
+
+    if (!subcategoryName) {
+        return;
+    }
+
+
+    const subcategoryData =
+        subcategories.find(function(item) {
+
+            return item.name === subcategoryName;
+
+        });
+
+
+    if (!subcategoryData) {
+        return;
+    }
+
+
+    const matchingSections =
+        sectionData
+            .filter(function(item) {
+
+                return String(item.subcategory_id) ===
+                       String(subcategoryData.id);
+
+            })
+            .sort(function(a, b) {
+
+                return Number(a.position) -
+                       Number(b.position);
+
+            });
+
+
+    matchingSections.forEach(function(item) {
+
+        /*
+         * OFF section ko hide karo,
+         * lekin current product ka OFF section
+         * edit karne ke liye show karo.
+         */
+
+        if (
+            !item.active &&
+            item.name !== currentSection
+        ) {
+            return;
+        }
+
+
+        const option =
+            document.createElement("option");
+
+
+        option.value =
+            item.name;
+
+
+        option.textContent =
+            item.name +
+            (!item.active ? " (OFF)" : "");
+
+
+        if (
+            item.name === currentSection
+        ) {
+
+            option.selected = true;
+
+        }
+
+
+        sectionSelect.appendChild(option);
+
+    });
 
 }
 

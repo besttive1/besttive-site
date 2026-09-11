@@ -3865,6 +3865,12 @@ def edit_product(id):
         product.category = category
         product.subcategory = subcategory
 
+        section = request.form.get(
+            "section",
+            ""
+        ).strip()
+
+        product.section = section
         # ==========================================
         # SAVE EVERYTHING
         # ==========================================
@@ -3913,11 +3919,22 @@ def edit_product(id):
         .all()
     )
 
+    sections = (
+        Section.query
+        .filter_by(active=True)
+        .order_by(
+            Section.position.asc(),
+            Section.id.asc()
+        )
+        .all()
+    )
+    
     return render_template(
         "edit_product.html",
         product=product,
         master_categories=master_categories,
-        subcategories=subcategories
+        subcategories=subcategories,
+        sections=sections
     )
 
 # =========================

@@ -105,3 +105,55 @@
     }
 
 }
+
+/* ==========================================
+   BESTTIVE BENEFITS
+   ========================================== */
+
+.besttive-benefits {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 24px 0;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    border-right: 1px solid #eee;
+}
+
+.benefit-item:last-child {
+    border-right: none;
+}
+
+.benefit-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #f3eafd;
+    font-size: 22px;
+}
+
+.benefit-text strong {
+    display: block;
+    font-size: 15px;
+    color: #222;
+    margin-bottom: 4px;
+}
+
+.benefit-text span {
+    display: block;
+    font-size: 12px;
+    color: #777;
+}

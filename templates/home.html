@@ -968,6 +968,181 @@
 {% endif %}
 
 </div>
+<!-- ==========================================
+     BESTTIVE BENEFITS
+     ========================================== -->
+
+<section class="besttive-benefits">
+
+    <div class="benefit-item">
+        <div class="benefit-icon">
+            🚚
+        </div>
+        <div class="benefit-text">
+            <strong>Free Shipping</strong>
+            <span>On orders above ₹499</span>
+        </div>
+    </div>
+
+    <div class="benefit-item">
+        <div class="benefit-icon">
+            🔒
+        </div>
+        <div class="benefit-text">
+            <strong>Secure Payments</strong>
+            <span>100% secure checkout</span>
+        </div>
+    </div>
+
+    <div class="benefit-item">
+        <div class="benefit-icon">
+            ↩
+        </div>
+        <div class="benefit-text">
+            <strong>Easy Returns</strong>
+            <span>Simple return process</span>
+        </div>
+    </div>
+
+    <div class="benefit-item">
+        <div class="benefit-icon">
+            🎧
+        </div>
+        <div class="benefit-text">
+            <strong>24/7 Support</strong>
+            <span>We're here to help</span>
+        </div>
+    </div>
+
+</section>
+
+<!-- ==========================================
+     DEAL OF THE DAY
+     ========================================== -->
+
+<section class="deal-of-day">
+
+    <div class="deal-header">
+
+        <div class="deal-title">
+
+            <div class="deal-icon">
+                ⚡
+            </div>
+
+            <div>
+                <h2>Deal of the Day</h2>
+                <span>Limited Time Offers</span>
+            </div>
+
+        </div>
+
+
+        <div class="deal-timer">
+
+            <div class="timer-box">
+                <strong id="deal-hours">10</strong>
+                <span>Hrs</span>
+            </div>
+
+            <div class="timer-box">
+                <strong id="deal-minutes">24</strong>
+                <span>Mins</span>
+            </div>
+
+            <div class="timer-box">
+                <strong id="deal-seconds">36</strong>
+                <span>Secs</span>
+            </div>
+
+        </div>
+
+
+        <a href="/" class="deal-view-all">
+            View All →
+        </a>
+
+    </div>
+
+
+    <div class="deal-products">
+
+        {% for product in products[:4] %}
+
+        <div class="deal-card">
+
+            <div class="deal-image-box">
+
+                <a href="/product/{{ product.id }}">
+
+                    <img
+                        src="{{ product.image }}"
+                        alt="{{ product.name }}"
+                    >
+
+                </a>
+
+                <span class="deal-badge">
+                    LIMITED
+                </span>
+
+                <button
+                    type="button"
+                    class="deal-wishlist"
+                    onclick="toggleWishlist(this, '{{ product.id }}')"
+                >
+                    ♡
+                </button>
+
+            </div>
+
+
+            <div class="deal-product-info">
+
+                <h3>
+                    <a href="/product/{{ product.id }}">
+                        {{ product.name }}
+                    </a>
+                </h3>
+
+                <p class="deal-description">
+                    {{ product.description }}
+                </p>
+
+                <div class="deal-price">
+                    ₹{{ product.price }}
+                </div>
+
+
+                {% if product.stock > 0 %}
+
+                <a
+                    href="/add-to-cart/{{ product.id }}"
+                    class="deal-cart-btn"
+                >
+                    🛒 Add to Cart
+                </a>
+
+                {% else %}
+
+                <button
+                    class="deal-cart-btn disabled"
+                    disabled
+                >
+                    Out of Stock
+                </button>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
 
 {% if search and products|length == 0 %}
 

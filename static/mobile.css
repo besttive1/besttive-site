@@ -1200,3 +1200,168 @@
     }
 
 }
+
+/* ==========================================
+   MOBILE SUBCATEGORY + SECTION HORIZONTAL SCROLL
+   ========================================== */
+
+.subcategory-cards,
+.section-cards {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 12px;
+    width: 100%;
+    padding: 4px 2px 12px;
+    box-sizing: border-box;
+
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+}
+
+.subcategory-cards::-webkit-scrollbar,
+.section-cards::-webkit-scrollbar {
+    display: none;
+}
+
+.customer-subcategory-card,
+.customer-section-card {
+    flex: 0 0 170px;
+    width: 170px;
+    min-width: 170px;
+    box-sizing: border-box;
+}
+
+.customer-section-card {
+    min-height: 90px;
+}
+
+/* ==========================================
+   FIX CARD TEXT OVERFLOW
+   ========================================== */
+
+.customer-subcategory-card > div:last-child,
+.customer-section-card > div:last-child {
+    min-width: 0;
+    flex: 1;
+}
+
+.customer-subcategory-card strong,
+.customer-section-card strong {
+    overflow-wrap: break-word;
+    word-break: normal;
+    white-space: normal;
+    line-height: 1.15;
+}
+
+.customer-subcategory-card small,
+.customer-section-card small {
+    white-space: normal;
+    line-height: 1.2;
+}
+
+/* ==========================================
+   BESTTIVE MOBILE BENEFITS - PREMIUM STRIP
+   ========================================== */
+
+.besttive-benefits {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    margin: 12px 0 18px;
+    padding: 0;
+    background: #faf8ff;
+    border: 1px solid #eee7f8;
+    border-radius: 10px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
+    padding: 10px 6px;
+    box-sizing: border-box;
+    border-right: 1px solid #e9e1f3;
+}
+
+.benefit-item:last-child {
+    border-right: none;
+}
+
+.benefit-icon {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: #f0e5ff;
+    color: #4b0082;
+
+    font-size: 15px;
+    line-height: 1;
+}
+
+.benefit-text {
+    min-width: 0;
+    text-align: left;
+}
+
+.benefit-text strong {
+    display: block;
+    color: #4b0082;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
+.benefit-text span {
+    display: block;
+    margin-top: 2px;
+    color: #777;
+    font-size: 8px;
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
+
+/* SMALL PHONES */
+
+@media (max-width: 380px) {
+
+    .besttive-benefits {
+        margin-top: 10px;
+    }
+
+    .benefit-item {
+        gap: 4px;
+        padding: 9px 4px;
+    }
+
+    .benefit-icon {
+        width: 27px;
+        height: 27px;
+        min-width: 27px;
+        font-size: 13px;
+    }
+
+    .benefit-text strong {
+        font-size: 9px;
+    }
+
+    .benefit-text span {
+        font-size: 7px;
+    }
+
+}
