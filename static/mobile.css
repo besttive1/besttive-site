@@ -1264,14 +1264,14 @@
 }
 
 /* ==========================================
-   BESTTIVE MOBILE BENEFITS - PREMIUM STRIP
+   BESTTIVE MOBILE BENEFITS - FINAL
    ========================================== */
 
 .besttive-benefits {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     width: 100%;
-    margin: 12px 0 18px;
+    margin: 10px 0 16px;
     padding: 0;
     background: #faf8ff;
     border: 1px solid #eee7f8;
@@ -1284,9 +1284,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 4px;
     min-width: 0;
-    padding: 10px 6px;
+    padding: 8px 4px;
     box-sizing: border-box;
     border-right: 1px solid #e9e1f3;
 }
@@ -1296,72 +1296,70 @@
 }
 
 .benefit-icon {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 50%;
     background: #f0e5ff;
     color: #4b0082;
-
-    font-size: 15px;
+    font-size: 12px;
     line-height: 1;
 }
 
 .benefit-text {
     min-width: 0;
+    overflow: hidden;
     text-align: left;
 }
 
 .benefit-text strong {
     display: block;
     color: #4b0082;
-    font-size: 10px;
+    font-size: 8px;
     font-weight: 700;
     line-height: 1.15;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .benefit-text span {
     display: block;
     margin-top: 2px;
     color: #777;
-    font-size: 8px;
+    font-size: 6px;
     line-height: 1.15;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 
-/* SMALL PHONES */
+/* VERY SMALL PHONES */
 
 @media (max-width: 380px) {
 
-    .besttive-benefits {
-        margin-top: 10px;
-    }
-
     .benefit-item {
-        gap: 4px;
-        padding: 9px 4px;
+        gap: 3px;
+        padding: 7px 3px;
     }
 
     .benefit-icon {
-        width: 27px;
-        height: 27px;
-        min-width: 27px;
-        font-size: 13px;
+        width: 22px;
+        height: 22px;
+        min-width: 22px;
+        font-size: 11px;
     }
 
     .benefit-text strong {
-        font-size: 9px;
+        font-size: 7px;
     }
 
     .benefit-text span {
-        font-size: 7px;
+        font-size: 5.5px;
     }
 
 }
