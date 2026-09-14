@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Offers & Deals | BESTTIVE</title>
+
+    <style>
+    
+    .flash-message {
+    margin-bottom: 18px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background: #efe2ff;
+    color: #4B0082;
+    font-size: 14px;
+    font-weight: 700;
+    border: 1px solid #d9bfff;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 30px;
+        background: #f6f3fa;
+        font-family: Arial, sans-serif;
+        color: #222;
+    }
+
+    .offers-container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .page-header h1 {
+        margin: 0;
+        color: #4B0082;
+        font-size: 28px;
+    }
+
+    .page-header p {
+        margin: 5px 0 0;
+        color: #777;
+        font-size: 14px;
+    }
+
+    .create-btn {
+        display: inline-block;
+        padding: 11px 18px;
+        border-radius: 8px;
+        background: #4B0082;
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .offers-card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,.06);
+    }
+
+    .offers-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+    }
+
+    th,
+    td {
+        padding: 13px 12px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    th {
+        color: #555;
+        font-size: 13px;
+        background: #faf8fd;
+    }
+
+    td {
+        font-size: 13px;
+    }
+
+    .empty-state {
+        padding: 50px 20px;
+        text-align: center;
+        color: #777;
+    }
+
+    .empty-state h2 {
+        margin-bottom: 8px;
+        color: #4B0082;
+    }
+
+
+    /* ==========================================
+       OFFER ACTIONS
+       ========================================== */
+
+    .offer-actions {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        white-space: nowrap;
+    }
+
+    .offer-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 10px;
+        border: none;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .edit-btn,
+    .products-btn,
+    .offer-status-btn {
+        background: #4B0082;
+    }
+
+    .delete-btn {
+        background: #4b0082;
+    }
+
+    .offer-btn:hover {
+        opacity: .9;
+    }
+
+
+    /* ==========================================
+       ACTIVE / INACTIVE STATUS
+       ========================================== */
+
+    .offer-status-btn {
+    width: 42px;
+    height: 30px;
+    padding: 0;
+    background: #4B0082;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.offer-status-btn span {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: block;
+}
+
+.offer-status-btn.active span {
+    background: #22c55e;
+}
+
+.offer-status-btn.inactive span {
+    background: #ef4444;
+}
+
+.offer-btn:hover {
+    opacity: 0.9;
+}
+
+
+    /* ==========================================
+       MOBILE
+       ========================================== */
+
+    @media (max-width: 768px) {
+
+        body {
+            padding: 15px;
+        }
+
+        .page-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .page-header h1 {
+            font-size: 22px;
+        }
+
+        .create-btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        .offers-card {
+            padding: 12px;
+        }
+
+        .offer-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .offer-btn {
+            width: 100%;
+            padding: 8px 10px;
+        }
+        
+    }
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="offers-container">
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="flash-message">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <div class="page-header">
+        <div>
+            <h1>Offers & Deals</h1>
+            <p>
+                Manage manual offers and automatic smart discounts
+            </p>
+        </div>
+
+        <a
+            href="/admin/offers-deals/create"
+            class="create-btn"
+        >
+            + Create Offer
+        </a>
+        <form 
+            method="POST" 
+            action="/admin/offers-deals/run-automation"
+            style="display:inline-block;"
+        >
+            <button 
+                type="submit" 
+                class="create-btn"
+            >
+                ⚙️ Run Automation
+            </button>
+        </form>
+    </div>
+
+    <div class="offers-card">
+
+        {% if offers %}
+
+            <div class="offers-table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Offer Name</th>
+                            <th>Type</th>
+                            <th>Discount</th>
+                            <th>Position</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for offer in offers %}
+
+                        <tr>
+
+                            <td>
+                                {{ offer.name }}
+                            </td>
+
+                            <td>
+                                {{ offer.offer_type }}
+                            </td>
+
+                            <td>
+                                {{ offer.discount_percent }}%
+                            </td>
+
+                            <td>
+                                {{ offer.position }}
+                            </td>
+
+                            <td>
+                                {% if offer.active %}
+                                    Active
+                                {% else %}
+                                    Inactive
+                                {% endif %}
+                            </td>
+
+                            <td class="offer-actions">
+
+    <a
+        href="/admin/offers-deals/{{ offer.id }}/edit"
+        class="offer-btn edit-btn"
+    >
+        ✏️ Edit
+    </a>
+
+    <a
+        href="/admin/offers-deals/{{ offer.id }}/products"
+        class="offer-btn products-btn"
+    >
+        📦 Products
+    </a>
+
+    <a
+        href="/admin/offers-deals/{{ offer.id }}/smart-rules"
+        class="offer-btn products-btn"
+    >
+        ⚙️ Automation
+    </a>
+
+    <form
+    method="POST"
+    action="/admin/offers-deals/{{ offer.id }}/toggle"
+    >
+    <button
+        type="submit"
+        class="offer-status-btn {% if offer.active %}active{% else %}inactive{% endif %}"
+        title="{% if offer.active %}Active{% else %}Inactive{% endif %}"
+        aria-label="{% if offer.active %}Active{% else %}Inactive{% endif %}"
+    >
+        <span></span>
+    </button>
+</form>
+
+    <form
+        method="POST"
+        action="/admin/offers-deals/{{ offer.id }}/delete"
+        onsubmit="return confirm('Delete this offer?');"
+    >
+        <button
+            type="submit"
+            class="offer-btn delete-btn"
+        >
+            🗑️ Delete
+        </button>
+    </form>
+
+</td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <h2>No Offers Yet</h2>
+
+                <p>
+                    Create your first Deal of the Day,
+                    discount or smart offer.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

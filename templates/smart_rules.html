@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Automation - {{ offer.name }}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f6f3fa;
+            font-family: Arial, sans-serif;
+            color: #222;
+        }
+
+        .automation-container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            color: #4B0082;
+            font-size: 28px;
+        }
+
+        .page-header p {
+            margin: 6px 0 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background: #4B0082;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .automation-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .automation-card h2 {
+            margin: 0 0 18px;
+            color: #4B0082;
+            font-size: 20px;
+        }
+
+        .rule-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .field label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #444;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: #fff;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            border-color: #4B0082;
+        }
+
+        .condition-box {
+            background: #faf8fd;
+            border: 1px solid #eee6f7;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .condition-box p {
+            margin: 0 0 12px;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .condition-mode {
+            display: flex;
+            gap: 10px;
+        }
+
+        .mode-btn {
+            flex: 1;
+        }
+
+        .mode-btn input {
+            display: none;
+        }
+
+        .mode-btn span {
+            display: block;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            background: #fff;
+        }
+
+        .mode-btn input:checked + span {
+            background: #4B0082;
+            color: #fff;
+            border-color: #4B0082;
+        }
+
+        .switch-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .switch-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 13px 14px;
+            border: 1px solid #eee;
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .switch-box span {
+            font-size: 13px;
+            font-weight: 700;
+            color: #444;
+        }
+
+        .switch-box input {
+            width: 18px;
+            height: 18px;
+            accent-color: #4B0082;
+        }
+
+        .save-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 11px 18px;
+            background: #4B0082;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .rules-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        th {
+            background: #faf8fd;
+            color: #555;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .status-dot.active {
+            background: #22c55e;
+        }
+
+        .status-dot.inactive {
+            background: #ef4444;
+        }
+
+        .empty-state {
+            padding: 35px 20px;
+            text-align: center;
+            color: #777;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+            .back-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .automation-card {
+                padding: 15px;
+            }
+
+            .rule-row,
+            .switch-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="automation-container">
+
+    <div class="page-header">
+        <div>
+            <h1>⚙️ Smart Automation</h1>
+            <p>Offer: {{ offer.name }}</p>
+        </div>
+
+        <a
+            href="/admin/offers-deals"
+            class="back-btn"
+        >
+            ← Back to Offers
+        </a>
+    </div>
+
+    <form method="POST">
+
+        <div class="automation-card">
+            <h2>Automation Conditions</h2>
+
+            <div class="condition-box">
+                <p>Select how multiple conditions should work together.</p>
+
+                <div class="condition-mode">
+
+                    <label class="mode-btn">
+                        <input
+                            type="radio"
+                            name="condition_mode"
+                            value="AND"
+                            checked
+                        >
+                        <span>ALL CONDITIONS (AND)</span>
+                    </label>
+
+                    <label class="mode-btn">
+                        <input
+                            type="radio"
+                            name="condition_mode"
+                            value="OR"
+                        >
+                        <span>ANY CONDITION (OR)</span>
+                    </label>
+
+                </div>
+            </div>
+
+            <br>
+
+            <div class="rule-row">
+
+                <div class="field">
+                    <label>Product age after (days)</label>
+                    <input
+                        type="number"
+                        name="days_after"
+                        min="0"
+                        placeholder="Example: 30"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Maximum views</label>
+                    <input
+                        type="number"
+                        name="max_views"
+                        min="0"
+                        placeholder="Example: 20"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Maximum orders</label>
+                    <input
+                        type="number"
+                        name="max_orders"
+                        min="0"
+                        placeholder="Example: 2"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Low stock below</label>
+                    <input
+                        type="number"
+                        name="low_stock"
+                        min="0"
+                        placeholder="Example: 5"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>No sales for (days)</label>
+                    <input
+                        type="number"
+                        name="no_sales_days"
+                        min="0"
+                        placeholder="Example: 15"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Discount (%)</label>
+                    <input
+                        type="number"
+                        name="discount_percent"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        placeholder="Example: 20"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>Maximum discount (%)</label>
+                    <input
+                        type="number"
+                        name="maximum_discount_percent"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        placeholder="Example: 50"
+                    >
+                </div>
+
+            </div>
+        </div>
+
+        <div class="automation-card">
+            <h2>Automatic Actions</h2>
+
+            <div class="switch-row">
+
+                <label class="switch-box">
+                    <span>Automatically add to Offer</span>
+                    <input
+                        type="checkbox"
+                        name="auto_add_offer"
+                        checked
+                    >
+                </label>
+
+                <label class="switch-box">
+                    <span>Show on Homepage</span>
+                    <input
+                        type="checkbox"
+                        name="auto_homepage"
+                    >
+                </label>
+
+                <label class="switch-box">
+                    <span>Add to Deal of the Day</span>
+                    <input
+                        type="checkbox"
+                        name="auto_deal_of_day"
+                    >
+                </label>
+
+                <label class="switch-box">
+                    <span>Automation Enabled</span>
+                    <input
+                        type="checkbox"
+                        name="enabled"
+                        checked
+                    >
+                </label>
+
+            </div>
+        </div>
+
+        <div class="automation-card">
+            <button
+                type="submit"
+                class="save-btn"
+            >
+                💾 Save Automation Rule
+            </button>
+        </div>
+
+    </form>
+
+    <div class="automation-card">
+
+        <h2>Existing Automation Rules</h2>
+
+        {% if rules %}
+
+        <div class="rules-table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Conditions</th>
+                        <th>Mode</th>
+                        <th>Discount</th>
+                        <th>Max Discount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for rule in rules %}
+
+                    <tr>
+
+                        <td>
+                            <span class="status-badge">
+
+                                <span
+                                    class="status-dot {% if rule.enabled %}active{% else %}inactive{% endif %}"
+                                ></span>
+
+                                {% if rule.enabled %}
+                                    Active
+                                {% else %}
+                                    Inactive
+                                {% endif %}
+
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if rule.days_after is not none %}
+                                Age ≥ {{ rule.days_after }} days<br>
+                            {% endif %}
+
+                            {% if rule.max_views is not none %}
+                                Views ≤ {{ rule.max_views }}<br>
+                            {% endif %}
+
+                            {% if rule.max_orders is not none %}
+                                Orders ≤ {{ rule.max_orders }}<br>
+                            {% endif %}
+
+                            {% if rule.low_stock is not none %}
+                                Stock &lt; {{ rule.low_stock }}<br>
+                            {% endif %}
+
+                            {% if rule.no_sales_days is not none %}
+                                No sales ≥ {{ rule.no_sales_days }} days
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ rule.condition_mode }}
+                        </td>
+
+                        <td>
+                            {{ rule.discount_percent }}%
+                        </td>
+
+                        <td>
+                            {% if rule.maximum_discount_percent is not none %}
+                                {{ rule.maximum_discount_percent }}%
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if rule.auto_add_offer %}
+                                Offer ✓
+                            {% endif %}
+
+                            {% if rule.auto_homepage %}
+                                Homepage ✓
+                            {% endif %}
+
+                            {% if rule.auto_deal_of_day %}
+                                Deal of Day ✓
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            No automation rules created yet.
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1214,6 +1214,10 @@ def product_details(id):
 
     product = Product.query.get_or_404(id)
 
+    # Count every product detail page visit
+    product.views = (product.views or 0) + 1
+    db.session.commit()
+
     images = ProductImage.query.filter_by(
         product_id=product.id
     ).all()
@@ -1501,6 +1505,18 @@ class Product(db.Model):
     category = db.Column(db.String(100), default="")
     subcategory = db.Column(db.String(100), default="")
     section = db.Column(db.String(100), default="")
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.datetime.now(
+            datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+        ).replace(tzinfo=None)
+    )
+
+    views = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
+    )
 
     gst_rate = db.Column(
     db.Float,
@@ -1842,7 +1858,12 @@ class PushSubscription(db.Model):
     auth = db.Column(db.String(255), nullable=False)
     user_agent = db.Column(db.String(255), default="")
     is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.datetime.now(
+            datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+        ).replace(tzinfo=None)
+    )
     last_seen_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
 
@@ -1980,6 +2001,209 @@ def create_stock_notification(product):
         )
 
     return None
+
+# ==========================================
+# OFFERS & DEALS
+# ==========================================
+
+class Offer(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    name = db.Column(
+        db.String(150),
+        nullable=False
+    )
+
+    offer_type = db.Column(
+        db.String(50),
+        nullable=False,
+        default="Custom"
+    )
+
+    title = db.Column(
+        db.String(200),
+        default=""
+    )
+
+    subtitle = db.Column(
+        db.String(300),
+        default=""
+    )
+
+    discount_percent = db.Column(
+        db.Float,
+        default=0
+    )
+
+    start_at = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
+    end_at = db.Column(
+        db.DateTime,
+        nullable=True
+    )
+
+    active = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
+    show_homepage = db.Column(
+        db.Boolean,
+        default=False,
+        nullable=False
+    )
+
+    position = db.Column(
+        db.Integer,
+        default=1,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.datetime.utcnow
+    )
+
+
+class OfferProduct(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    offer_id = db.Column(
+        db.Integer,
+        db.ForeignKey("offer.id"),
+        nullable=False
+    )
+
+    product_id = db.Column(
+        db.Integer,
+        db.ForeignKey("product.id"),
+        nullable=False
+    )
+
+    offer = db.relationship(
+        "Offer",
+        backref=db.backref(
+            "offer_products",
+            lazy=True,
+            cascade="all, delete-orphan"
+        )
+    )
+
+    product = db.relationship(
+        "Product"
+    )
+
+
+class SmartRule(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    offer_id = db.Column(
+        db.Integer,
+        db.ForeignKey("offer.id"),
+        nullable=False
+    )
+
+    enabled = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
+    # Automatic conditions
+    days_after = db.Column(
+        db.Integer,
+        nullable=True
+    )
+
+    max_views = db.Column(
+        db.Integer,
+        nullable=True
+    )
+
+    max_orders = db.Column(
+        db.Integer,
+        nullable=True
+    )
+
+    low_stock = db.Column(
+        db.Integer,
+        nullable=True
+    )
+
+    no_sales_days = db.Column(
+        db.Integer,
+        nullable=True
+    )
+
+    # Discount settings
+    discount_percent = db.Column(
+        db.Float,
+        default=0
+    )
+
+    maximum_discount_percent = db.Column(
+        db.Float,
+        nullable=True
+    )
+
+    # AND / OR
+    condition_mode = db.Column(
+        db.String(10),
+        default="AND",
+        nullable=False
+    )
+
+    # Automatic actions
+    auto_add_offer = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
+    auto_homepage = db.Column(
+        db.Boolean,
+        default=False,
+        nullable=False
+    )
+
+    auto_deal_of_day = db.Column(
+        db.Boolean,
+        default=False,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.datetime.now(
+            datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+        ).replace(tzinfo=None)
+    )
+
+    offer = db.relationship(
+        "Offer",
+        backref=db.backref(
+            "smart_rules",
+            lazy=True,
+            cascade="all, delete-orphan"
+        )
+    )
+
 
 # ==========================================
 # MASTER CATEGORY MANAGEMENT
@@ -2385,6 +2609,186 @@ class Order(db.Model):
 
     product = db.relationship("Product")
 
+def run_smart_automation():
+    """
+    Checks all active SmartRules and applies matching
+    automation actions to products.
+    """
+
+    now = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+    ).replace(tzinfo=None)
+
+    rules = SmartRule.query.filter_by(
+        enabled=True
+    ).all()
+
+    for rule in rules:
+
+        products = Product.query.all()
+
+        for product in products:
+
+            conditions = []
+
+            # -------------------------
+            # Product age condition
+            # -------------------------
+            if rule.days_after is not None:
+
+                if product.created_at:
+                    age_days = (
+                        now - product.created_at
+                    ).days
+
+                    conditions.append(
+                        age_days >= rule.days_after
+                    )
+                else: 
+                    conditions.append(False)
+
+            # -------------------------
+            # Views condition
+            # -------------------------
+            if rule.max_views is not None:
+
+                conditions.append(
+                    (product.views or 0) <= rule.max_views
+                )
+
+            # -------------------------
+            # Orders condition
+            # -------------------------
+            if rule.max_orders is not None:
+
+                order_count = Order.query.filter(
+                    Order.product_id == product.id,
+                    Order.status.notin_([
+                        "Cancelled",
+                        "cancelled"
+                    ])
+                ).count()
+
+                conditions.append(
+                    order_count <= rule.max_orders
+                )
+
+            # -------------------------
+            # Low stock condition
+            # -------------------------
+            if rule.low_stock is not None:
+
+                conditions.append(
+                    (product.stock or 0) < rule.low_stock
+                )
+
+            # -------------------------
+            # No sales condition
+            # -------------------------
+            if rule.no_sales_days is not None:
+
+                last_order = Order.query.filter(
+                    Order.product_id == product.id,
+                    Order.status.notin_([
+                        "Cancelled",
+                        "cancelled"
+                    ])
+                ).order_by(
+                    Order.created_at.desc()
+                ).first()
+
+                if last_order:
+                    days_since_sale = (
+                        now - last_order.created_at
+                    ).days
+
+                    conditions.append(
+                        days_since_sale >= rule.no_sales_days
+                    )
+                else:
+                    conditions.append(True)
+
+            # -------------------------
+            # Skip when no conditions
+            # -------------------------
+            if not conditions:
+                continue
+
+            # -------------------------
+            # AND / OR
+            # -------------------------
+            if rule.condition_mode == "OR":
+                matched = any(conditions)
+            else:
+                matched = all(conditions)
+
+            if not matched:
+                continue
+
+            # -------------------------
+            # Calculate discount
+            # -------------------------
+            discount = float(
+                rule.discount_percent or 0
+            )
+
+            if rule.maximum_discount_percent is not None:
+
+                discount = min(
+                    discount,
+                    float(rule.maximum_discount_percent)
+                )
+
+            # -------------------------
+            # Find offer-product link
+            # -------------------------
+            existing_offer_product = OfferProduct.query.filter_by(
+                offer_id=rule.offer_id,
+                product_id=product.id
+            ).first()
+
+            if rule.auto_add_offer:
+
+                if not existing_offer_product:
+
+                    db.session.add(
+                        OfferProduct(
+                            offer_id=rule.offer_id,
+                            product_id=product.id
+                        )
+                    )
+
+            # -------------------------
+            # Update offer discount
+            # -------------------------
+            offer = Offer.query.get(rule.offer_id)
+
+            if offer:
+                offer.discount_percent = discount
+
+                if rule.auto_homepage:
+                    offer.show_homepage = True
+
+                if rule.auto_deal_of_day:
+                    offer.offer_type = "Deal of the Day"
+                    offer.show_homepage = True
+
+    db.session.commit()
+
+@app.route("/admin/offers-deals/run-automation", methods=["POST"])
+def admin_run_automation():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    try:
+        run_smart_automation()
+        flash("Smart automation executed successfully!")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Automation error: {str(e)}")
+
+    return redirect("/admin/offers-deals")
 
 def calculate_tax(product, quantity=1):
 
@@ -2651,6 +3055,426 @@ def admin_dashboard():
         recent_orders=recent_orders,
         unread_notifications=unread_notifications,
         vapid_public_key=app.config.get("VAPID_PUBLIC_KEY", "")
+    )
+
+# ==========================================
+# ADMIN - OFFERS & DEALS
+# ==========================================
+
+@app.route("/admin/offers-deals")
+def admin_offers_deals():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    offers = (
+        Offer.query
+        .order_by(
+            Offer.position.asc(),
+            Offer.id.desc()
+        )
+        .all()
+    )
+
+    return render_template(
+        "offers_deals.html",
+        offers=offers
+    )
+
+@app.route("/admin/offers-deals/<int:offer_id>/smart-rules", methods=["GET", "POST"])
+def admin_smart_rules(offer_id):
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    offer = Offer.query.get_or_404(offer_id)
+
+    if request.method == "POST":
+        def get_int(name):
+            value = request.form.get(name, "").strip()
+            return int(value) if value else None
+
+        discount_percent = float(
+            request.form.get("discount_percent") or 0
+        )
+
+        maximum_discount = request.form.get(
+            "maximum_discount_percent", ""
+        ).strip()
+
+        rule = SmartRule(
+            offer_id=offer.id,
+            enabled=request.form.get("enabled") == "on",
+
+            days_after=get_int("days_after"),
+            max_views=get_int("max_views"),
+            max_orders=get_int("max_orders"),
+            low_stock=get_int("low_stock"),
+            no_sales_days=get_int("no_sales_days"),
+
+            discount_percent=discount_percent,
+
+            maximum_discount_percent=(
+                float(maximum_discount)
+                if maximum_discount else None
+            ),
+
+            condition_mode=request.form.get(
+                "condition_mode", "AND"
+            ),
+
+            auto_add_offer=request.form.get(
+                "auto_add_offer"
+            ) == "on",
+
+            auto_homepage=request.form.get(
+                "auto_homepage"
+            ) == "on",
+
+            auto_deal_of_day=request.form.get(
+                "auto_deal_of_day"
+            ) == "on"
+        )
+
+        db.session.add(rule)
+        db.session.commit()
+
+        flash("Smart automation rule created successfully!")
+        return redirect(
+            f"/admin/offers-deals/{offer.id}/smart-rules"
+        )
+
+    rules = SmartRule.query.filter_by(
+        offer_id=offer.id
+    ).order_by(
+        SmartRule.id.desc()
+    ).all()
+
+    return render_template(
+        "smart_rules.html",
+        offer=offer,
+        rules=rules
+    )
+
+# ==========================================
+# ADMIN - CREATE OFFER
+# ==========================================
+
+@app.route(
+    "/admin/offers-deals/create",
+    methods=["GET", "POST"]
+)
+def admin_create_offer():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    if request.method == "POST":
+
+        name = request.form.get(
+            "name",
+            ""
+        ).strip()
+
+        offer_type = request.form.get(
+            "offer_type",
+            "Custom"
+        ).strip()
+
+        title = request.form.get(
+            "title",
+            ""
+        ).strip()
+
+        subtitle = request.form.get(
+            "subtitle",
+            ""
+        ).strip()
+
+        discount_percent = float(
+            request.form.get(
+                "discount_percent"
+            ) or 0
+        )
+
+        start_at = None
+        end_at = None
+
+        start_value = request.form.get(
+            "start_at"
+        )
+
+        end_value = request.form.get(
+            "end_at"
+        )
+
+        if start_value:
+            start_at = datetime.datetime.fromisoformat(
+                start_value
+            )
+
+        if end_value:
+            end_at = datetime.datetime.fromisoformat(
+                end_value
+            )
+
+        active = (
+            request.form.get("active")
+            == "on"
+        )
+
+        show_homepage = (
+            request.form.get("show_homepage")
+            == "on"
+        )
+
+        position = int(
+            request.form.get(
+                "position"
+            ) or 1
+        )
+
+        offer = Offer(
+            name=name,
+            offer_type=offer_type,
+            title=title,
+            subtitle=subtitle,
+            discount_percent=discount_percent,
+            start_at=start_at,
+            end_at=end_at,
+            active=active,
+            show_homepage=show_homepage,
+            position=position
+        )
+
+        db.session.add(offer)
+        db.session.commit()
+
+        flash(
+            "Offer created successfully!"
+        )
+
+        return redirect(
+            "/admin/offers-deals"
+        )
+
+    return render_template(
+        "create_offer.html"
+    )
+
+# ==========================================
+# ADMIN - EDIT OFFER
+# ==========================================
+
+@app.route(
+    "/admin/offers-deals/<int:id>/edit",
+    methods=["GET", "POST"]
+)
+def admin_edit_offer(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    offer = Offer.query.get_or_404(id)
+
+    if request.method == "POST":
+
+        offer.name = request.form.get(
+            "name",
+            ""
+        ).strip()
+
+        offer.offer_type = request.form.get(
+            "offer_type",
+            "Custom"
+        ).strip()
+
+        offer.title = request.form.get(
+            "title",
+            ""
+        ).strip()
+
+        offer.subtitle = request.form.get(
+            "subtitle",
+            ""
+        ).strip()
+
+        offer.discount_percent = float(
+            request.form.get(
+                "discount_percent"
+            ) or 0
+        )
+
+        offer.position = int(
+            request.form.get(
+                "position"
+            ) or 1
+        )
+
+        start_value = request.form.get(
+            "start_at"
+        )
+
+        end_value = request.form.get(
+            "end_at"
+        )
+
+        offer.start_at = (
+            datetime.datetime.fromisoformat(start_value)
+            if start_value
+            else None
+        )
+
+        offer.end_at = (
+            datetime.datetime.fromisoformat(end_value)
+            if end_value
+            else None
+        )
+
+        offer.active = (
+            request.form.get("active")
+            == "on"
+        )
+
+        offer.show_homepage = (
+            request.form.get("show_homepage")
+            == "on"
+        )
+
+        db.session.commit()
+
+        flash(
+            "Offer updated successfully!"
+        )
+
+        return redirect(
+            "/admin/offers-deals"
+        )
+
+    return render_template(
+        "edit_offer.html",
+        offer=offer
+    )
+
+# ==========================================
+# ADMIN - TOGGLE OFFER
+# ==========================================
+
+@app.route(
+    "/admin/offers-deals/<int:id>/toggle",
+    methods=["POST"]
+)
+def admin_toggle_offer(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    offer = Offer.query.get_or_404(id)
+
+    offer.active = not offer.active
+
+    db.session.commit()
+
+    flash(
+        "Offer status updated successfully!"
+    )
+
+    return redirect(
+        "/admin/offers-deals"
+    )
+
+
+# ==========================================
+# ADMIN - DELETE OFFER
+# ==========================================
+
+@app.route(
+    "/admin/offers-deals/<int:id>/delete",
+    methods=["POST"]
+)
+def admin_delete_offer(id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    offer = Offer.query.get_or_404(id)
+
+    db.session.delete(offer)
+    db.session.commit()
+
+    flash(
+        "Offer deleted successfully!"
+    )
+
+    return redirect(
+        "/admin/offers-deals"
+    )
+
+# ==========================================
+# ADMIN - OFFER PRODUCTS
+# ==========================================
+
+@app.route(
+    "/admin/offers-deals/<int:offer_id>/products",
+    methods=["GET", "POST"]
+)
+def admin_offer_products(offer_id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    offer = Offer.query.get_or_404(offer_id)
+
+    products = (
+        Product.query
+        .order_by(Product.id.desc())
+        .all()
+    )
+
+    if request.method == "POST":
+
+        selected_ids = request.form.getlist(
+            "product_ids"
+        )
+
+        OfferProduct.query.filter_by(
+            offer_id=offer.id
+        ).delete()
+
+        for product_id in selected_ids:
+
+            product = Product.query.get(
+                int(product_id)
+            )
+
+            if product:
+
+                db.session.add(
+                    OfferProduct(
+                        offer_id=offer.id,
+                        product_id=product.id
+                    )
+                )
+
+        db.session.commit()
+
+        flash(
+            "Offer products updated successfully!"
+        )
+
+        return redirect(
+            "/admin/offers-deals"
+        )
+
+    selected_product_ids = {
+        item.product_id
+        for item in offer.offer_products
+    }
+
+    return render_template(
+        "offer_products.html",
+        offer=offer,
+        products=products,
+        selected_product_ids=selected_product_ids
     )
 
 # ==================================================
