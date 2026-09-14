@@ -372,58 +372,105 @@ def home():
         )
 
     products = query.all()
-
+    
     # =========================
     # SECTION-WISE PRODUCTS
     # =========================
 
     section_products = {}
 
+    # Active subcategories ek hi query mein
+    active_subcategories = (
+        SubCategory.query
+        .filter_by(active=True)
+        .all()
+    )
+
+    # Subcategory ID -> (Master Category Name, Subcategory Name)
+    subcategory_map = {}
+
+    active_master_map = {
+        master.id: master.name
+        for master in active_master_categories
+    }
+
+    for sub in active_subcategories:
+
+        master_name = active_master_map.get(
+            sub.master_category_id
+        )
+
+        if master_name:
+
+            subcategory_map[sub.id] = (
+                master_name,
+                sub.name
+            )
+
+
+    # Saare relevant products ek hi query mein
+    section_product_pool = (
+        Product.query
+        .filter(
+            Product.category.in_(active_category_names)
+        )
+        .order_by(
+            Product.id.desc()
+        )
+        .all()
+    )
+
+
+    # Product ko section ke according group karo
+    section_product_map = {}
+
+    for product in section_product_pool:
+
+        key = (
+            product.category,
+            product.subcategory,
+            product.section
+        )
+
+        section_product_map.setdefault(
+            key,
+            []
+        ).append(product)
+
+
+    # Har section ke liye grouped products use karo
     for current_section in sections:
 
-        subcategory_obj = (
-            SubCategory.query
-            .filter_by(
-                id=current_section.subcategory_id,
-                active=True
-            )
-            .first()
+        subcategory_info = subcategory_map.get(
+            current_section.subcategory_id
         )
 
-        if not subcategory_obj:
+        if not subcategory_info:
 
             section_products[current_section.id] = []
 
             continue
 
-        # Find master category of this subcategory
-        master_category_obj = (
-            MasterCategory.query
-            .filter_by(
-                id=subcategory_obj.master_category_id,
-                active=True
-            )
-            .first()
+
+        master_name, subcategory_name = (
+            subcategory_info
         )
 
-        if not master_category_obj:
 
-            section_products[current_section.id] = []
+        key = (
+            master_name,
+            subcategory_name,
+            current_section.name
+        )
 
-            continue
 
         section_products[current_section.id] = (
-            Product.query
-            .filter(
-                Product.category == master_category_obj.name,
-                Product.subcategory == subcategory_obj.name,
-                Product.section == current_section.name
+            section_product_map.get(
+                key,
+                []
             )
-            .order_by(
-                Product.id.desc()
-            )
-            .all()
         )
+
 
     # =========================
     # WISHLIST
@@ -439,6 +486,7 @@ def home():
                 user_id=session["user_id"]
             ).all()
         ]
+
 
     # =========================
     # RENDER HOME
