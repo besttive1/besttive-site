@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Create Offer | BESTTIVE</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            background: #f6f3fa;
+            font-family: Arial, sans-serif;
+            color: #222;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #4B0082;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin-top: 5px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.06);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .checkbox-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .checkbox-row label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-weight: 500;
+        }
+
+        .checkbox-row input {
+            width: auto;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .btn {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background: #4B0082;
+            color: #fff;
+        }
+
+        .back-btn {
+            background: #eee;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>Create Offer</h1>
+
+        <p>
+            Create a Deal of the Day, discount or campaign.
+        </p>
+
+    </div>
+
+
+    <form
+        method="POST"
+        class="card"
+    >
+
+        <div class="form-grid">
+
+            <div class="field">
+
+                <label>Offer Name</label>
+
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="Deal of the Day"
+                    required
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>Offer Type</label>
+
+                <select name="offer_type">
+
+                    <option value="Deal of the Day">
+                        Deal of the Day
+                    </option>
+
+                    <option value="Discount">
+                        Discount
+                    </option>
+
+                    <option value="Flash Sale">
+                        Flash Sale
+                    </option>
+
+                    <option value="Festival Sale">
+                        Festival Sale
+                    </option>
+
+                    <option value="Custom">
+                        Custom
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field full">
+
+                <label>Homepage Title</label>
+
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Deal of the Day"
+                >
+
+            </div>
+
+
+            <div class="field full">
+
+                <label>Subtitle</label>
+
+                <input
+                    type="text"
+                    name="subtitle"
+                    placeholder="Limited Time Offers"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>Discount (%)</label>
+
+                <input
+                    type="number"
+                    name="discount_percent"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value="0"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>Position</label>
+
+                <input
+                    type="number"
+                    name="position"
+                    min="1"
+                    value="1"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>Start Date & Time</label>
+
+                <input
+                    type="datetime-local"
+                    name="start_at"
+                >
+
+            </div>
+
+
+            <div class="field">
+
+                <label>End Date & Time</label>
+
+                <input
+                    type="datetime-local"
+                    name="end_at"
+                >
+
+            </div>
+
+
+            <div class="field full">
+
+                <div class="checkbox-row">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            name="active"
+                            checked
+                        >
+
+                        Active
+
+                    </label>
+
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            name="show_homepage"
+                            checked
+                        >
+
+                        Show on Homepage
+
+                    </label>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                type="submit"
+                class="btn save-btn"
+            >
+                Save Offer
+            </button>
+
+
+            <a
+                href="/admin/offers-deals"
+                class="btn back-btn"
+            >
+                Back
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+
+</html>

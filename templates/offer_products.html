@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Offer Products | BESTTIVE</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            background: #f6f3fa;
+            font-family: Arial, sans-serif;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #4B0082;
+            font-size: 26px;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .save-btn {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #4B0082;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .card {
+            background: #fff;
+            padding: 18px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.06);
+        }
+
+        .search {
+            width: 100%;
+            padding: 11px 13px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .selected-count {
+            margin-bottom: 15px;
+            color: #4B0082;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .product {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .product input {
+            flex-shrink: 0;
+        }
+
+        .product img {
+            width: 55px;
+            height: 55px;
+            border-radius: 7px;
+            object-fit: contain;
+            background: #f7f7f7;
+        }
+
+        .product-info {
+            min-width: 0;
+        }
+
+        .product-name {
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .product-price {
+            margin-top: 4px;
+            color: #4B0082;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .bottom-actions {
+            margin-top: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            color: #4B0082;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .save-btn {
+                width: 100%;
+            }
+
+            .products {
+                grid-template-columns: 1fr;
+            }
+
+            .bottom-actions {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <div>
+
+            <h1>
+                Select Products
+            </h1>
+
+            <p>
+                {{ offer.name }}
+            </p>
+
+        </div>
+
+        <button
+            form="offer-products-form"
+            type="submit"
+            class="save-btn"
+        >
+            Save Products
+        </button>
+
+    </div>
+
+
+    <form
+        id="offer-products-form"
+        method="POST"
+        class="card"
+    >
+
+        <input
+            type="text"
+            id="productSearch"
+            class="search"
+            placeholder="Search products..."
+        >
+
+
+        <div class="selected-count">
+            Selected:
+            <span id="selectedCount">0</span>
+        </div>
+
+
+        <div class="products">
+
+            {% for product in products %}
+
+            <label
+                class="product"
+                data-name="{{ product.name|lower }}"
+            >
+
+                <input
+                    type="checkbox"
+                    name="product_ids"
+                    value="{{ product.id }}"
+                    {% if product.id in selected_product_ids %}
+                        checked
+                    {% endif %}
+                >
+
+                <img
+                    src="{{ product.image }}"
+                    alt="{{ product.name }}"
+                    loading="lazy"
+                >
+
+                <div class="product-info">
+
+                    <div class="product-name">
+                        {{ product.name }}
+                    </div>
+
+                    <div class="product-price">
+                        ₹{{ product.price }}
+                    </div>
+
+                </div>
+
+            </label>
+
+            {% endfor %}
+
+        </div>
+
+
+        <div class="bottom-actions">
+
+            <a
+                href="/admin/offers-deals"
+                class="back-btn"
+            >
+                ← Back to Offers
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+
+const searchInput =
+    document.getElementById("productSearch");
+
+const productItems =
+    document.querySelectorAll(".product");
+
+const checkboxes =
+    document.querySelectorAll(
+        'input[name="product_ids"]'
+    );
+
+const selectedCount =
+    document.getElementById("selectedCount");
+
+
+function updateSelectedCount() {
+
+    selectedCount.textContent =
+        document.querySelectorAll(
+            'input[name="product_ids"]:checked'
+        ).length;
+
+}
+
+
+searchInput.addEventListener(
+    "input",
+    function() {
+
+        const search =
+            this.value.toLowerCase().trim();
+
+        productItems.forEach(function(item) {
+
+            const name =
+                item.dataset.name;
+
+            item.style.display =
+                name.includes(search)
+                    ? "flex"
+                    : "none";
+
+        });
+
+    }
+);
+
+
+checkboxes.forEach(function(checkbox) {
+
+    checkbox.addEventListener(
+        "change",
+        updateSelectedCount
+    );
+
+});
+
+
+updateSelectedCount();
+
+</script>
+
+</body>
+
+</html>
