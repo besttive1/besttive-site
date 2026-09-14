@@ -771,9 +771,13 @@
 
                                 <a href="/product/{{ product.id }}">
 
-                                    <img src="{{ product.image }}"
-                                         alt="{{ product.name }}">
-
+                                    <img
+                                        src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
+                                        alt="{{ product.name }}"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
+                                                          
                                 </a>
 
 
@@ -1076,8 +1080,10 @@
                 <a href="/product/{{ product.id }}">
 
                     <img
-                        src="{{ product.image }}"
+                        src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
                         alt="{{ product.name }}"
+                        loading="lazy"
+                        decoding="async"
                     >
 
                 </a>
@@ -1198,8 +1204,12 @@
 
                                 <a href="/product/{{ product.id }}">
 
-                                    <img src="{{ product.image }}"
-                                         alt="{{ product.name }}">
+                                    <img
+                                        src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
+                                        alt="{{ product.name }}"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
 
                                 </a>
 
@@ -1305,7 +1315,12 @@
              <div class="product-image-box">
 
                  <a href="/product/{{ product.id }}">
-                     <img src="{{ product.image }}">
+                     <img
+                         src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
+                         alt="{{ product.name }}"
+                         loading="lazy"
+                         decoding="async"
+                        >
                  </a>
 
                  <button type="button"
