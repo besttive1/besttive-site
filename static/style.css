@@ -2458,6 +2458,18 @@ background: #310058;
     line-height: 1.1;
 }
 
+.product-rating {
+    margin: 4px 0 8px;
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: 1px;
+}
+
+.product-rating span {
+    color: #f5b301 !important;
+    font-size: 14px;
+}
+
 .deal-cart-btn {
     display: block;
     width: 100%;

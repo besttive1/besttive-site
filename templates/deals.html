@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Deals - BESTTIVE</title>
+
+    <style>
+        .product-rating {
+            margin: 4px 0 8px;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .product-rating span {
+            color: #f5b301;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f6f3fa;
+            font-family: Arial, sans-serif;
+            color: #222;
+        }
+
+        .deals-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 30px 20px;
+        }
+
+        .deals-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .deals-header h1 {
+            margin: 0;
+            color: #4B0082;
+            font-size: 30px;
+        }
+
+        .deals-header p {
+            margin: 6px 0 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .back-btn {
+            padding: 10px 16px;
+            background: #4B0082;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .offer-section {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.06);
+        }
+
+        .offer-header {
+            margin-bottom: 18px;
+        }
+
+        .offer-header h2 {
+            margin: 0;
+            color: #4B0082;
+            font-size: 22px;
+        }
+
+        .offer-header p {
+            margin: 5px 0 0;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .deal-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .deal-card {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+            padding-bottom: 12px;
+        }
+
+        .deal-image-box {
+            position: relative;
+            background: #faf8fd;
+            padding: 10px;
+        }
+
+        .deal-image-box img {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .deal-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #4B0082;
+            color: #fff;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .deal-info {
+            padding: 12px;
+        }
+
+        .deal-info h3 {
+            margin: 0 0 6px;
+            font-size: 15px;
+        }
+
+        .deal-info h3 a {
+            color: #222;
+            text-decoration: none;
+        }
+
+        .deal-description {
+            margin: 0 0 10px;
+            color: #777;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .price-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 10px;
+        }
+
+        .old-price {
+            color: #888;
+            text-decoration: line-through;
+            font-size: 12px;
+        }
+
+        .new-price {
+            color: #4B0082;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .discount-text {
+            color: #16a34a;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .cart-btn {
+            display: block;
+            width: 100%;
+            padding: 9px 10px;
+            background: #4B0082;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .empty-state {
+            background: #fff;
+            border-radius: 14px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #777;
+            box-shadow: 0 4px 15px rgba(0,0,0,.06);
+        }
+
+        .empty-state h2 {
+            margin-bottom: 8px;
+            color: #4B0082;
+        }
+
+        @media (max-width: 900px) {
+            .deal-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 650px) {
+            .deals-container {
+                padding: 15px 10px;
+            }
+
+            .deals-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .deals-header h1 {
+                font-size: 24px;
+            }
+
+            .back-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .offer-section {
+                padding: 12px;
+            }
+
+            .deal-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .deal-image-box img {
+                height: 150px;
+            }
+
+            .deal-info {
+                padding: 9px;
+            }
+
+            .deal-info h3 {
+                font-size: 13px;
+            }
+
+            .new-price {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="deals-container">
+
+    <div class="deals-header">
+
+        <div>
+            <h1>🔥 Deals & Offers</h1>
+            <p>Discover our latest active offers and discounts</p>
+        </div>
+
+        <a
+            href="/"
+            class="back-btn"
+        >
+            ← Home
+        </a>
+
+    </div>
+
+
+    {% if offers %}
+
+        {% for offer in offers %}
+
+            {% if offer.offer_products %}
+
+                <section class="offer-section">
+
+                    <div class="offer-header">
+
+                        <h2>
+                            {% if offer.title %}
+                                {{ offer.title }}
+                            {% else %}
+                                {{ offer.name }}
+                            {% endif %}
+                        </h2>
+
+                        {% if offer.subtitle %}
+
+                            <p>
+                                {{ offer.subtitle }}
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="deal-grid">
+
+                        {% for offer_product in offer.offer_products %}
+
+                            {% set product = offer_product.product %}
+
+                            <div class="deal-card">
+
+                                <div class="deal-image-box">
+
+                                    <a href="/product/{{ product.id }}">
+
+                                        <img
+                                            src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
+                                            alt="{{ product.name }}"
+                                            loading="lazy"
+                                            decoding="async"
+                                        >
+
+                                    </a>
+
+                                    {% if offer.discount_percent > 0 %}
+
+                                        <span class="deal-badge">
+                                            {{ offer.discount_percent|int }}% OFF
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="deal-info">
+
+                                    <h3>
+
+                                        <a href="/product/{{ product.id }}">
+                                            {{ product.name }}
+                                        </a>
+
+                                    </h3>
+
+
+                                    <div class="product-rating">
+                                        <span>★★★★★</span>
+                                    </div>
+
+
+                                    {% if offer.discount_percent > 0 %}
+
+                                        {% set discounted_price = (
+                                            product.price
+                                            * (100 - offer.discount_percent)
+                                            / 100
+                                        )|round|int %}
+
+                                        <div class="price-row">
+
+                                            <span class="new-price">
+                                               ₹{{ discounted_price }}
+                                            </span>
+
+                                            <span class="old-price">
+                                               ₹{{ product.price }}
+                                            </span>
+
+                                            <span class="discount-text">
+                                                {{ offer.discount_percent|int }}% OFF
+                                            </span>
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <div class="price-row">
+
+                                            <span class="new-price">
+                                                ₹{{ product.price }}
+                                            </span>
+
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    {% if product.stock > 0 %}
+
+                                        <a
+                                            href="/add-to-cart/{{ product.id }}"
+                                            class="cart-btn"
+                                        >
+                                            🛒 Add to Cart
+                                        </a>
+
+                                    {% else %}
+
+                                        <button
+                                            class="cart-btn"
+                                            disabled
+                                            style="opacity:.6;border:none;"
+                                        >
+                                            Out of Stock
+                                        </button>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+
+            {% endif %}
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <h2>No Active Deals</h2>
+
+            <p>
+                There are currently no active offers available.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

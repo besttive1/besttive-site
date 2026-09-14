@@ -831,13 +831,9 @@
 
                             </h3>
 
-
-                            <p class="product-description">
-
-                                {{ product.description }}
-
-                            </p>
-
+                            <div class="product-rating">
+                                <span>★★★★★</span>
+                            </div>
 
                             <p>
 
@@ -1035,12 +1031,24 @@
             </div>
 
             <div>
-                <h2>Deal of the Day</h2>
-                <span>Limited Time Offers</span>
+                <h2>
+                    {% if deal_of_day_offer and deal_of_day_offer.title %}
+                        {{ deal_of_day_offer.title }}
+                    {% else %}
+                        Deal of the Day
+                    {% endif %}
+                </h2>
+
+                <span>
+                    {% if deal_of_day_offer and deal_of_day_offer.subtitle %}
+                        {{ deal_of_day_offer.subtitle }}
+                    {% else %}
+                        Limited Time Offers
+                    {% endif %}
+                </span>
             </div>
 
         </div>
-
 
         <div class="deal-timer">
 
@@ -1061,8 +1069,7 @@
 
         </div>
 
-
-        <a href="/" class="deal-view-all">
+        <a href="/deals" class="deal-view-all">
             View All →
         </a>
 
@@ -1071,80 +1078,193 @@
 
     <div class="deal-products">
 
-        {% for product in products[:4] %}
+        {% if deal_of_day_offer %}
 
-        <div class="deal-card">
+            {% for offer_product in deal_of_day_offer.offer_products[:4] %}
 
-            <div class="deal-image-box">
+                {% set product = offer_product.product %}
 
-                <a href="/product/{{ product.id }}">
+                <div class="deal-card">
 
-                    <img
-                        src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
-                        alt="{{ product.name }}"
-                        loading="lazy"
-                        decoding="async"
-                    >
+                    <div class="deal-image-box">
 
-                </a>
+                        <a href="/product/{{ product.id }}">
 
-                <span class="deal-badge">
-                    LIMITED
-                </span>
+                            <img
+                                src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                                decoding="async"
+                            >
 
-                <button
-                    type="button"
-                    class="deal-wishlist"
-                    onclick="toggleWishlist(this, '{{ product.id }}')"
-                >
-                    ♡
-                </button>
+                        </a>
 
-            </div>
+                        <span class="deal-badge">
+                            {{ deal_of_day_offer.discount_percent|int }}% OFF
+                        </span>
+
+                        <button
+                            type="button"
+                            class="deal-wishlist"
+                            onclick="toggleWishlist(this, '{{ product.id }}')"
+                        >
+                            ♡
+                        </button>
+
+                    </div>
 
 
-            <div class="deal-product-info">
+                    <div class="deal-product-info">
 
-                <h3>
-                    <a href="/product/{{ product.id }}">
-                        {{ product.name }}
-                    </a>
-                </h3>
+                        <h3>
+                            <a href="/product/{{ product.id }}">
+                                {{ product.name }}
+                            </a>
+                        </h3>
 
-                <p class="deal-description">
-                    {{ product.description }}
-                </p>
+                        <div class="product-rating">
+                            <span>★★★★★</span>
+                        </div>
 
-                <div class="deal-price">
-                    ₹{{ product.price }}
+                        {% if deal_of_day_offer.discount_percent > 0 %}
+
+                            <div class="deal-price">
+
+                                <strong>
+                                    ₹{{ (product.price * (100 - deal_of_day_offer.discount_percent) / 100)|round|int }}
+                                </strong>
+
+                                <span style="
+                                    text-decoration:line-through;
+                                    color:#888;
+                                    font-size:13px;
+                                    margin-left:6px;
+                                ">
+                                    ₹{{ product.price }}
+                                </span>
+
+                                <span style="
+                                    color:#16a34a;
+                                    font-size:11px;
+                                    font-weight:700;
+                                    margin-left:6px;
+                                ">
+                                    {{ deal_of_day_offer.discount_percent|int }}% OFF
+                                </span>
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="deal-price">
+                                ₹{{ product.price }}
+                            </div>
+
+                        {% endif %}
+
+
+                        {% if product.stock > 0 %}
+
+                            <a
+                                href="/add-to-cart/{{ product.id }}"
+                                class="deal-cart-btn"
+                            >
+                                🛒 Add to Cart
+                            </a>
+
+                        {% else %}
+
+                            <button
+                                class="deal-cart-btn disabled"
+                                disabled
+                            >
+                                Out of Stock
+                            </button>
+
+                        {% endif %}
+
+                    </div>
+
                 </div>
 
+            {% endfor %}
 
-                {% if product.stock > 0 %}
+        {% else %}
 
-                <a
-                    href="/add-to-cart/{{ product.id }}"
-                    class="deal-cart-btn"
-                >
-                    🛒 Add to Cart
-                </a>
+            {% for product in products[:4] %}
 
-                {% else %}
+                <div class="deal-card">
 
-                <button
-                    class="deal-cart-btn disabled"
-                    disabled
-                >
-                    Out of Stock
-                </button>
+                    <div class="deal-image-box">
 
-                {% endif %}
+                        <a href="/product/{{ product.id }}">
 
-            </div>
+                            <img
+                                src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                                decoding="async"
+                            >
 
-        </div>
+                        </a>
 
-        {% endfor %}
+                        <span class="deal-badge">
+                            LIMITED
+                        </span>
+
+                        <button
+                            type="button"
+                            class="deal-wishlist"
+                            onclick="toggleWishlist(this, '{{ product.id }}')"
+                        >
+                            ♡
+                        </button>
+
+                    </div>
+
+                    <div class="deal-product-info">
+
+                        <h3>
+                            <a href="/product/{{ product.id }}">
+                                {{ product.name }}
+                            </a>
+                        </h3>
+
+                        <div class="product-rating">
+                            <span>★★★★★</span>
+                        </div>
+
+                        <div class="deal-price">
+                            ₹{{ product.price }}
+                        </div>
+
+                        {% if product.stock > 0 %}
+
+                            <a
+                                href="/add-to-cart/{{ product.id }}"
+                                class="deal-cart-btn"
+                            >
+                                🛒 Add to Cart
+                            </a>
+
+                        {% else %}
+
+                            <button
+                                class="deal-cart-btn disabled"
+                                disabled
+                            >
+                                Out of Stock
+                            </button>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
 
     </div>
 

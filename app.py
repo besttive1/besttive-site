@@ -372,7 +372,49 @@ def home():
         )
 
     products = query.all()
-    
+
+    # =========================
+    # ACTIVE HOMEPAGE OFFERS
+    # =========================
+
+    now = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+    ).replace(tzinfo=None)
+
+    homepage_offers = (
+        Offer.query
+        .filter(
+            Offer.active == True,
+            Offer.show_homepage == True,
+            db.or_(
+                Offer.start_at.is_(None),
+                Offer.start_at <= now
+            ),
+            db.or_(
+                Offer.end_at.is_(None),
+                Offer.end_at >= now
+            )
+        )
+        .order_by(
+            Offer.position.asc(),
+            Offer.id.desc()
+        )
+        .all()
+    )
+
+    # =========================
+    # DEAL OF THE DAY OFFER
+    # =========================
+
+    deal_of_day_offer = next(
+        (
+            offer
+            for offer in homepage_offers
+            if offer.offer_type == "Deal of the Day"
+        ),
+        None
+    )
+
     # =========================
     # SECTION-WISE PRODUCTS
     # =========================
@@ -509,6 +551,8 @@ def home():
         current_sections=current_sections,
         sections=sections,
         section_products=section_products,
+        homepage_offers=homepage_offers,
+        deal_of_day_offer=deal_of_day_offer,
     )
 
 @app.route("/add-to-cart/<int:id>")
@@ -1214,20 +1258,94 @@ def product_details(id):
 
     product = Product.query.get_or_404(id)
 
-    # Count every product detail page visit
+    # Count product view
     product.views = (product.views or 0) + 1
-    db.session.commit()
+
+    # Current IST time
+    now = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+    ).replace(tzinfo=None)
+
+    # Find active offer for this product
+    applied_offer = (
+        Offer.query
+        .join(OfferProduct, Offer.id == OfferProduct.offer_id)
+        .filter(
+            OfferProduct.product_id == product.id,
+            Offer.active == True,
+            db.or_(
+                Offer.start_at.is_(None),
+                Offer.start_at <= now
+            ),
+            db.or_(
+                Offer.end_at.is_(None),
+                Offer.end_at >= now
+            ),
+            Offer.discount_percent > 0
+        )
+        .order_by(
+            Offer.discount_percent.desc(),
+            Offer.position.asc(),
+            Offer.id.desc()
+        )
+        .first()
+    )
+
+    # Calculate customer price
+    discounted_price = product.price
+
+    if applied_offer:
+        discounted_price = round(
+            product.price
+            * (100 - applied_offer.discount_percent)
+            / 100
+        )
 
     images = ProductImage.query.filter_by(
         product_id=product.id
     ).all()
 
+    db.session.commit()
+
     return render_template(
         "product_details.html",
         product=product,
-        images=images
+        images=images,
+        applied_offer=applied_offer,
+        discounted_price=discounted_price
     )
 
+@app.route("/deals")
+def deals():
+
+    now = datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+    ).replace(tzinfo=None)
+
+    active_offers = (
+        Offer.query
+        .filter(
+            Offer.active == True,
+            db.or_(
+                Offer.start_at.is_(None),
+                Offer.start_at <= now
+            ),
+            db.or_(
+                Offer.end_at.is_(None),
+                Offer.end_at >= now
+            )
+        )
+        .order_by(
+            Offer.position.asc(),
+            Offer.id.desc()
+        )
+        .all()
+    )
+
+    return render_template(
+        "deals.html",
+        offers=active_offers
+    )
 
 @app.route("/about")
 def about():
