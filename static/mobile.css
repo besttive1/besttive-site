@@ -737,32 +737,42 @@
 .home-products .product-actions {
     width: 100% !important;
     display: flex !important;
+    margin: 0 !important;
 }
 
 .home-products .compact-product-actions {
-    display: flex !important;
-    align-items: center;
-    gap: 5px !important;
     width: 100% !important;
-}
-
-.home-products .compact-cart-btn {
-    width: 34px !important;
-    min-width: 34px !important;
-    height: 32px !important;
-    padding: 0 !important;
-    font-size: 15px !important;
     display: flex !important;
-    align-items: center;
-    justify-content: center;
+    align-items: center !important;
+    gap: 3px !important;
+}
+
+.home-products .compact-product-actions a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+}
+
+.home-products .compact-buy-btn {
+    flex: 1 !important;
+    min-width: 0 !important;
+    height: 28px !important;
+    padding: 0 5px !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    border-radius: 5px !important;
+    white-space: nowrap !important;
 }
 
 .home-products .compact-cart-btn {
+    flex: 0 0 28px !important;
     width: 28px !important;
     min-width: 28px !important;
     height: 28px !important;
     padding: 0 !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
+    border-radius: 5px !important;
 }
 
     .buy-now-full {
