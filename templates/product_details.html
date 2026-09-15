@@ -115,47 +115,71 @@
 
         {% if applied_offer %}
 
-    <div style="margin:10px 0 18px;">
+        <div style="margin:10px 0 18px; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;">
 
-        <span style="
-            color:#888;
-            text-decoration:line-through;
-            font-size:16px;
-        ">
-            ₹{{ product.price }}
-        </span>
+            <span style="
+                color:#4B0082;
+                font-size:30px;
+                font-weight:800;
+            ">
+                ₹{{ discounted_price }}
+            </span>
 
-        <span style="
-            color:#e91e63;
-            font-size:26px;
-            font-weight:800;
-            margin-left:10px;
-        ">
-            ₹{{ discounted_price }}
-        </span>
+            <span style="
+                color:#888;
+                text-decoration:line-through;
+                font-size:17px;
+            
+            ">
+                ₹{{ product.price }}
+            </span>
 
-        <span style="
-            color:#16a34a;
-            font-size:14px;
-            font-weight:700;
-            margin-left:8px;
-        ">
+            <span style="
+                color:#16a34a;
+                font-size:15px;
+                font-weight:700;
+            ">
             {{ applied_offer.discount_percent|int }}% OFF
-        </span>
+            </span>
 
-    </div>
+        </div>
 
-{% else %}
+        {% else %} 
 
-    <h2 style="color:#e91e63;">
-        ₹{{ product.price }}
+        <div style="margin:10px 0 18px;">
+            <span style="
+                color:#4B0082;
+                font-size:30px;
+                font-weight:800;
+            ">
+                ₹{{ product.price }}
+            </span>
+        </div>
+
+        {% endif %}
     </h2>
-
-{% endif %}
         
         <p>
 
             <b>Stock :</b>
+            <div style="margin:20px 0 24px;">
+                <h3 style="
+                    margin:0 0 8px;
+                    font-size:20px;
+                    color:#4B0082;
+                ">
+                    Description
+                </h3>
+
+                <p style="
+                   margin:0;
+                   font-size:15px;
+                   line-height:1.7;
+                   color:#555;
+                ">
+                {{ product.description }}
+                </p>
+        </div> 
 
             {% if product.stock > 0 %}
                 <span style="color:green;">

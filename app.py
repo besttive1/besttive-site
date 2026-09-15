@@ -560,21 +560,42 @@ def add_to_cart(id):
 
     product = Product.query.get_or_404(id)
 
-    customer_name = session.get("customer_name", "Guest Customer")
+    # Logged-in customer
+    user_id = session.get("user_id")
 
+    if user_id:
+        user = User.query.get(user_id)
+
+        if not user:
+            session.clear()
+            return redirect("/login")
+
+        customer_name = user.name
+
+    else:
+        # Guest customer
+        customer_name = "Guest Customer"
+
+    # Check existing cart item
     cart_item = Cart.query.filter_by(
         customer_name=customer_name,
-        product_id=id
+        product_id=product.id
     ).first()
 
     if cart_item:
-        cart_item.quantity += 1
+
+        cart_item.quantity = (
+            cart_item.quantity or 0
+        ) + 1
+
     else:
+
         cart_item = Cart(
             customer_name=customer_name,
-            product_id=id,
+            product_id=product.id,
             quantity=1
         )
+
         db.session.add(cart_item)
 
     db.session.commit()
@@ -586,39 +607,128 @@ def add_to_cart(id):
 @app.route("/cart")
 def cart():
 
-    customer_name = session.get("customer_name", "Guest Customer")
+    user_id = session.get("user_id")
+
+    if user_id:
+        user = User.query.get(user_id)
+
+        if not user:
+            session.clear()
+            return redirect("/login")
+
+        customer_name = user.name
+
+    else:
+        customer_name = "Guest Customer"
 
     cart_items = Cart.query.filter_by(
         customer_name=customer_name
     ).all()
 
     products = []
-
     total = 0
+    original_total = 0
+
+    now = datetime.datetime.now(
+        datetime.timezone(
+            datetime.timedelta(hours=5, minutes=30)
+        )
+    ).replace(tzinfo=None)
 
     for item in cart_items:
 
         product = Product.query.get(item.product_id)
 
-        if product:
+        if not product:
+            continue
 
-            subtotal = product.price * item.quantity
+        # =========================
+        # ORIGINAL PRICE
+        # =========================
 
-            total += subtotal
+        original_price = product.price
 
-            products.append({
-                "id": item.id,
-                "name": product.name,
-                "image": product.image,
-                "price": product.price,
-                "quantity": item.quantity,
-                "subtotal": subtotal
-            })
+        # =========================
+        # ACTIVE OFFER CHECK
+        # =========================
+
+        applied_offer = (
+            Offer.query
+            .join(
+                OfferProduct,
+                Offer.id == OfferProduct.offer_id
+            )
+            .filter(
+                OfferProduct.product_id == product.id,
+                Offer.active == True,
+
+                db.or_(
+                    Offer.start_at.is_(None),
+                    Offer.start_at <= now
+                ),
+
+                db.or_(
+                    Offer.end_at.is_(None),
+                    Offer.end_at >= now
+                ),
+
+                Offer.discount_percent > 0
+            )
+            .order_by(
+                Offer.discount_percent.desc(),
+                Offer.position.asc(),
+                Offer.id.desc()
+            )
+            .first()
+        )
+
+        # =========================
+        # FINAL PRICE
+        # =========================
+
+        final_price = original_price
+        discount_percent = 0
+
+        if applied_offer:
+
+            discount_percent = float(
+                applied_offer.discount_percent or 0
+            )
+
+            final_price = round(
+                original_price
+                * (100 - discount_percent)
+                / 100
+            )
+
+        # =========================
+        # SUBTOTAL
+        # =========================
+        original_subtotal = original_price * item.quantity
+        original_total += original_subtotal
+        subtotal = final_price * item.quantity
+
+        total += subtotal
+
+        products.append({
+            "id": item.id,
+            "name": product.name,
+            "image": product.image,
+
+            "price": final_price,
+            "original_price": original_price,
+            "discount_percent": discount_percent,
+
+            "quantity": item.quantity,
+            "subtotal": subtotal
+        })
 
     return render_template(
         "cart.html",
         products=products,
-        total=total
+        total=total,
+        original_total=original_total,
+        total_discount=original_total - total
     )
 
 @app.route("/cart/increase/<int:id>")
@@ -660,7 +770,26 @@ def delete_cart(id):
 @app.route("/checkout-cart")
 def checkout_cart():
 
-    customer_name = session.get("customer_name", "Guest Customer")
+    # =========================
+    # LOGGED-IN CUSTOMER
+    # =========================
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return redirect("/login")
+
+    user = User.query.get(user_id)
+
+    if not user:
+        session.clear()
+        return redirect("/login")
+
+    customer_name = user.name
+
+    # =========================
+    # GET CART
+    # =========================
 
     cart_items = Cart.query.filter_by(
         customer_name=customer_name
@@ -670,21 +799,97 @@ def checkout_cart():
         flash("Your cart is empty!")
         return redirect("/cart")
 
+    # =========================
+    # CALCULATE TOTAL
+    # =========================
+
     total = 0
+
+    now = datetime.datetime.now(
+        datetime.timezone(
+            datetime.timedelta(hours=5, minutes=30)
+        )
+    ).replace(tzinfo=None)
 
     for item in cart_items:
 
-        product = Product.query.get(item.product_id)
+        product = Product.query.get(
+            item.product_id
+        )
 
-        if product:
-            total += product.price * item.quantity
+        if not product:
+            continue
+
+        final_price = product.price
+
+        # =========================
+        # ACTIVE OFFER
+        # =========================
+
+        applied_offer = (
+            Offer.query
+            .join(
+                OfferProduct,
+                Offer.id == OfferProduct.offer_id
+            )
+            .filter(
+                OfferProduct.product_id == product.id,
+                Offer.active == True,
+
+                db.or_(
+                    Offer.start_at.is_(None),
+                    Offer.start_at <= now
+                ),
+
+                db.or_(
+                    Offer.end_at.is_(None),
+                    Offer.end_at >= now
+                ),
+
+                Offer.discount_percent > 0
+            )
+            .order_by(
+                Offer.discount_percent.desc(),
+                Offer.position.asc(),
+                Offer.id.desc()
+            )
+            .first()
+        )
+
+        if applied_offer:
+
+            discount_percent = float(
+                applied_offer.discount_percent or 0
+            )
+
+            final_price = round(
+                product.price
+                * (100 - discount_percent)
+                / 100
+            )
+
+        total += final_price * (
+            item.quantity or 1
+        )
+
+    # =========================
+    # SAVE CHECKOUT SESSION
+    # =========================
 
     session["cart_total"] = total
     session["product_name"] = "BESTTIVE-CART"
-
     session["amount"] = str(total)
 
-    return redirect("/payment/BESTTIVE-CART/" + str(total))
+    session["checkout_cart_item_ids"] = [
+        item.id
+        for item in cart_items
+    ]
+
+    session["customer_name"] = customer_name
+
+    return redirect(
+        "/payment/BESTTIVE-CART/" + str(total)
+    )
 
 # 🔥 PAYMENT PAGE
 @app.route("/payment/<string:name>/<int:price>")
@@ -719,34 +924,102 @@ def payment(name, price):
         gst_amount = 0
         gst_rate = 0
 
+        now = datetime.datetime.now(
+            datetime.timezone(
+                datetime.timedelta(hours=5, minutes=30)
+            )
+        ).replace(tzinfo=None)
+
         for item in cart_items:
 
             product = Product.query.get(
                 item.product_id
             )
 
-            if product:
+            if not product:
+                continue
 
-                tax = calculate_tax(
-                    product,
-                    item.quantity
+            # =========================
+            # ACTIVE OFFER CHECK
+            # =========================
+
+            applied_offer = (
+                Offer.query
+                .join(
+                    OfferProduct,
+                    Offer.id == OfferProduct.offer_id
+                )
+                .filter(
+                    OfferProduct.product_id == product.id,
+                    Offer.active == True,
+
+                    db.or_(
+                        Offer.start_at.is_(None),
+                        Offer.start_at <= now
+                    ),
+
+                    db.or_(
+                        Offer.end_at.is_(None),
+                        Offer.end_at >= now
+                    ),
+
+                    Offer.discount_percent > 0
+                )
+                .order_by(
+                    Offer.discount_percent.desc(),
+                    Offer.position.asc(),
+                    Offer.id.desc()
+                )
+                .first()
+            )
+
+            # =========================
+            # FINAL PRICE
+            # =========================
+
+            final_price = product.price
+
+            if applied_offer:
+
+                discount_percent = float(
+                    applied_offer.discount_percent or 0
                 )
 
-                product_total += (
-                    product.price * item.quantity
+                final_price = round(
+                    product.price
+                    * (100 - discount_percent)
+                    / 100
                 )
 
-                gst_amount += tax["gst_amount"]
+            # =========================
+            # TAXABLE AMOUNT
+            # =========================
 
-                gst_rate = tax["gst_rate"]
+            item_taxable_amount = (
+                final_price * item.quantity
+            )
+
+            product_total += item_taxable_amount
+
+            gst_rate = float(
+                product.gst_rate or 0
+            )
+
+            gst_amount += round(
+                item_taxable_amount
+                * gst_rate
+                / 100,
+                2
+            )
 
         # Temporary shipping charge
         shipping_charge = 0
 
-        final_amount = (
+        final_amount = round(
             product_total +
             gst_amount +
-            shipping_charge
+            shipping_charge,
+            2
         )
 
         return render_template(
@@ -813,23 +1086,104 @@ def payu_payment():
         flash("Product not found!")
         return redirect("/")
 
-    # Automatic GST calculation
-    tax = calculate_tax(product, 1)
+    # =========================
+    # CURRENT IST TIME
+    # =========================
 
-    taxable_amount = tax["taxable_amount"]
-    gst_rate = tax["gst_rate"]
-    gst_amount = tax["gst_amount"]
-    final_amount = tax["total_amount"]
+    now = datetime.datetime.now(
+        datetime.timezone(
+            datetime.timedelta(hours=5, minutes=30)
+        )
+    ).replace(tzinfo=None)
 
-    # Final amount including GST
+    # =========================
+    # ACTIVE OFFER CHECK
+    # =========================
+
+    applied_offer = (
+        Offer.query
+        .join(
+            OfferProduct,
+            Offer.id == OfferProduct.offer_id
+        )
+        .filter(
+            OfferProduct.product_id == product.id,
+            Offer.active == True,
+
+            db.or_(
+                Offer.start_at.is_(None),
+                Offer.start_at <= now
+            ),
+
+            db.or_(
+                Offer.end_at.is_(None),
+                Offer.end_at >= now
+            ),
+
+            Offer.discount_percent > 0
+        )
+        .order_by(
+            Offer.discount_percent.desc(),
+            Offer.position.asc(),
+            Offer.id.desc()
+        )
+        .first()
+    )
+
+    # =========================
+    # FINAL PRODUCT PRICE
+    # =========================
+
+    final_price = product.price
+
+    if applied_offer:
+
+        discount_percent = float(
+            applied_offer.discount_percent or 0
+        )
+
+        final_price = round(
+            product.price
+            * (100 - discount_percent)
+            / 100
+        )
+
+    # =========================
+    # GST ON FINAL PRICE
+    # =========================
+
+    taxable_amount = final_price
+
+    gst_rate = float(
+        product.gst_rate or 0
+    )
+
+    gst_amount = round(
+        taxable_amount * gst_rate / 100,
+        2
+    )
+
+    final_amount = round(
+        taxable_amount + gst_amount,
+        2
+    )
+
+    # Final amount for PayU
     amount = str(final_amount)
 
-    # Save order/payment information temporarily
+    # =========================
+    # SAVE PAYMENT INFORMATION
+    # =========================
+
     session["product_name"] = product.name
     session["product_id"] = product.id
     session["amount"] = amount
 
-    # Save tax information for payment success
+    # Save actual paid unit price
+    session["final_price"] = final_price
+    session["original_price"] = product.price
+
+    # Save tax information
     session["taxable_amount"] = taxable_amount
     session["gst_rate"] = gst_rate
     session["gst_amount"] = gst_amount
@@ -876,7 +1230,10 @@ def payu_payment():
 @app.route("/qr-payment-success", methods=["POST"])
 def qr_payment_success():
 
-    # Login required
+    # =========================
+    # LOGIN REQUIRED
+    # =========================
+
     if not session.get("user_id"):
         return redirect("/login")
 
@@ -887,6 +1244,275 @@ def qr_payment_success():
         return redirect("/login")
 
     product_name = request.form.get("product_name")
+    customer_name = user.name or "BESTTIVE Customer"
+
+    # =========================
+    # CURRENT IST TIME
+    # =========================
+
+    now = datetime.datetime.now(
+        datetime.timezone(
+            datetime.timedelta(hours=5, minutes=30)
+        )
+    ).replace(tzinfo=None)
+
+    # ==================================================
+    # CART PAYMENT
+    # ==================================================
+
+    if product_name in (
+        "BESTTIVE-CART",
+        "BESTTIVE CART",
+        "BESTTIVE Shopping Cart"
+    ):
+
+        # =========================
+        # GET EXACT CART ITEMS
+        # FROM CHECKOUT SESSION
+        # =========================
+
+        cart_item_ids = session.get(
+            "checkout_cart_item_ids",
+            []
+        )
+
+        cart_items = []
+
+        if cart_item_ids:
+
+            cart_items = Cart.query.filter(
+                Cart.id.in_(cart_item_ids)
+            ).all()
+
+        # Fallback for old checkout sessions
+        if not cart_items:
+
+            customer_name = (
+                session.get("customer_name")
+                or user.name
+                or "Guest Customer"
+            )
+
+            cart_items = Cart.query.filter_by(
+                customer_name=customer_name
+            ).all()
+
+            if not cart_items and user.name:
+
+                cart_items = Cart.query.filter_by(
+                    customer_name=user.name
+                ).all()
+
+                if cart_items:
+                    customer_name = user.name
+
+        if not cart_items:
+
+            flash(
+                "Checkout cart could not be found."
+            )
+
+            return redirect("/cart")
+
+        total_amount = 0
+        tracking_ids = []
+
+        for item in cart_items:
+
+            product = Product.query.get(
+                item.product_id
+            )
+
+            if not product:
+                continue
+
+            quantity = item.quantity or 1
+            # =========================
+            # ACTIVE OFFER CHECK
+            # =========================
+            applied_offer = (
+                Offer.query
+                .join(
+                    OfferProduct,
+                    Offer.id == OfferProduct.offer_id
+                )
+                .filter(
+                    OfferProduct.product_id == product.id,
+                    Offer.active == True,
+
+                    db.or_(
+                        Offer.start_at.is_(None),
+                        Offer.start_at <= now
+                    ),
+
+                    db.or_(
+                        Offer.end_at.is_(None),
+                        Offer.end_at >= now
+                    ),
+
+                    Offer.discount_percent > 0
+                )
+                .order_by(
+                    Offer.discount_percent.desc(),
+                    Offer.position.asc(),
+                    Offer.id.desc()
+                )
+                .first()
+            )
+
+            # =========================
+            # FINAL PRICE
+            # =========================
+
+            final_price = product.price
+
+            if applied_offer:
+
+                discount_percent = float(
+                    applied_offer.discount_percent or 0
+                )
+
+                final_price = round(
+                    product.price
+                    * (100 - discount_percent)
+                    / 100
+                )
+
+            # =========================
+            # GST
+            # =========================
+
+            taxable_amount = (
+                final_price * quantity
+            )
+
+            gst_rate = float(
+                product.gst_rate or 0
+            )
+
+            gst_amount = round(
+                taxable_amount
+                * gst_rate
+                / 100,
+                2
+            )
+
+            final_amount = round(
+                taxable_amount + gst_amount,
+                2
+            )
+
+            # =========================
+            # CREATE ORDER
+            # =========================
+
+            new_order = Order(
+                customer_name=customer_name,
+
+                product_name=product.name,
+
+                amount=int(final_amount),
+
+                user_id=user.id,
+
+                product_id=product.id,
+
+                quantity=quantity,
+
+                price=final_price,
+
+                taxable_amount=taxable_amount,
+
+                gst_rate=gst_rate,
+
+                gst_amount=gst_amount,
+
+                hsn_code=product.hsn_code or "",
+
+                total_amount=final_amount,
+
+                address=user.address or "",
+
+                status="Pending",
+
+                payment_status="Paid"
+            )
+
+            db.session.add(new_order)
+
+            db.session.flush()
+
+            assign_tracking_id(new_order)
+
+            tracking_ids.append(
+                new_order.tracking_id
+            )
+
+            total_amount += final_amount
+
+            # =========================
+            # STOCK UPDATE
+            # =========================
+
+            previous_stock = product.stock
+
+            product.stock = max(
+                0,
+                product.stock - quantity
+            )
+
+            inventory_history = InventoryMovement(
+                product_id=product.id,
+                movement_type="Sale",
+                quantity=quantity,
+                previous_stock=previous_stock,
+                new_stock=product.stock,
+                note=(
+                    f"Sold through QR Cart Payment | "
+                    f"Order #{new_order.id}"
+                )
+            )
+
+            db.session.add(
+                inventory_history
+            )
+
+            db.session.delete(item)
+
+        db.session.commit()
+
+        # =========================
+        # STOCK NOTIFICATIONS
+        # =========================
+
+        for item in cart_items:
+
+            product = Product.query.get(
+                item.product_id
+            )
+
+            if product:
+                create_stock_notification(
+                    product
+                )
+
+        return render_template(
+            "payment_success.html",
+
+            customer_name=user.name,
+
+            product_name="BESTTIVE Shopping Cart",
+
+            amount=total_amount,
+
+            status="Pending",
+
+            tracking_ids=tracking_ids
+        )
+
+    # ==================================================
+    # NORMAL SINGLE PRODUCT PAYMENT
+    # ==================================================
 
     product = Product.query.filter_by(
         name=product_name
@@ -897,25 +1523,90 @@ def qr_payment_success():
         return redirect("/")
 
     # =========================
-    # STOCK AVAILABILITY CHECK
+    # STOCK CHECK
     # =========================
 
     if product.stock <= 0:
 
-        flash("Sorry, this product is currently out of stock.")
+        flash(
+            "Sorry, this product is currently out of stock."
+        )
 
         return redirect("/")
-        
+
     # =========================
-    # AUTOMATIC GST CALCULATION
+    # ACTIVE OFFER CHECK
     # =========================
 
-    tax = calculate_tax(product, 1)
+    applied_offer = (
+        Offer.query
+        .join(
+            OfferProduct,
+            Offer.id == OfferProduct.offer_id
+        )
+        .filter(
+            OfferProduct.product_id == product.id,
+            Offer.active == True,
 
-    taxable_amount = tax["taxable_amount"]
-    gst_rate = tax["gst_rate"]
-    gst_amount = tax["gst_amount"]
-    final_amount = tax["total_amount"]
+            db.or_(
+                Offer.start_at.is_(None),
+                Offer.start_at <= now
+            ),
+
+            db.or_(
+                Offer.end_at.is_(None),
+                Offer.end_at >= now
+            ),
+
+            Offer.discount_percent > 0
+        )
+        .order_by(
+            Offer.discount_percent.desc(),
+            Offer.position.asc(),
+            Offer.id.desc()
+        )
+        .first()
+    )
+
+    # =========================
+    # FINAL PRICE
+    # =========================
+
+    final_price = product.price
+
+    if applied_offer:
+
+        discount_percent = float(
+            applied_offer.discount_percent or 0
+        )
+
+        final_price = round(
+            product.price
+            * (100 - discount_percent)
+            / 100
+        )
+
+    # =========================
+    # GST
+    # =========================
+
+    taxable_amount = final_price
+
+    gst_rate = float(
+        product.gst_rate or 0
+    )
+
+    gst_amount = round(
+        taxable_amount
+        * gst_rate
+        / 100,
+        2
+    )
+
+    final_amount = round(
+        taxable_amount + gst_amount,
+        2
+    )
 
     # =========================
     # CREATE ORDER
@@ -926,7 +1617,6 @@ def qr_payment_success():
 
         product_name=product.name,
 
-        # Final amount including GST
         amount=int(final_amount),
 
         user_id=user.id,
@@ -935,9 +1625,8 @@ def qr_payment_success():
 
         quantity=1,
 
-        price=product.price,
+        price=final_price,
 
-        # Tax details
         taxable_amount=taxable_amount,
 
         gst_rate=gst_rate,
@@ -946,19 +1635,18 @@ def qr_payment_success():
 
         hsn_code=product.hsn_code or "",
 
-        # Final order total
         total_amount=final_amount,
 
         address=user.address or "",
 
-        # Delivery / Order Status
         status="Pending",
 
-        # Payment Status
         payment_status="Paid"
     )
 
     db.session.add(new_order)
+
+    db.session.flush()
 
     assign_tracking_id(new_order)
 
@@ -971,11 +1659,11 @@ def qr_payment_success():
     )
 
     previous_stock = product.stock
-    product.stock -= 1
 
-    # =========================
-    # SAVE INVENTORY HISTORY
-    # =========================
+    product.stock = max(
+        0,
+        product.stock - 1
+    )
 
     inventory_history = InventoryMovement(
         product_id=product.id,
@@ -983,16 +1671,22 @@ def qr_payment_success():
         quantity=1,
         previous_stock=previous_stock,
         new_stock=product.stock,
-        note=f"Sold through QR Payment | Order #{new_order.id}"
+        note=(
+            f"Sold through QR Payment | "
+            f"Order #{new_order.id}"
+        )
     )
 
-    db.session.add(inventory_history)
+    db.session.add(
+        inventory_history
+    )
 
     db.session.commit()
+
     create_stock_notification(product)
 
     # =========================
-    # PAYMENT SUCCESS PAGE
+    # SUCCESS
     # =========================
 
     return render_template(
@@ -1006,7 +1700,9 @@ def qr_payment_success():
 
         status="Pending",
 
-        tracking_ids=[new_order.tracking_id]
+        tracking_ids=[
+            new_order.tracking_id
+        ]
     )
 
 @app.route("/payment-success", methods=["POST"])
@@ -1024,7 +1720,6 @@ def payment_success():
 
     customer_name = user.name
     product_name = session.get("product_name")
-    amount = session.get("amount")
 
     if not product_name:
         flash("Order information not found.")
@@ -1034,194 +1729,222 @@ def payment_success():
     # CART ORDER
     # =========================
 
-    if product_name == "BESTTIVE Shopping Cart":
+    if product_name in (
+        "BESTTIVE-CART",
+        "BESTTIVE Shopping Cart"
+    ):
 
         cart_items = Cart.query.filter_by(
             customer_name=customer_name
         ).all()
 
+        if not cart_items:
+            flash("Your cart is empty!")
+            return redirect("/cart")
+
         total_amount = 0
         tracking_ids = []
 
+        now = datetime.datetime.now(
+            datetime.timezone(
+                datetime.timedelta(hours=5, minutes=30)
+            )
+        ).replace(tzinfo=None)
+
         for item in cart_items:
 
-            product = Product.query.get(item.product_id)
+            product = Product.query.get(
+                item.product_id
+            )
 
-            if product:
+            if not product:
+                continue
 
-                quantity = item.quantity or 1
+            quantity = item.quantity or 1
 
-                # Automatic GST calculation
-                tax = calculate_tax(product, quantity)
+            # =========================
+            # ACTIVE OFFER CHECK
+            # =========================
 
-                taxable_amount = tax["taxable_amount"]
-                gst_rate = tax["gst_rate"]
-                gst_amount = tax["gst_amount"]
-                final_amount = tax["total_amount"]
+            applied_offer = (
+                Offer.query
+                .join(
+                    OfferProduct,
+                    Offer.id == OfferProduct.offer_id
+                )
+                .filter(
+                    OfferProduct.product_id == product.id,
+                    Offer.active == True,
 
-                new_order = Order(
-                    customer_name=customer_name or "BESTTIVE Customer",
-                    product_name=product.name,
+                    db.or_(
+                        Offer.start_at.is_(None),
+                        Offer.start_at <= now
+                    ),
 
-                    # Final amount including GST
-                    amount=int(final_amount),
+                    db.or_(
+                        Offer.end_at.is_(None),
+                        Offer.end_at >= now
+                    ),
 
-                    user_id=user.id,
-                    product_id=product.id,
+                    Offer.discount_percent > 0
+                )
+                .order_by(
+                    Offer.discount_percent.desc(),
+                    Offer.position.asc(),
+                    Offer.id.desc()
+                )
+                .first()
+            )
 
-                    quantity=quantity,
-                    price=product.price,
+            # =========================
+            # DISCOUNTED PRICE
+            # =========================
 
-                    # Tax details
-                    taxable_amount=taxable_amount,
-                    gst_rate=gst_rate,
-                    gst_amount=gst_amount,
-                    hsn_code=product.hsn_code or "",
+            final_price = product.price
 
-                    # Final total
-                    total_amount=final_amount,
+            if applied_offer:
 
-                    address=user.address or "",
-
-                    # Payment Status
-                    payment_status="Paid",
-
-                    # Order / Delivery Status
-                    status="Pending"
+                discount_percent = float(
+                    applied_offer.discount_percent or 0
                 )
 
-                db.session.add(new_order)
-
-                assign_tracking_id(new_order)
-
-                tracking_ids.append(
-                    new_order.tracking_id
+                final_price = round(
+                    product.price
+                    * (100 - discount_percent)
+                    / 100
                 )
 
-                total_amount += final_amount
+            # =========================
+            # GST ON DISCOUNTED PRICE
+            # =========================
 
-                db.session.delete(item)
+            taxable_amount = (
+                final_price * quantity
+            )
+
+            gst_rate = float(
+                product.gst_rate or 0
+            )
+
+            gst_amount = round(
+                taxable_amount
+                * gst_rate
+                / 100,
+                2
+            )
+
+            final_amount = round(
+                taxable_amount + gst_amount,
+                2
+            )
+
+            # =========================
+            # CREATE ORDER
+            # =========================
+
+            new_order = Order(
+                customer_name=customer_name or "BESTTIVE Customer",
+
+                product_name=product.name,
+
+                amount=int(final_amount),
+
+                user_id=user.id,
+
+                product_id=product.id,
+
+                quantity=quantity,
+
+                # IMPORTANT:
+                # Save actual paid unit price
+                price=final_price,
+
+                taxable_amount=taxable_amount,
+
+                gst_rate=gst_rate,
+
+                gst_amount=gst_amount,
+
+                hsn_code=product.hsn_code or "",
+
+                total_amount=final_amount,
+
+                address=user.address or "",
+
+                payment_status="Paid",
+
+                status="Pending"
+            )
+
+            db.session.add(new_order)
+
+            assign_tracking_id(new_order)
+
+            tracking_ids.append(
+                new_order.tracking_id
+            )
+
+            total_amount += final_amount
+
+            # =========================
+            # STOCK UPDATE
+            # =========================
+
+            previous_stock = product.stock
+
+            product.stock = max(
+                0,
+                product.stock - quantity
+            )
+
+            inventory_history = InventoryMovement(
+                product_id=product.id,
+                movement_type="Sale",
+                quantity=quantity,
+                previous_stock=previous_stock,
+                new_stock=product.stock,
+                note=(
+                    f"Sold through Cart Payment | "
+                    f"Order #{new_order.id}"
+                )
+            )
+
+            db.session.add(
+                inventory_history
+            )
+
+            db.session.delete(item)
 
         db.session.commit()
 
-        if cart_items:
-            for item in cart_items:
-                product = Product.query.get(item.product_id)
-                if product:
-                    create_stock_notification(product)
+        # =========================
+        # STOCK NOTIFICATIONS
+        # =========================
+
+        for item in cart_items:
+
+            product = Product.query.get(
+                item.product_id
+            )
+
+            if product:
+                create_stock_notification(
+                    product
+                )
 
         return render_template(
             "payment_success.html",
+
             customer_name=customer_name,
+
             product_name="BESTTIVE Shopping Cart",
+
             amount=total_amount,
+
             status="Pending",
+
             tracking_ids=tracking_ids
         )
-
-    # =========================
-    # SINGLE PRODUCT ORDER
-    # =========================
-
-    product_id = session.get("product_id")
-
-    product = Product.query.get(product_id)
-
-    if not product:
-        flash("Product not found.")
-        return redirect("/")
-    
-    # =========================
-    # STOCK AVAILABILITY CHECK
-    # =========================
-
-    if product.stock <= 0:
-
-        flash("Sorry, this product is currently out of stock.")
-
-        return redirect("/")
-    
-    # Automatic GST calculation
-    tax = calculate_tax(product, 1)
-
-    taxable_amount = tax["taxable_amount"]
-    gst_rate = tax["gst_rate"]
-    gst_amount = tax["gst_amount"]
-    final_amount = tax["total_amount"]
-
-    # =========================
-    # CREATE ORDER
-    # =========================
-
-    new_order = Order(
-        customer_name=customer_name or "BESTTIVE Customer",
-        product_name=product.name,
-
-        # Final amount including GST
-        amount=int(final_amount),
-
-        user_id=user.id,
-        product_id=product.id,
-
-        quantity=1,
-        price=product.price,
-
-        # Tax details
-        taxable_amount=taxable_amount,
-        gst_rate=gst_rate,
-        gst_amount=gst_amount,
-        hsn_code=product.hsn_code or "",
-
-        # Final total
-        total_amount=final_amount,
-
-        address=user.address or "",
-
-        # Payment Status
-        payment_status="Paid",
-
-        # Order / Delivery Status
-        status="Pending"
-    )
-
-    db.session.add(new_order)
-
-    assign_tracking_id(new_order)
-
-    db.session.commit()
-
-    create_admin_notification(
-        "New Customer Order",
-        f"New order #{new_order.id} for '{new_order.product_name}' was placed by {customer_name or 'a customer'}.",
-        "order"
-    )
-
-    # =========================
-    # DECREASE PRODUCT STOCK
-    # =========================
-    previous_stock = product.stock
-    product.stock -= 1
-    inventory_history = InventoryMovement(
-        product_id=product.id,
-        movement_type="Sale",
-        quantity=1,
-        previous_stock=previous_stock,
-        new_stock=product.stock,
-        note=f"Sold through Buy Now | Order #{new_order.id}"
-    )
-
-    db.session.add(inventory_history)
-    db.session.commit()
-    create_stock_notification(product)
-
-    return render_template(
-        "payment_success.html",
-        customer_name=customer_name,
-        product_name=product.name,
-        amount=final_amount,
-        status="Pending",
-        tracking_ids=[new_order.tracking_id]
-    )
 
 
 @app.route("/payment-failure", methods=["POST"])

@@ -158,13 +158,10 @@ width: 60%;
 /* CATEGORY BAR */
 
 .category-bar {
-display: grid !important;
-justify-content: space-around;
-padding: 22px 5%;
-background: white;
-gap: 18px;
-box-shadow: none;
-grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    padding-left: max(16px, calc((100% - 1280px) / 2 + 16px));
+    padding-right: max(16px, calc((100% - 1280px) / 2 + 16px));
+    box-sizing: border-box;
 }
 
 .cat {
@@ -744,13 +741,15 @@ color: #777;
    ===================================================== */
 
 .besttive-header {
-display: flex;
+    width: 100%;
+    min-height: 88px;
+
+    display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 30px;
 
-    min-height: 88px;
-    padding: 10px 5%;
+    gap: 30px;
+    padding: 10px max(16px, calc((100% - 1280px) / 2 + 16px));
 
     background: linear-gradient(90deg, #18002f, #2b0758);
     color: white;
@@ -978,12 +977,13 @@ background: #310058;
 
 .hero-slider {
     position: relative;
-    width: 95% !important;
-    max-width: 1400px !important;
+    width: min(1280px, calc(100% - 32px)) !important;
+    max-width: 1280px !important;
     height: 450px !important;
     overflow: hidden;
     border-radius: 12px;
     margin: 15px auto !important;
+    box-sizing: border-box;
 }
 
 .hero-slides {
@@ -3049,4 +3049,72 @@ background: #310058;
         font-size: 15px;
     }
 
+}
+
+/* =====================================================
+   BESTTIVE MASTER CONTENT ALIGNMENT
+   ===================================================== */
+
+.category-bar {
+    width: min(1280px, calc(100% - 32px));
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 12px 0;
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.hero-slider {
+    width: min(1280px, calc(100% - 32px)) !important;
+    max-width: 1280px !important;
+    margin: 15px auto !important;
+    box-sizing: border-box;
+}
+
+.besttive-benefits {
+    width: min(1280px, calc(100% - 32px)) !important;
+    max-width: 1280px !important;
+    margin: 10px auto 16px !important;
+    padding: 0;
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.benefit-item {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 18px 12px;
+}
+
+.deal-of-day {
+    width: min(1280px, calc(100% - 32px));
+    max-width: 1280px;
+    margin: 24px auto 30px;
+    box-sizing: border-box;
+}
+
+.home-section {
+    width: min(1280px, calc(100% - 32px));
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+/* Header stays full width */
+.besttive-header {
+    width: 100%;
+    box-sizing: border-box;
 }
