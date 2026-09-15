@@ -846,26 +846,20 @@
 
                                 {% if product.stock > 0 %}
 
-                                    <a href="/add-to-cart/{{ product.id }}">
+                                    <div class="compact-product-actions">
 
-                                        <button>
+                                        <a href="/payment/{{ product.name }}/{{ product.price }}"
+                                           class="compact-buy-btn">
+                                            🛍️ Buy Now
+                                        </a>
 
-                                            🛒 Add to Cart
+                                        <a href="/add-to-cart/{{ product.id }}"
+                                           class="compact-cart-btn"
+                                           title="Add to Cart">
+                                            🛒
+                                        </a>
 
-                                        </button>
-
-                                    </a>
-
-
-                                    <a href="/payment/{{ product.name }}/{{ product.price }}">
-
-                                        <button>
-
-                                            Buy Now
-
-                                        </button>
-
-                                    </a>
+                                    </div>
 
                                 {% else %}
 
@@ -1165,23 +1159,35 @@
 
                         {% if product.stock > 0 %}
 
-                            <a
-                                href="/add-to-cart/{{ product.id }}"
-                                class="deal-cart-btn"
-                            >
-                                🛒 Add to Cart
-                            </a>
+    <div class="compact-product-actions">
 
-                        {% else %}
+        <a
+            href="/payment/{{ product.name }}/{{ product.price }}"
+            class="compact-buy-btn"
+        >
+            🛍️ Buy Now
+        </a>
 
-                            <button
-                                class="deal-cart-btn disabled"
-                                disabled
-                            >
-                                Out of Stock
-                            </button>
+        <a
+            href="/add-to-cart/{{ product.id }}"
+            class="compact-cart-btn"
+            title="Add to Cart"
+        >
+            🛒
+        </a>
 
-                        {% endif %}
+    </div>
+
+{% else %}
+
+    <button
+        class="deal-cart-btn disabled"
+        disabled
+    >
+        Out of Stock
+    </button>
+
+{% endif %}
 
                     </div>
 
@@ -1240,12 +1246,24 @@
 
                         {% if product.stock > 0 %}
 
-                            <a
-                                href="/add-to-cart/{{ product.id }}"
-                                class="deal-cart-btn"
-                            >
-                                🛒 Add to Cart
-                            </a>
+                            <div class="compact-product-actions">
+
+                                <a
+                                    href="/payment/{{ product.name }}/{{ product.price }}"
+                                    class="compact-buy-btn"
+                                >
+                                    🛍️ Buy Now
+                                </a>
+
+                                <a
+                                    href="/add-to-cart/{{ product.id }}"
+                                    class="compact-cart-btn"
+                                    title="Add to Cart"
+                                >
+                                    🛒
+                                </a>
+
+                            </div>
 
                         {% else %}
 
@@ -1391,16 +1409,23 @@
 
                                 {% if product.stock > 0 %}
 
-                                    <a href="/payment/{{ product.name }}/{{ product.price }}">
+                                    <div class="compact-product-actions">
 
-                                        <button class="buy-now-full">
-                                            🛒 Buy Now
-                                        </button>
+                                        <a href="/payment/{{ product.name }}/{{ product.price }}"
+                                           class="compact-buy-btn">
+                                            🛍️ Buy Now
+                                        </a>
 
-                                    </a>
+                                        <a href="/add-to-cart/{{ product.id }}"
+                                           class="compact-cart-btn"
+                                           title="Add to Cart">
+                                            🛒
+                                        </a>
+
+                                    </div>
 
                                 {% else %}
-
+                                       
                                     <button
                                         class="buy-now-full out-of-stock-btn"
                                         disabled
@@ -1425,91 +1450,138 @@
     {% endfor %}
 
 {% endif %}
+<!-- ==========================================
+     HOME PRODUCTS
+     ========================================== -->
 
-<div class="products">
+{% if products %}
 
-    {% for product in products %}
+    <section class="home-section home-all-products">
 
-        <div class="card">
-           
-             <div class="product-image-box">
+        <div class="home-section-header">
 
-                 <a href="/product/{{ product.id }}">
-                     <img
-                         src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
-                         alt="{{ product.name }}"
-                         loading="lazy"
-                         decoding="async"
-                        >
-                 </a>
+            <h2>Featured Products</h2>
 
-                 <button type="button"
-                         class="wishlist-icon {% if product.id in wishlist_product_ids %}active{% endif %}"
-                         data-product-id="{{ product.id }}"
-                         onclick="toggleWishlist(this, this.dataset.productId)">
-
-                     <span class="heart-icon">
-                         {% if product.id in wishlist_product_ids %}♥{% else %}♡{% endif %}
-                     </span>
-
-                     <span class="wishlist-symbol">
-                         {% if product.id in wishlist_product_ids %}−{% else %}+{% endif %}
-                     </span>
-
-                 </button>
-
-             </div>
-
-            <h3>
-
-                <a href="/product/{{ product.id }}"
-                   style="text-decoration:none;color:black;">
-
-                    {{ product.name }}
-
-                </a>
-
-            </h3>
-             <p class="product-description">
-                 {{ product.description }}
-             </p>
-
-            <p>
-                ₹{{ product.price }}
-            </p>
-
-
-             <div class="product-actions">
-
-                 {% if product.stock > 0 %}
-
-                     <a href="/payment/{{ product.name }}/{{ product.price }}">
-                         <button class="buy-now-full">
-                             🛍️ Buy Now
-                         </button>
-                     </a>
-
-                 {% else %}
-
-                     <button
-                         class="buy-now-full out-of-stock-btn"
-                         disabled
-                     >
-                         Out of Stock
-                     </button>
-
-                 {% endif %}
-
-             </div>
-
+            <a href="/" class="view-all-section">
+                View All
+            </a>
 
         </div>
 
-    {% endfor %}
+        <div class="products">
 
-</div>
+            {% for product in products[:10] %}
 
+                <div class="card">
 
+                    <div class="product-image-box">
+
+                        <a href="/product/{{ product.id }}">
+
+                            <img
+                                src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
+                                alt="{{ product.name }}"
+                                loading="lazy"
+                                decoding="async"
+                            >
+
+                        </a>
+
+                        <button
+                            type="button"
+                            class="wishlist-icon {% if product.id in wishlist_product_ids %}active{% endif %}"
+                            data-product-id="{{ product.id }}"
+                            onclick="toggleWishlist(this, this.dataset.productId)"
+                        >
+
+                            <span class="heart-icon">
+
+                                {% if product.id in wishlist_product_ids %}
+                                    ♥
+                                {% else %}
+                                    ♡
+                                {% endif %}
+
+                            </span>
+
+                            <span class="wishlist-symbol">
+
+                                {% if product.id in wishlist_product_ids %}
+                                    −
+                                {% else %}
+                                    +
+                                {% endif %}
+
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                    <h3>
+
+                        <a
+                            href="/product/{{ product.id }}"
+                            style="text-decoration:none;color:black;"
+                        >
+                            {{ product.name }}
+                        </a>
+
+                    </h3>
+
+                    <div class="product-rating">
+                        <span>★★★★★</span>
+                    </div>
+
+                    <p>
+                        ₹{{ product.price }}
+                    </p>
+
+                    <div class="product-actions">
+
+                        {% if product.stock > 0 %}
+
+                            <div class="compact-product-actions">
+
+                                <a
+                                    href="/payment/{{ product.name }}/{{ product.price }}"
+                                    class="compact-buy-btn"
+                                >
+                                    🛍️ Buy Now
+                                </a>
+
+                                <a
+                                    href="/add-to-cart/{{ product.id }}"
+                                    class="compact-cart-btn"
+                                    title="Add to Cart"
+                                >
+                                    🛒
+                                </a>
+
+                            </div>
+
+                        {% else %}
+
+                            <button
+                                class="buy-now-full out-of-stock-btn"
+                                disabled
+                            >
+                                Out of Stock
+                            </button>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+{% endif %}
 {% endif %}
 
 <!-- 🔥 SCRIPT (ONLY ONCE) -->
