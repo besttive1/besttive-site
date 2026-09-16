@@ -2465,10 +2465,13 @@ background: #310058;
 }
 
 .product-rating {
-    margin: 4px 0 8px;
-    font-size: 14px;
-    line-height: 1;
-    letter-spacing: 1px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    padding: 0;
+    margin: 3px 0;
 }
 
 .product-rating span {

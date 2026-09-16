@@ -1257,7 +1257,12 @@
     gap: 8px;
     margin-top: 12px;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: 0;
+    scrollbar-width: none;
+}
+
+.section-cards::-webkit-scrollbar {
+    display: none;
 }
 
 .customer-section-card {
