@@ -1412,12 +1412,31 @@
 }
 
 @media (max-width: 768px) {
-    .compact-buy-btn {
+    .compact-product-actions {
         display: flex !important;
         align-items: center !important;
-        justify-content: center !important;
-        text-align: center !important;
-        line-height: normal !important;
-        padding: 0 !important;
+        width: 100% !important;
     }
+
+@media (max-width: 768px) {
+
+    .compact-buy-btn {
+        flex: 1 !important;
+        min-width: 0 !important;
+
+        display: block !important;
+
+        height: 30px !important;
+        line-height: 30px !important;
+
+        padding: 0 !important;
+        margin: 0 !important;
+
+        text-align: center !important;
+        white-space: nowrap !important;
+
+        box-sizing: border-box !important;
+    }
+
+}
 }
