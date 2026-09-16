@@ -194,13 +194,9 @@ def home():
         .all()
     )
 
-    # =========================
+        # =========================
     # ACTIVE SUBCATEGORIES
     # =========================
-
-    subcategories = []
-
-    active_master_category = None
 
     if category:
 
@@ -227,6 +223,34 @@ def home():
                 )
                 .all()
             )
+
+        else:
+            subcategories = []
+
+    else:
+
+        active_category_ids = {
+            c.id for c in active_master_categories
+        }
+
+        subcategories = (
+            SubCategory.query
+            .filter(
+                SubCategory.active == True
+            )
+            .order_by(
+                SubCategory.master_category_id.asc(),
+                SubCategory.position.asc(),
+                SubCategory.id.asc()
+            )
+            .all()
+        )
+
+        subcategories = [
+            sub
+            for sub in subcategories
+            if sub.master_category_id in active_category_ids
+        ]
 
     # =========================
     # ACTIVE SECTIONS
@@ -479,6 +503,33 @@ def home():
             []
         ).append(product)
 
+    # =========================
+    # SUBCATEGORY THUMBNAILS
+    # =========================
+
+    subcategory_thumbnails = {}
+
+    for sub in active_subcategories:
+
+        master_name = active_master_map.get(
+            sub.master_category_id
+        )
+
+        if not master_name:
+            continue
+
+        matching_products = [
+            product
+            for product in section_product_pool
+            if product.category == master_name
+            and product.subcategory == sub.name
+        ]
+
+        subcategory_thumbnails[(master_name, sub.name)] = (
+            matching_products[0].image
+            if matching_products
+            else None
+        )
 
     # Har section ke liye grouped products use karo
     for current_section in sections:
@@ -513,6 +564,26 @@ def home():
             )
         )
 
+    # =========================
+    # HOMEPAGE SUBCATEGORY DATA
+    # =========================
+
+    if not category:
+        subcategories = (
+            SubCategory.query
+            .filter(
+                SubCategory.active == True,
+                SubCategory.master_category_id.in_(
+                    [c.id for c in active_master_categories]
+                )
+            )
+            .order_by(
+                SubCategory.master_category_id.asc(),
+                SubCategory.position.asc(),
+                SubCategory.id.asc()
+            )
+            .all()
+        )
 
     # =========================
     # WISHLIST
@@ -553,6 +624,7 @@ def home():
         section_products=section_products,
         homepage_offers=homepage_offers,
         deal_of_day_offer=deal_of_day_offer,
+        subcategory_thumbnails=subcategory_thumbnails,
     )
 
 @app.route("/add-to-cart/<int:id>")
@@ -3116,6 +3188,11 @@ class SubCategory(db.Model):
         nullable=False
     )
 
+    thumbnail = db.Column(
+        db.String(500),
+        default=""
+    )
+
     created_at = db.Column(
         db.DateTime,
         default=datetime.datetime.utcnow
@@ -3137,6 +3214,11 @@ class Section(db.Model):
     name = db.Column(
         db.String(100),
         nullable=False
+    )
+
+    thumbnail = db.Column(
+        db.String(500),
+        default=""
     )
 
     active = db.Column(
@@ -4842,6 +4924,7 @@ def add_subcategory(category_id):
 
     name = request.form.get("name", "").strip()
     position = request.form.get("position", "1").strip()
+    thumbnail = request.files.get("thumbnail")
 
     if not name:
         flash("Subcategory name is required.")
@@ -4869,11 +4952,21 @@ def add_subcategory(category_id):
             .count() + 1
         )
 
+    thumbnail_url = ""
+
+    if thumbnail and thumbnail.filename:
+        upload_result = cloudinary.uploader.upload(
+            thumbnail,
+            folder="besttive/subcategories"
+        )
+    thumbnail_url = upload_result.get("secure_url", "")
+
     subcategory = SubCategory(
-        master_category_id=category.id,
-        name=name,
-        position=position,
-        active=True
+       master_category_id=category.id,
+       name=name,
+       position=position,
+       active=True,
+       thumbnail=thumbnail_url
     )
 
     db.session.add(subcategory)
@@ -4923,11 +5016,22 @@ def add_section(subcategory_id):
             .count() + 1
         )
 
+    thumbnail = request.files.get("thumbnail")
+    thumbnail_url = ""
+
+    if thumbnail and thumbnail.filename:
+        upload_result = cloudinary.uploader.upload(
+            thumbnail,
+            folder="besttive/sections"
+        )
+        thumbnail_url = upload_result.get("secure_url", "")
+
     section = Section(
         subcategory_id=subcategory.id,
         name=name,
         position=position,
-        active=True
+        active=True,
+        thumbnail=thumbnail_url
     )
 
     db.session.add(section)
@@ -4974,6 +5078,16 @@ def edit_section(id):
     except ValueError:
         position = section.position
 
+    
+    thumbnail = request.files.get("thumbnail")
+
+    if thumbnail and thumbnail.filename:
+        upload_result = cloudinary.uploader.upload(
+            thumbnail,
+            folder="besttive/sections"
+        )
+        section.thumbnail = upload_result.get("secure_url", "")
+
     section.name = name
     section.position = position
 
@@ -4983,6 +5097,18 @@ def edit_section(id):
 
     return redirect("/admin/master-categories")
 
+@app.route("/admin/sections/<int:id>/thumbnail/delete", methods=["POST"])
+def delete_section_thumbnail(id):
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    section = Section.query.get_or_404(id)
+
+    section.thumbnail = ""
+    db.session.commit()
+
+    flash("Section thumbnail deleted.")
+    return redirect("/admin/master-categories")
 
 @app.route(
     "/admin/sections/<int:id>/toggle",
@@ -5079,7 +5205,17 @@ def edit_subcategory(id):
     subcategory.name = name
     subcategory.position = position
 
+    thumbnail = request.files.get("thumbnail")
+
+    if thumbnail and thumbnail.filename:
+        upload_result = cloudinary.uploader.upload(
+            thumbnail,
+            folder="besttive/subcategories"
+        )
+        subcategory.thumbnail = upload_result.get("secure_url", "")
+
     db.session.commit()
+    
 
     flash("Subcategory updated successfully!")
 

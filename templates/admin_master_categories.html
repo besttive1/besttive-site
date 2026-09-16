@@ -191,6 +191,27 @@
             gap: 15px;
         }
 
+        .category-collapse-btn {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            border: 2px solid #111;
+            border-radius: 50%;
+            background: #fff;
+            color: #111;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-collapse-btn:hover {
+            border-color: #4b0082;
+            color: #4b0082;
+        }
+
         .category-icon {
             width: 48px;
             height: 48px;
@@ -579,6 +600,13 @@
 
                 </div>
 
+                <button type="button"
+                        class="category-collapse-btn"
+                        onclick="toggleCategoryContent('{{ category.id }}', this)"
+                        title="Collapse / Expand">
+                    −
+                </button>
+
 
                 {% if category.active %}
                     <span class="status active">ON</span>
@@ -620,6 +648,9 @@
 
             </div>
 
+
+            <div class="category-content"
+                 id="categoryContent{{ category.id }}">
 
             <!-- EDIT MASTER CATEGORY BOX -->
 
@@ -713,7 +744,8 @@
                     <h2>Add Subcategory</h2>
 
                     <form method="POST"
-                          action="/admin/master-categories/{{ category.id }}/subcategories/add">
+                          action="/admin/master-categories/{{ category.id }}/subcategories/add"
+                          enctype="multipart/form-data">
 
                         <div class="form-group">
 
@@ -734,6 +766,16 @@
                                    min="1"
                                    value="1"
                                    required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>Subcategory Thumbnail</label>
+
+                            <input type="file"
+                                   name="thumbnail"
+                                   accept="image/*">
 
                         </div>
 
@@ -828,6 +870,7 @@
 
     <form method="POST"
           action="/admin/subcategories/{{ sub.id }}/sections/add">
+          
 
         <input type="text"
                name="name"
@@ -839,7 +882,7 @@
                min="1"
                value="1"
                required>
-
+        
         <button type="submit"
                 class="add-section-btn">
             + Add Section
@@ -880,6 +923,48 @@
 
 
             <div class="section-actions">
+                <form method="POST" 
+                      action="/admin/sections/{{ section.id }}/edit" 
+                      enctype="multipart/form-data" 
+                      class="section-thumbnail-form"> 
+
+                    <input type="hidden" 
+                           name="name" 
+                           value="{{ section.name }}"> 
+
+                    <input type="hidden" 
+                           name="position" 
+                           value="{{ section.position }}"> 
+
+                    <label class="section-thumbnail-upload" 
+                           title="Upload Section Thumbnail"> 
+
+                            <span>🖼️</span>
+
+                        <input type="file" 
+                               name="thumbnail" 
+                               accept="image/*" 
+                               onchange="this.form.submit()" 
+                               hidden> 
+
+                    </label> 
+
+                </form>
+
+                {% if section.thumbnail %}
+                <form method="POST"
+                      action="/admin/sections/{{ section.id }}/thumbnail/delete"
+                      class="section-thumbnail-delete-form">
+
+                    <button type="submit"
+                            class="action-btn"
+                            title="Delete Thumbnail"
+                            onclick="return confirm('Delete this thumbnail?');">
+                        🗑️
+                    </button>
+
+                </form>
+                {% endif %}
 
                 <button type="button"
                         class="action-btn"
@@ -914,7 +999,8 @@
              id="editSection{{ section.id }}">
 
             <form method="POST"
-                  action="/admin/sections/{{ section.id }}/edit">
+                  action="/admin/sections/{{ section.id }}/edit"
+                  enctype="multipart/form-data">
 
                 <div class="form-group">
 
@@ -939,8 +1025,7 @@
                            required>
 
                 </div>
-
-
+                                
                 <div class="form-actions">
 
                     <button type="submit"
@@ -973,7 +1058,8 @@
                         <h2>Edit Subcategory</h2>
 
                         <form method="POST"
-                              action="/admin/subcategories/{{ sub.id }}/edit">
+                              action="/admin/subcategories/{{ sub.id }}/edit"
+                              enctype="multipart/form-data">
 
                             <div class="form-group">
 
@@ -995,6 +1081,24 @@
                                        id="editSubPosition{{ sub.id }}"
                                        min="1"
                                        required>
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label>Change Thumbnail</label>
+
+                                <input type="file"
+                                       name="thumbnail"
+                                       accept="image/*">
+
+                                {% if sub.thumbnail %}
+                                    <div style="margin-top:8px;">
+                                        <img src="{{ sub.thumbnail }}"
+                                             alt="{{ sub.name }}"
+                                             style="width:70px;height:70px;object-fit:cover;border-radius:8px;border:1px solid #ddd;">
+                                    </div>
+                                {% endif %}
 
                             </div>
 
@@ -1027,6 +1131,8 @@
                     </div>
 
                 {% endif %}
+
+            </div>
 
             </div>
 
@@ -1072,6 +1178,23 @@ function chooseIcon(button, icon) {
 
     document.getElementById("selectedIconPreview")
         .textContent = icon;
+}
+
+
+function toggleCategoryContent(categoryId, button) {
+
+    const content =
+        document.getElementById("categoryContent" + categoryId);
+
+    if (!content) return;
+
+    if (content.style.display === "none") {
+        content.style.display = "";
+        button.textContent = "−";
+    } else {
+        content.style.display = "none";
+        button.textContent = "+";
+    }
 }
 
 

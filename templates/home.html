@@ -850,7 +850,7 @@
 
                                         <a href="/payment/{{ product.name }}/{{ product.price }}"
                                            class="compact-buy-btn">
-                                            🛍️ Buy Now
+                                            Buy Now
                                         </a>
 
                                         <a href="/add-to-cart/{{ product.id }}"
@@ -1165,7 +1165,7 @@
             href="/payment/{{ product.name }}/{{ product.price }}"
             class="compact-buy-btn"
         >
-            🛍️ Buy Now
+            Buy Now
         </a>
 
         <a
@@ -1252,7 +1252,7 @@
                                     href="/payment/{{ product.name }}/{{ product.price }}"
                                     class="compact-buy-btn"
                                 >
-                                    🛍️ Buy Now
+                                    Buy Now
                                 </a>
 
                                 <a
@@ -1305,143 +1305,68 @@
 {% endif %}
 
 <!-- ==========================================
-     SECTION-WISE PRODUCTS
+     SUBCATEGORY + SECTION HIERARCHY
      ========================================== -->
 
-{% if sections %}
+{% if subcategories %}
 
-    {% for section in sections %}
+    {% for sub in subcategories %}
 
-        {% set section_items = section_products.get(section.id, []) %}
+        {% set sub_master = namespace(value=none) %}
 
-        {% if section_items %}
+        {% for master in master_categories %}
 
-            <section class="home-section">
+            {% if master.id == sub.master_category_id %}
+                {% set sub_master.value = master %}
+            {% endif %}
 
+        {% endfor %}
+
+        {% if sub_master.value %}
+
+            <section class="home-section home-subcategory-section">
+
+                <!-- SUBCATEGORY NAME -->
                 <div class="home-section-header">
-
-                    <h2>
-                        {{ section.name }}
-                    </h2>
-
-                    <a href="/?category={{ category }}&subcategory={{ subcategory }}"
-                       class="view-all-section">
-                        View All
-                    </a>
-
+                    <h2>{{ sub.name }}</h2>
                 </div>
+               
+                <!-- SECTIONS -->
+                {% set sub_sections = sections
+                    | selectattr("subcategory_id", "equalto", sub.id)
+                    | list
+                %}
 
+                {% if sub_sections %}
 
-                <div class="products">
+                    <div class="section-cards">
 
-                    {% for product in section_items %}
+                        {% for section_item in sub_sections %}
 
-                        <div class="card">
+                                                        <a
+                                href="/?category={{ sub_master.value.name|urlencode }}&subcategory={{ sub.name|urlencode }}&section={{ section_item.name|urlencode }}"
+                                class="customer-section-card"
+                            >
+                                <div class="section-thumbnail">
+                                    {% if section_item.thumbnail %}
+                                        <img
+                                            src="{{ section_item.thumbnail }}"
+                                            alt="{{ section_item.name }}"
+                                            loading="lazy"
+                                        >
+                                    {% else %}
+                                        <span>🖼️</span>
+                                    {% endif %}
+                                </div>
 
-                            <div class="product-image-box">
+                                <strong>{{ section_item.name }}</strong>
+                            </a>
 
-                                <a href="/product/{{ product.id }}">
+{% endfor %}
 
-                                    <img
-                                        src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
-                                        alt="{{ product.name }}"
-                                        loading="lazy"
-                                        decoding="async"
-                                    >
+                    </div>
 
-                                </a>
-
-                                <button
-                                    type="button"
-                                    class="wishlist-icon {% if product.id in wishlist_product_ids %}active{% endif %}"
-                                    data-product-id="{{ product.id }}"
-                                    onclick="toggleWishlist(this, this.dataset.productId)"
-                                >
-
-                                    <span class="heart-icon">
-
-                                        {% if product.id in wishlist_product_ids %}
-                                            ♥
-                                        {% else %}
-                                            ♡
-                                        {% endif %}
-
-                                    </span>
-
-                                    <span class="wishlist-symbol">
-
-                                        {% if product.id in wishlist_product_ids %}
-                                            −
-                                        {% else %}
-                                            +
-                                        {% endif %}
-
-                                    </span>
-
-                                </button>
-
-                            </div>
-
-
-                            <h3>
-
-                                <a href="/product/{{ product.id }}"
-                                   style="text-decoration:none;color:black;">
-
-                                    {{ product.name }}
-
-                                </a>
-
-                            </h3>
-
-
-                            <p class="product-description">
-                                {{ product.description }}
-                            </p>
-
-
-                            <p>
-                                ₹{{ product.price }}
-                            </p>
-
-
-                            <div class="product-actions">
-
-                                {% if product.stock > 0 %}
-
-                                    <div class="compact-product-actions">
-
-                                        <a href="/payment/{{ product.name }}/{{ product.price }}"
-                                           class="compact-buy-btn">
-                                            🛍️ Buy Now
-                                        </a>
-
-                                        <a href="/add-to-cart/{{ product.id }}"
-                                           class="compact-cart-btn"
-                                           title="Add to Cart">
-                                            🛒
-                                        </a>
-
-                                    </div>
-
-                                {% else %}
-                                       
-                                    <button
-                                        class="buy-now-full out-of-stock-btn"
-                                        disabled
-                                    >
-                                        Out of Stock
-                                    </button>
-
-                                {% endif %}
-
-                            </div>
-
-                        </div>
-
-                    {% endfor %}
-
-                </div>
+                {% endif %}
 
             </section>
 
@@ -1450,6 +1375,11 @@
     {% endfor %}
 
 {% endif %}
+
+
+<!-- ==========================================
+     HOME PRODUCTS
+     ========================================== -->
 <!-- ==========================================
      HOME PRODUCTS
      ========================================== -->
@@ -1547,7 +1477,7 @@
                                     href="/payment/{{ product.name }}/{{ product.price }}"
                                     class="compact-buy-btn"
                                 >
-                                    🛍️ Buy Now
+                                    Buy Now
                                 </a>
 
                                 <a
@@ -1581,7 +1511,6 @@
 
     </section>
 
-{% endif %}
 {% endif %}
 
 <!-- 🔥 SCRIPT (ONLY ONCE) -->
@@ -1903,6 +1832,8 @@ document.addEventListener("click", function(e) {
     </div>
 
 </footer>
+{% endif %}
+
 </body>
 </html>
 
