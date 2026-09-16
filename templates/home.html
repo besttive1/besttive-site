@@ -522,379 +522,203 @@
 
         <main class="category-products">
 
-
-            <!-- BREADCRUMB -->
-
-            <div class="category-breadcrumb">
-
+            <!-- CATEGORY BREADCRUMB -->
+            <div class="category-breadcrumb category-page-breadcrumb">
                 <a href="/">Home</a>
-
                 <span>›</span>
 
-                <strong>{{ category }}</strong>
-
+                {% if category %}
+                    <a href="/?category={{ category|urlencode }}">{{ category }}</a>
+                {% endif %}
 
                 {% if subcategory %}
-
                     <span>›</span>
-
                     <strong>{{ subcategory }}</strong>
-
-                {% endif %}
-
-
-                {% if section %}
-
+                {% elif section %}
                     <span>›</span>
-
                     <strong>{{ section }}</strong>
-
                 {% endif %}
 
+                {% if section and subcategory %}
+                    <span>›</span>
+                    <strong>{{ section }}</strong>
+                {% endif %}
             </div>
 
+            <!-- CATEGORY HERO -->
+            {% set hero_sub = namespace(value=none) %}
+            {% for sub_item in subcategories %}
+                {% if sub_item.name == subcategory %}
+                    {% set hero_sub.value = sub_item %}
+                {% endif %}
+            {% endfor %}
 
+            <section class="category-hero-card">
+                <div class="category-hero-copy">
+                    <span class="category-hero-kicker">
+                        {% if section %}SECTION{% elif subcategory %}SUBCATEGORY{% else %}CATEGORY{% endif %}
+                    </span>
 
-            <!-- CATEGORY TITLE -->
-
-            <div class="category-heading">
-
-                <div>
-
-                    <h2>
-
+                    <h1>
                         {% if section %}
-
                             {{ section }}
-
                         {% elif subcategory %}
-
                             {{ subcategory }}
-
                         {% else %}
-
                             {{ category }}
-
                         {% endif %}
-
-                    </h2>
-
+                    </h1>
 
                     <p>
-
                         {% if section %}
-
-                            Products in this section
-
+                            Explore products in {{ section }}
                         {% elif subcategory %}
-
-                            Explore sections and products
-
+                            Explore the complete {{ subcategory }} collection
                         {% else %}
-
-                            Explore subcategories and sections
-
+                            Explore our {{ category }} collection
                         {% endif %}
-
                     </p>
-
                 </div>
 
-
-                <span>
-
-                    {{ products|length }} Products
-
-                </span>
-
-            </div>
-
-
-
-            <!-- =========================================
-                 SUBCATEGORIES
-                 ========================================= -->
-
-            <section class="customer-subcategories">
-
-                <div class="customer-section-heading">
-
-                    <div>
-
-                        <span>SHOP BY</span>
-
-                        <h2>Subcategories</h2>
-
+                {% if hero_sub.value and hero_sub.value.thumbnail %}
+                    <div class="category-hero-image">
+                        <img src="{{ hero_sub.value.thumbnail }}"
+                             alt="{{ hero_sub.value.name }}"
+                             loading="eager">
                     </div>
-
-                </div>
-
-
-                <div class="subcategory-cards">
-
-                    {% for sub in subcategories %}
-
-                        <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}"
-                           class="customer-subcategory-card
-                           {% if subcategory == sub.name %}active{% endif %}">
-
-                            <div class="subcategory-icon">
-
-                                ✦
-                            </div>
-
-
-                            <div>
-
-                                <strong>
-
-                                    {{ sub.name }}
-
-                                </strong>
-
-                                <small>
-
-                                    View Sections →
-
-                                </small>
-
-                            </div>
-
-                        </a>
-
-                    {% endfor %}
-
-                </div>
-
+                {% endif %}
             </section>
 
+            <!-- SHOP BY SUBCATEGORIES -->
+            {% if subcategories %}
+                <section class="customer-subcategories category-shop-section">
+                    <div class="category-section-title-row">
+                        <div>
+                            <span>SHOP BY</span>
+                            <h2>Subcategories</h2>
+                        </div>
+                    </div>
 
+                    <div class="category-subcategory-row">
+                        {% for sub in subcategories %}
+                            <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}"
+                               class="category-subcategory-card {% if subcategory == sub.name %}active{% endif %}">
 
-            <!-- =========================================
-                 SECTIONS
-                 ========================================= -->
-
-            {% if subcategory %}
-
-                {% for sub in subcategories %}
-
-                    {% if sub.name == subcategory %}
-
-                        <section class="customer-sections">
-
-                            <div class="customer-section-heading">
-
-                                <div>
-
-                                    <span>SHOP BY</span>
-
-                                    <h2>{{ sub.name }} Sections</h2>
-
+                                <div class="category-subcategory-image">
+                                    {% if sub.thumbnail %}
+                                        <img src="{{ sub.thumbnail }}"
+                                             alt="{{ sub.name }}"
+                                             loading="lazy">
+                                    {% else %}
+                                        <span>✦</span>
+                                    {% endif %}
                                 </div>
 
-                            </div>
-
-
-                            <div class="section-cards">
-
-
-                                <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}"
-                                   class="customer-section-card">
-
-                                    <strong>
-
-                                        All {{ sub.name }}
-
-                                    </strong>
-
-                                    <small>
-
-                                        View All Products →
-
-                                    </small>
-
-                                </a>
-
-
-                                {% for section_item in sections %}
-
-                                    {% if section_item.subcategory_id == sub.id %}
-
-                                        <a href="/?category={{ category|urlencode }}&subcategory={{ sub.name|urlencode }}&section={{ section_item.name|urlencode }}"
-                                           class="customer-section-card
-                                           {% if section == section_item.name %}active{% endif %}">
-
-                                            <strong>
-
-                                                {{ section_item.name }}
-
-                                            </strong>
-
-                                            <small>
-
-                                                Shop Products →
-
-                                            </small>
-
-                                        </a>
-
-                                    {% endif %}
-
-                                {% endfor %}
-
-                            </div>
-
-                        </section>
-
-                    {% endif %}
-
-                {% endfor %}
-
+                                <strong>{{ sub.name }}</strong>
+                                <small>View Products →</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </section>
             {% endif %}
 
+            <!-- PRODUCTS TOOLBAR -->
+            <div class="category-products-toolbar">
+                <div>
+                    <strong>{{ products|length }} Products</strong>
+                </div>
 
+                <div class="category-sort-control">
+                    <label for="categorySort">Sort By</label>
+                    <select id="categorySort"
+                            onchange="if (this.value) window.location.href=this.value;">
+                        <option value="/?category={{ category|urlencode }}{% if subcategory %}&subcategory={{ subcategory|urlencode }}{% endif %}{% if section %}&section={{ section|urlencode }}{% endif %}&sort=newest"
+                                {% if sort == 'newest' or not sort %}selected{% endif %}>
+                            Newest First
+                        </option>
+                        <option value="/?category={{ category|urlencode }}{% if subcategory %}&subcategory={{ subcategory|urlencode }}{% endif %}{% if section %}&section={{ section|urlencode }}{% endif %}&sort=low"
+                                {% if sort == 'low' %}selected{% endif %}>
+                            Price: Low to High
+                        </option>
+                        <option value="/?category={{ category|urlencode }}{% if subcategory %}&subcategory={{ subcategory|urlencode }}{% endif %}{% if section %}&section={{ section|urlencode }}{% endif %}&sort=high"
+                                {% if sort == 'high' %}selected{% endif %}>
+                            Price: High to Low
+                        </option>
+                    </select>
+                </div>
+            </div>
 
-            <!-- =========================================
-                 PRODUCTS
-                 ========================================= -->
-
+            <!-- PRODUCT GRID -->
             {% if products|length > 0 %}
-
-                <div class="products">
-
+                <div class="products category-product-grid">
                     {% for product in products %}
+                        <div class="card category-product-card">
 
-                        <div class="card">
-
-
-                            <div class="product-image-box">
-
+                            <div class="product-image-box category-product-image-box">
                                 <a href="/product/{{ product.id }}">
-
-                                    <img
-                                        src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
-                                        alt="{{ product.name }}"
-                                        loading="lazy"
-                                        decoding="async"
-                                    >
-                                                          
+                                    <img src="{{ product.image.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_500/') }}"
+                                         alt="{{ product.name }}"
+                                         loading="lazy"
+                                         decoding="async">
                                 </a>
-
 
                                 <button type="button"
                                         class="wishlist-icon {% if product.id in wishlist_product_ids %}active{% endif %}"
                                         data-product-id="{{ product.id }}"
                                         onclick="toggleWishlist(this, this.dataset.productId)">
-
                                     <span class="heart-icon">
-
-                                        {% if product.id in wishlist_product_ids %}
-
-                                            ♥
-
-                                        {% else %}
-
-                                            ♡
-
-                                        {% endif %}
-
+                                        {% if product.id in wishlist_product_ids %}♥{% else %}♡{% endif %}
                                     </span>
-
-
                                     <span class="wishlist-symbol">
-
-                                        {% if product.id in wishlist_product_ids %}
-
-                                            −
-
-                                        {% else %}
-
-                                            +
-
-                                        {% endif %}
-
+                                        {% if product.id in wishlist_product_ids %}−{% else %}+{% endif %}
                                     </span>
-
                                 </button>
-
                             </div>
 
-
                             <h3>
-
                                 <a href="/product/{{ product.id }}"
-                                   style="text-decoration:none;color:black;">
-
+                                   style="text-decoration:none;color:inherit;">
                                     {{ product.name }}
-
                                 </a>
-
                             </h3>
 
-                            <div class="product-rating">
+                            <div class="product-rating category-product-rating">
                                 <span>★★★★★</span>
                             </div>
 
-                            <p>
-
+                            <p class="category-product-price">
                                 ₹{{ product.price }}
-
                             </p>
 
-
-                            <div class="product-actions">
-
+                            <div class="product-actions category-product-actions">
                                 {% if product.stock > 0 %}
-
                                     <div class="compact-product-actions">
-
                                         <a href="/payment/{{ product.name }}/{{ product.price }}"
                                            class="compact-buy-btn">
                                             Buy Now
                                         </a>
-
                                         <a href="/add-to-cart/{{ product.id }}"
                                            class="compact-cart-btn"
                                            title="Add to Cart">
                                             🛒
                                         </a>
-
                                     </div>
-
                                 {% else %}
-
                                     <button disabled
                                             class="out-of-stock-btn">
-
                                         Out of Stock
-
                                     </button>
-
                                 {% endif %}
-
                             </div>
 
-
                         </div>
-
                     {% endfor %}
-
                 </div>
-
             {% else %}
-
-                <div style="text-align:center;padding:50px 20px;">
-
+                <div class="category-empty-state">
                     <h2>No Products Found 😔</h2>
-
-                    <p>
-
-                        Try another subcategory or section.
-
-                    </p>
-
+                    <p>Try another subcategory or section.</p>
                 </div>
-
             {% endif %}
 
         </main>

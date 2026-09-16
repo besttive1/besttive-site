@@ -127,7 +127,7 @@
         width: 100% !important;
     }
 
-    .product-actions a {
+    .product-actions > a {
         display: block !important;
         width: 100% !important;
         margin: 0 !important;
@@ -1409,4 +1409,15 @@
         font-size: 5.5px;
     }
 
+}
+
+@media (max-width: 768px) {
+    .compact-buy-btn {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        line-height: normal !important;
+        padding: 0 !important;
+    }
 }
