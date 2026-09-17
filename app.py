@@ -5645,6 +5645,13 @@ def delete_product(id):
         synchronize_session=False
     )
 
+    # Remove product from offers
+    OfferProduct.query.filter_by(
+        product_id=id
+    ).delete(
+        synchronize_session=False
+    )
+
     # Delete product
     db.session.delete(product)
 
