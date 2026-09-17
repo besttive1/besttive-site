@@ -5747,6 +5747,38 @@ def edit_product(id):
         ).strip()
 
         product.section = section
+
+        # ==========================================
+        # CHANGE PRODUCT IMAGE
+        # ==========================================
+
+        image_file = request.files.get("image")
+
+        if image_file and image_file.filename:
+            filename = secure_filename(image_file.filename)
+
+            upload_folder = os.path.join(
+                app.root_path,
+                "static",
+                "uploads"
+            )
+
+            os.makedirs(
+                upload_folder,
+                exist_ok=True
+            )
+
+            image_path = os.path.join(
+                upload_folder,
+                filename
+            )
+
+            image_file.save(image_path)
+
+            product.image = (
+               "/static/uploads/" + filename
+            )
+            
         # ==========================================
         # SAVE EVERYTHING
         # ==========================================
