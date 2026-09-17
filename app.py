@@ -3405,8 +3405,8 @@ class Order(db.Model):
 
     product_id = db.Column(
         db.Integer,
-        db.ForeignKey("product.id"),
-        nullable=False
+        db.ForeignKey("product.id", ondelete="SET NULL"),
+        nullable=True
     )
 
     quantity = db.Column(
