@@ -35,6 +35,195 @@
         background: #310058;
         border-color: #310058;
     }
+
+    /* ==========================================
+   SIMILAR PRODUCTS
+   ========================================== */
+
+.similar-products-section {
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    padding: 0 30px;
+    box-sizing: border-box;
+}
+
+.similar-products-header {
+    margin-bottom: 15px;
+}
+
+.similar-products-header h2 {
+    margin: 0;
+    color: #4B0082;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.similar-products-header span {
+    display: block;
+    margin-top: 3px;
+    color: #777;
+    font-size: 11px;
+}
+
+.similar-products-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.similar-product-card {
+    background: #fff;
+    border: 1px solid #ebe5f2;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,.06);
+}
+
+.similar-product-image {
+    display: block;
+    width: 100%;
+    height: 190px;
+    background: #f8f7fb;
+}
+
+.similar-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.similar-product-info {
+    padding: 10px;
+}
+
+.similar-product-name {
+    display: block;
+    color: #222;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.similar-product-price {
+    margin: 6px 0 9px;
+    color: #4B0082;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.similar-product-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
+
+.similar-buy-btn {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 5px;
+    background: #4B0082;
+    color: #fff;
+    border-radius: 6px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 700;
+    box-sizing: border-box;
+}
+
+.similar-cart-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: #4B0082;
+    border: 1px solid #4B0082;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.similar-out-stock {
+    display: block;
+    color: red;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .similar-products-section {
+        margin-bottom: 25px;
+        padding: 0 12px;
+    }
+
+    .similar-products-header h2 {
+        font-size: 19px;
+    }
+
+    .similar-products-header span {
+        font-size: 9px;
+    }
+
+    .similar-products-list {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scrollbar-width: none;
+    }
+
+    .similar-products-list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .similar-product-card {
+        flex: 0 0 155px;
+        min-width: 155px;
+    }
+
+    .similar-product-image {
+        height: 150px;
+    }
+
+    .similar-product-info {
+        padding: 8px;
+    }
+
+    .similar-product-name {
+        font-size: 11px;
+    }
+
+    .similar-product-price {
+        font-size: 14px;
+        margin: 5px 0 7px;
+    }
+
+    .similar-buy-btn {
+        padding: 8px 4px;
+        font-size: 9px;
+    }
+
+    .similar-cart-btn {
+        width: 29px;
+        height: 29px;
+        min-width: 29px;
+        font-size: 12px;
+    }
+
+}
 </style>
 </head>
 
@@ -234,6 +423,88 @@
     </div>
 
 </div>
+<!-- ==========================================
+     SIMILAR PRODUCTS
+     ========================================== -->
+
+{% if similar_products %}
+
+<section class="similar-products-section">
+
+    <div class="similar-products-header">
+        <h2>You May Also Like</h2>
+        <span>Similar Products</span>
+    </div>
+
+    <div class="similar-products-list">
+
+        {% for similar in similar_products %}
+
+        <div class="similar-product-card">
+
+            <a href="/product/{{ similar.id }}" class="similar-product-image">
+
+                <img
+                    src="{{ similar.image }}"
+                    alt="{{ similar.name }}"
+                    loading="lazy"
+                >
+
+            </a>
+
+            <div class="similar-product-info">
+
+                <a
+                    href="/product/{{ similar.id }}"
+                    class="similar-product-name"
+                >
+                    {{ similar.name }}
+                </a>
+
+                <div class="similar-product-price">
+                    ₹{{ similar.price }}
+                </div>
+
+                {% if similar.stock > 0 %}
+
+                <div class="similar-product-actions">
+
+                    <a
+                        href="/payment/{{ similar.name }}/{{ similar.price }}"
+                        class="similar-buy-btn"
+                    >
+                        Buy Now
+                    </a>
+
+                    <a
+                        href="/add-to-cart/{{ similar.id }}"
+                        class="similar-cart-btn"
+                        title="Add to Cart"
+                    >
+                        🛒
+                    </a>
+
+                </div>
+
+                {% else %}
+
+                <span class="similar-out-stock">
+                    Out of Stock
+                </span>
+
+                {% endif %}
+                
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endif %}
 <script>
 
 function changeImage(src){

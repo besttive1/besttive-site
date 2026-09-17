@@ -2100,6 +2100,44 @@ def product_details(id):
         product_id=product.id
     ).all()
 
+    # ==========================================
+    # SIMILAR PRODUCTS
+    # ==========================================
+
+    similar_products = []
+
+    # First: same subcategory
+    if product.subcategory:
+        similar_products = (
+            Product.query
+            .filter(
+                Product.id != product.id,
+                Product.subcategory == product.subcategory
+            )
+            .order_by(Product.id.desc())
+            .limit(4)
+            .all()
+        )
+
+    # Then: same category if needed
+    if len(similar_products) < 4 and product.category:
+
+        existing_ids = [p.id for p in similar_products]
+        existing_ids.append(product.id)
+
+        more_products = (
+            Product.query
+            .filter(
+                Product.id.notin_(existing_ids),
+                Product.category == product.category
+            )
+            .order_by(Product.id.desc())
+            .limit(4 - len(similar_products))
+            .all()
+        )
+
+        similar_products.extend(more_products)
+
     db.session.commit()
 
     return render_template(
@@ -2107,7 +2145,8 @@ def product_details(id):
         product=product,
         images=images,
         applied_offer=applied_offer,
-        discounted_price=discounted_price
+        discounted_price=discounted_price,
+        similar_products=similar_products
     )
 
 @app.route("/deals")
@@ -5778,7 +5817,7 @@ def edit_product(id):
             product.image = (
                "/static/uploads/" + filename
             )
-            
+
         # ==========================================
         # SAVE EVERYTHING
         # ==========================================
