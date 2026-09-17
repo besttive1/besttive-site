@@ -5623,17 +5623,29 @@ def delete_product(id):
 
     product = Product.query.get_or_404(id)
 
-    # Delete inventory movement history first
+    # Keep old orders safe
+    Order.query.filter_by(
+        product_id=id
+    ).update(
+        {"product_id": None},
+        synchronize_session=False
+    )
+
+    # Delete inventory history
     InventoryMovement.query.filter_by(
         product_id=id
-    ).delete(synchronize_session=False)
+    ).delete(
+        synchronize_session=False
+    )
 
-    # Delete all extra product images
+    # Delete extra images
     ProductImage.query.filter_by(
         product_id=id
-    ).delete(synchronize_session=False)
+    ).delete(
+        synchronize_session=False
+    )
 
-    # Delete main product
+    # Delete product
     db.session.delete(product)
 
     db.session.commit()
