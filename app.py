@@ -3319,9 +3319,10 @@ class InventoryMovement(db.Model):
 
     product = db.relationship(
         "Product",
-        backref=db.backref(
-            "inventory_movements",
-            lazy=True
+       backref=db.backref(
+           "inventory_movements",
+           lazy=True,
+           cascade="all, delete-orphan"
         )
     )
 
@@ -5622,8 +5623,15 @@ def delete_product(id):
 
     product = Product.query.get_or_404(id)
 
-    # Delete all extra images
-    ProductImage.query.filter_by(product_id=id).delete()
+    # Delete inventory movement history first
+    InventoryMovement.query.filter_by(
+        product_id=id
+    ).delete(synchronize_session=False)
+
+    # Delete all extra product images
+    ProductImage.query.filter_by(
+        product_id=id
+    ).delete(synchronize_session=False)
 
     # Delete main product
     db.session.delete(product)

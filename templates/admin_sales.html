@@ -1157,9 +1157,9 @@
        SALES CHART
        ========================= */
 
-    const chartLabels = {{ chart_labels | tojson }};
+    const chartLabels = JSON.parse(`{{ chart_labels | tojson }}`);
 
-    const chartSales = {{ chart_sales | tojson }};
+    const chartSales = JSON.parse(`{{ chart_sales | tojson }}`);
 
 
     const salesChartCanvas = document.getElementById(

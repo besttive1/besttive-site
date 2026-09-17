@@ -127,13 +127,11 @@
     <!-- MOBILE FILTER + SORT -->
     <div class="mobile-filter-buttons">
 
-        <button type="button"
-                onclick="openMobileFilters()">
+        <button type="button" id="mobileFilterBtn">
             🔽 FILTER
         </button>
 
-        <button type="button"
-                onclick="openMobileSort()">
+        <button type="button" id="mobileSortBtn">
             ↕️ SORT
         </button>
 
@@ -155,7 +153,7 @@
                 <h3>Filters</h3>
 
                 <button type="button"
-                        onclick="closeMobileFilters()">
+                        onclick="document.getElementById('mobileFilterDrawer').style.display='none';">
                     ✕
                 </button>
 
@@ -299,7 +297,7 @@
                 <h3>Sort By</h3>
 
                 <button type="button"
-                        onclick="closeMobileSort()">
+                        onclick="document.getElementById('mobileSortDrawer').style.display='none';">
 
                     ✕
 
@@ -1338,7 +1336,117 @@
 {% endif %}
 
 <!-- 🔥 SCRIPT (ONLY ONCE) -->
- <script>
+ 
+<!-- =========================================
+     BESTTIVE FOOTER
+     ========================================= -->
+
+<footer class="besttive-footer">
+
+    <div class="footer-container">
+
+        <!-- ABOUT -->
+        <div class="footer-column">
+            <h3>BESTTIVE</h3>
+
+            <p>
+                Style That Speaks. Discover quality products,
+                great style and a better shopping experience
+                with BESTTIVE.
+            </p>
+
+            <a href="/about">About Us</a>
+            <a href="/contact">Contact Us</a>
+            <a href="/help">Help & FAQs</a>
+        </div>
+
+
+        <!-- CUSTOMER SUPPORT -->
+        <div class="footer-column">
+            <h3>Customer Support</h3>
+
+            <a href="/track-order">Track Order</a>
+            <a href="/return-refund-cancellation">
+                Return / Refund / Cancellation
+            <a href="/shipping-delivery">
+                Shipping & Delivery Policy
+            </a>
+        </div>
+
+
+        <!-- CATEGORIES -->
+        <div class="footer-column">
+            <h3>Categories</h3>
+
+            {% for master_category in master_categories %}
+
+                <a href="/?category={{ master_category.name | urlencode }}">
+                    {{ master_category.name }}
+                </a>
+
+            {% endfor %}
+        </div>
+
+
+        
+    <!-- SOCIAL MEDIA -->
+
+<div class="footer-column footer-social">
+
+    <h3>Follow Us</h3>
+
+    <a
+        href="https://instagram.com/besttive.business"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        <i class="fab fa-instagram"></i>
+        Instagram
+    </a>
+
+
+    <a
+        href="https://wa.me/918601362353"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        <i class="fab fa-whatsapp"></i>
+        WhatsApp
+    </a>
+
+
+    <a href="#" target="_blank">
+        <i class="fab fa-facebook"></i>
+        Facebook
+    </a>
+
+
+    <a href="#" target="_blank">
+        <i class="fab fa-youtube"></i>
+        YouTube
+    </a>
+
+</div>
+
+    <!-- FOOTER BOTTOM -->
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 BESTTIVE. All Rights Reserved.
+        </p>
+
+        <div class="footer-policies">
+            <a href="/privacy-policy">Privacy Policy</a>
+            <a href="/terms-conditions">Terms & Conditions</a>
+        </div>
+
+    </div>
+
+</footer>
+{% endif %}
+
+<script>
 let heroSlideIndex = 0;
 
 function showHeroSlide(index) {
@@ -1471,7 +1579,6 @@ document.addEventListener("click", function(event) {
 });
 
 </script>
-
 <script>
 function toggleMenu() {
   let menu = document.getElementById("loginMenu");
@@ -1548,115 +1655,16 @@ document.addEventListener("click", function(e) {
     menu.style.display = "none";
   }
 });
+
+document.getElementById("mobileFilterBtn")?.addEventListener("click", function () {
+    document.getElementById("mobileFilterDrawer").style.display = "block";
+});
+
+document.getElementById("mobileSortBtn")?.addEventListener("click", function () {
+    document.getElementById("mobileSortDrawer").style.display = "block";
+});
+
 </script>
-<!-- =========================================
-     BESTTIVE FOOTER
-     ========================================= -->
-
-<footer class="besttive-footer">
-
-    <div class="footer-container">
-
-        <!-- ABOUT -->
-        <div class="footer-column">
-            <h3>BESTTIVE</h3>
-
-            <p>
-                Style That Speaks. Discover quality products,
-                great style and a better shopping experience
-                with BESTTIVE.
-            </p>
-
-            <a href="/about">About Us</a>
-            <a href="/contact">Contact Us</a>
-            <a href="/help">Help & FAQs</a>
-        </div>
-
-
-        <!-- CUSTOMER SUPPORT -->
-        <div class="footer-column">
-            <h3>Customer Support</h3>
-
-            <a href="/track-order">Track Order</a>
-            <a href="/return-refund-cancellation">
-                Return / Refund / Cancellation
-            <a href="/shipping-delivery">
-                Shipping & Delivery Policy
-            </a>
-        </div>
-
-
-        <!-- CATEGORIES -->
-        <div class="footer-column">
-            <h3>Categories</h3>
-
-            {% for master_category in master_categories %}
-
-                <a href="/?category={{ master_category.name | urlencode }}">
-                    {{ master_category.name }}
-                </a>
-
-            {% endfor %}
-        </div>
-
-
-        
-    <!-- SOCIAL MEDIA -->
-
-<div class="footer-column footer-social">
-
-    <h3>Follow Us</h3>
-
-    <a
-        href="https://instagram.com/besttive.business"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        <i class="fab fa-instagram"></i>
-        Instagram
-    </a>
-
-
-    <a
-        href="https://wa.me/918601362353"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        <i class="fab fa-whatsapp"></i>
-        WhatsApp
-    </a>
-
-
-    <a href="#" target="_blank">
-        <i class="fab fa-facebook"></i>
-        Facebook
-    </a>
-
-
-    <a href="#" target="_blank">
-        <i class="fab fa-youtube"></i>
-        YouTube
-    </a>
-
-</div>
-
-    <!-- FOOTER BOTTOM -->
-
-    <div class="footer-bottom">
-
-        <p>
-            © 2026 BESTTIVE. All Rights Reserved.
-        </p>
-
-        <div class="footer-policies">
-            <a href="/privacy-policy">Privacy Policy</a>
-            <a href="/terms-conditions">Terms & Conditions</a>
-        </div>
-
-    </div>
-
-</footer>
-{% endif %}
 
 </body>
 </html>
