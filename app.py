@@ -1067,7 +1067,7 @@ def payment(name, price):
             # TAXABLE AMOUNT
             # =========================
 
-            item_taxable_amount = (
+            item_taxable_amount = (                             
                 final_price * item.quantity
             )
 
