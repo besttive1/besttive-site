@@ -10,3 +10,4 @@ Flask-Migrate
 python-dotenv
 resend
 pywebpush
+psycopg[binary]
