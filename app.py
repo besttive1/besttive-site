@@ -31,6 +31,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 
+import hmac
+
 from flask import send_file
 import io
 from flask import send_file
@@ -8104,6 +8106,292 @@ def select_shiprocket_courier(order_id):
         return redirect(
             f"/admin/shipping/couriers/{order.id}"
         )
-    
+
+    # =========================================================
+# MAKE.COM PRODUCT AUTOMATION API
+# =========================================================
+
+@app.route("/api/automation/products", methods=["POST"])
+def make_create_product():
+
+    # -----------------------------------------------------
+    # SECURITY
+    # -----------------------------------------------------
+    automation_token = os.environ.get(
+        "MAKE_AUTOMATION_TOKEN",
+        ""
+    )
+
+    received_token = request.headers.get(
+        "X-Make-Token",
+        ""
+    )
+
+    if (
+        not automation_token
+        or not hmac.compare_digest(
+            received_token,
+            automation_token
+        )
+    ):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 401
+
+    # -----------------------------------------------------
+    # JSON DATA
+    # -----------------------------------------------------
+    data = request.get_json(silent=True) or {}
+
+    name = str(
+        data.get("name", "")
+    ).strip()
+
+    price = data.get("price")
+    stock = data.get("stock", 0)
+
+    category = str(
+        data.get("category", "")
+    ).strip()
+
+    subcategory = str(
+        data.get("subcategory", "")
+    ).strip()
+
+    section = str(
+        data.get("section", "")
+    ).strip()
+
+    description = str(
+        data.get("description", "")
+    ).strip()
+
+    image_url = str(
+        data.get("image", "")
+    ).strip()
+
+    packaging_profile = str(
+        data.get(
+            "packaging_profile",
+            "Small Product"
+        )
+    ).strip()
+
+    package_weight = float(
+        data.get("package_weight", 0.50)
+        or 0.50
+    )
+
+    package_length = float(
+        data.get("package_length", 20)
+        or 20
+    )
+
+    package_breadth = float(
+        data.get("package_breadth", 15)
+        or 15
+    )
+
+    package_height = float(
+        data.get("package_height", 10)
+        or 10
+    )
+
+    # -----------------------------------------------------
+    # REQUIRED FIELDS
+    # -----------------------------------------------------
+    if not name:
+        return jsonify({
+            "success": False,
+            "error": "Product name is required"
+        }), 400
+
+    if price is None:
+        return jsonify({
+            "success": False,
+            "error": "Price is required"
+        }), 400
+
+    if not image_url:
+        return jsonify({
+            "success": False,
+            "error": "Image URL is required"
+        }), 400
+
+    try:
+
+        price = int(price)
+        stock = int(stock or 0)
+
+    except (TypeError, ValueError):
+
+        return jsonify({
+            "success": False,
+            "error": "Price and stock must be numbers"
+        }), 400
+
+    # -----------------------------------------------------
+    # AUTO GST + HSN
+    # -----------------------------------------------------
+    tax_details = get_tax_details(
+        category,
+        subcategory
+    )
+
+    hsn_code = tax_details.get(
+        "hsn",
+        ""
+    )
+
+    gst_rate = tax_details.get(
+        "gst",
+        0
+    )
+
+    # -----------------------------------------------------
+    # IMAGE
+    # -----------------------------------------------------
+    try:
+
+        # If image is already a Cloudinary URL,
+        # use it directly.
+        if "res.cloudinary.com" in image_url:
+
+            final_image_url = image_url
+
+        else:
+
+            upload_result = (
+                cloudinary.uploader.upload(
+                    image_url
+                )
+            )
+
+            final_image_url = (
+                upload_result["secure_url"]
+            )
+
+    except Exception as e:
+
+        print(
+            "MAKE IMAGE UPLOAD ERROR:",
+            e
+        )
+
+        return jsonify({
+            "success": False,
+            "error": "Image upload failed"
+        }), 400
+
+    # -----------------------------------------------------
+    # CREATE PRODUCT
+    # -----------------------------------------------------
+    try:
+
+        new_product = Product(
+
+            name=name,
+
+            price=price,
+
+            image=final_image_url,
+
+            description=description,
+
+            stock=stock,
+
+            category=category,
+
+            subcategory=subcategory,
+
+            section=section,
+
+            hsn_code=hsn_code,
+
+            gst_rate=float(gst_rate),
+
+            packaging_profile=(
+                packaging_profile
+            ),
+
+            package_weight=(
+                package_weight
+            ),
+
+            package_length=(
+                package_length
+            ),
+
+            package_breadth=(
+                package_breadth
+            ),
+
+            package_height=(
+                package_height
+            )
+        )
+
+        db.session.add(
+            new_product
+        )
+
+        db.session.commit()
+
+        print(
+            "================================="
+        )
+
+        print(
+            "MAKE PRODUCT CREATED:",
+            new_product.id
+        )
+
+        print(
+            "PRODUCT NAME:",
+            new_product.name
+        )
+
+        print(
+            "================================="
+        )
+
+        return jsonify({
+
+            "success": True,
+
+            "message":
+                "Product created successfully",
+
+            "product_id":
+                new_product.id,
+
+            "name":
+                new_product.name,
+
+            "status":
+                "Listed"
+
+        }), 201
+
+    except Exception as e:
+
+        db.session.rollback()
+
+        print(
+            "MAKE PRODUCT DATABASE ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Product could not be created"
+
+        }), 500
+
+
 if __name__ == "__main__":
     app.run(debug=False)
